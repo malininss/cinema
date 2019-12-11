@@ -1,0 +1,18 @@
+
+@import '../client/client.component.scss';
+
+.page-header {
+  padding: 1.4rem;
+}
+
+.page-header__title {
+  margin: 0;
+  font-weight: 900;
+  font-size: 3.4rem;
+  color: $white;
+  text-transform: uppercase;
+
+  span {
+    font-weight: 100;
+  }
+}

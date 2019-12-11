@@ -1,0 +1,168 @@
+@import '../client/client.component.scss';
+
+.page-nav {
+  position: sticky;
+  top: 2px;
+  padding-bottom: 1rem;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  color: $black;
+  z-index: 10;
+
+  .page-nav__day {
+    flex-basis: calc(100% / 8);
+    font-size: 1.2rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.24), 0px 0px 2px rgba(0, 0, 0, 0.12);
+    border-radius: 2px;
+    text-decoration: none;
+    color: $black;
+
+    & + .page-nav__day {
+      margin-left: 1px;
+    }
+
+    .page-nav__day-week::after {
+      content: ',';
+    }
+
+    .page-nav__day-number::before {
+      content: ' ';
+    }
+
+    .page-nav__day-week, .page-nav__day-number {
+      display: block;
+    }
+  }
+
+  .page-nav__day_chosen {
+    flex-grow: 1;
+    background-color: $white;
+    font-weight: 700;
+    transform: scale(1.1);
+  }
+
+  .page-nav__day_weekend {
+    color: #DE2121;
+  }
+
+  .page-nav__day_next {
+    text-align: center;
+
+    &::before {
+      content: '>';
+      font-family: monospace;
+      font-weight: 700;
+      font-size: 2.4rem;
+    }
+  }
+
+  .page-nav__day_today {
+    .page-nav__day-week::before {
+      content: 'Сегодня';
+      display: block;
+    }
+    .page-nav__day-week, .page-nav__day-number {
+      display: inline;
+    }
+  }
+}
+
+.movie {
+  position: relative;
+  padding: 1.5rem;
+  margin-top: 3rem;
+  background: rgba(241, 235, 230, 0.95);
+  color: $black;
+
+  .movie__info {
+    display: flex;
+  }
+
+  .movie__poster {
+    position: relative;
+    width: 12.5rem;
+    height: 17.5rem;
+/*    left: 1.5rem;
+    top: -1.5rem;*/
+
+    .movie__poster-image {
+      position: relative;
+      top: -3rem;
+      width: 12.5rem;
+      height: 17.5rem;
+    }
+
+    &::after {
+      content: '';
+      display: block;
+      position: absolute;
+      right: -0.7rem;
+      top: -3rem;
+      border: 1.5rem solid transparent;
+      border-bottom: 0 solid transparent;
+      border-right: 0 solid transparent;
+      border-left: 0.7rem solid rgb(119, 39, 32);
+    }
+  }
+
+  .movie__description {
+    flex-grow: 1;
+    padding-left: 1.5rem;
+  }
+
+  .movie__title {
+    font-weight: 700;
+    font-size: 1.6rem;
+  }
+
+  .movie__synopsis {
+    font-size: 1.4rem;
+    margin-top: 1rem;
+  }
+
+  .movie__data {
+    font-size: 1.4rem;
+    font-weight: 300;
+    margin-top: 1rem;
+  }
+
+  .movie-seances__hall {
+
+    & + .movie-seances__hall {
+      margin-top: 2rem;
+    }
+
+    .movie-seances__hall-title {
+      font-weight: 700;
+      font-size: 1.6rem;
+    }
+
+    .movie-seances__list {
+      margin-top: 0.7rem;
+      font-size: 0;
+    }
+
+    .movie-seances__time-block {
+      display: inline-block;
+      margin-bottom: 4px;
+
+      &:nth-last-of-type(n + 1) {
+        margin-right: 4px;
+      }
+    }
+
+    .movie-seances__time {
+      display: block;
+      padding: 8px;
+      box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.24), 0px 0px 2px rgba(0, 0, 0, 0.12);
+      border-radius: 2px;
+      background-color: $white;
+      color: $black;
+      text-decoration: none;
+      font-size: 1.5rem;
+    }
+  }
+}

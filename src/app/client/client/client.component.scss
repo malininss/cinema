@@ -1,0 +1,23 @@
+
+$black: #000000;
+$white: #FFFFFF;
+$green: #16A6AF;
+
+@media screen and (min-width: 479px) {
+  .page-nav .page-nav__day {
+    padding: 1rem 2rem;
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .page-header, nav, main {
+    width: 990px;
+    margin: auto;
+  }
+  .movie, .buying {
+    border-radius: 2px;
+  }
+  .buying__info-hint {
+    display: none;
+  }
+}
