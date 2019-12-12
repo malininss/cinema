@@ -1,4 +1,4 @@
-@import '../../../assets/css/variables.scss';
+@import '../client/client.component.scss';
 
 .tichet__check, .ticket__info-wrapper {
   padding-left: 1.5rem;
@@ -105,24 +105,4 @@
   margin: 3rem auto 0;
   width: 20rem;
   height: 20rem;
-}
-
-
-@media screen and (min-width: 479px) {
-  .page-nav .page-nav__day {
-    padding: 1rem 2rem;
-  }
-}
-
-@media screen and (min-width: 990px) {
-  .page-header, nav, main {
-    width: 990px;
-    margin: auto;
-  }
-  .movie, .buying {
-    border-radius: 2px;
-  }
-  .buying__info-hint {
-    display: none;
-  }
 }
