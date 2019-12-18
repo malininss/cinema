@@ -1,0 +1,8 @@
+Создание:
+INSERT INTO films(film_name, film_description, film_duration, film_country, film_img) VALUES (Звёздные войны XXIII: Атака клонированных клонов', 'Две сотни лет назад малороссийские хутора разоряла шайка нехристей-ляхов во главе с могущественным колдуном.', 130, 'Франция', '../assets/i/poster1.jpg');
+
+Обновление:
+UPDATE films SET film_name='Звёздные войны XXIII',film_duration=120 WHERE `film_id`=1
+
+Удаление:
+DELETE FROM films WHERE film_id=1
