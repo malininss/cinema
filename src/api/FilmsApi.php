@@ -83,28 +83,23 @@ class FilmsApi extends Api
      * http://ДОМЕН/users/1 + параметры запроса name, email
      * @return string
      */
-    public function updateAction()
-    {
+    public function updateAction() {
+
         $parse_url = parse_url($this->requestUri[0]);
         $filmId = $parse_url['path'] ?? null;
 
         $db = (new Connection())->getConnection();
 
         if(!$filmId || !Films::getById($db, $filmId)){
-            return $this->response("Film with id=$userId not found", 404);
+            return $this->response("Film with id=$filmId not found", 404);
         }
 
-        // print_r($this->requestParams);
-
-        // $film_name = $this->requestParams['name'] ?? '';
-        // // $email = $this->requestParams['email'] ?? '';
-
-        // if($film_name){
-        //     if($user = Films::update($db, $userId, $name, $email)){
-        //         return $this->response('Data updated.', 200);
-        //     }
-        // }
-        // return $this->response("Update error", 400);
+        if($this->requestParams){
+            if($film = Films::updateFilm($db, $filmId, $this->requestParams)){
+                return $this->response('Data updated.', 200);
+            }
+        }
+        return $this->response("Update error", 400);
     }
 
     // /**
@@ -113,20 +108,23 @@ class FilmsApi extends Api
     //  * http://ДОМЕН/users/1
     //  * @return string
     //  */
-    // public function deleteAction()
-    // {
-    //     $parse_url = parse_url($this->requestUri[0]);
-    //     $userId = $parse_url['path'] ?? null;
+    public function deleteAction()
+    {
 
-    //     $db = (new Db())->getConnect();
+        $parse_url = parse_url($this->requestUri[0]);
+        $filmId = $parse_url['path'] ?? null;
 
-    //     if(!$userId || !Users::getById($db, $userId)){
-    //         return $this->response("User with id=$userId not found", 404);
-    //     }
-    //     if(Users::deleteById($db, $userId)){
-    //         return $this->response('Data deleted.', 200);
-    //     }
-    //     return $this->response("Delete error", 500);
-    // }
+        $db = (new Connection())->getConnection();
+
+        if(!$filmId || !Films::getById($db, $filmId)){
+            return $this->response("User with id=$filmId not found", 404);
+        }
+
+
+        if(Films::deleteById($db, $filmId)){
+            return $this->response('Data deleted.', 200);
+        }
+        return $this->response("Delete error", 500);
+    }
 
 }

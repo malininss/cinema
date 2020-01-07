@@ -15,23 +15,35 @@ abstract class Api
     public function __construct() {
         header("Access-Control-Allow-Orgin: *");
         header("Access-Control-Allow-Methods: *");
+        header('Access-Control-Allow-Headers: X-Requested-With, content-type');
         header("Content-Type: application/json");
+
 
         //Разбиваем строку GET параметров разделенных слешем
         $this->requestUri = explode('/', trim($_SERVER['REQUEST_URI'],'/'));
         $this->requestParams = $_REQUEST;
-
-        //Определение метода запроса
         $this->method = $_SERVER['REQUEST_METHOD'];
-        if ($this->method == 'POST' && array_key_exists('HTTP_X_HTTP_METHOD', $_SERVER)) {
-            if ($_SERVER['HTTP_X_HTTP_METHOD'] == 'DELETE') {
-                $this->method = 'DELETE';
-            } else if ($_SERVER['HTTP_X_HTTP_METHOD'] == 'PUT') {
-                $this->method = 'PUT';
-            } else {
-                throw new Exception("Unexpected Header");
-            }
+
+        if ($this->method == 'POST' && $this->requestUri[count($this->requestUri) - 1] == 'PUT') {
+          $this->method = 'PUT';
+        } else if ($this->method == 'POST' && $this->requestUri[count($this->requestUri) - 1] == 'DELETE') {
+          $this->method = 'DELETE';
         }
+        // print_r($this->requestUri[count($this->requestUri) - 1]);
+
+        // if ($this->method == 'POST' && array_key_exists('HTTP_X_HTTP_METHOD', $_SERVER)) {
+
+        //     if ($_SERVER['HTTP_X_HTTP_METHOD'] == 'DELETE') {
+        //         $this->method = 'DELETE';
+        //     } else if ($_SERVER['REQUEST_METHOD'] == 'POST' && count($this->requestUri) > 2) {
+        //       print_r('test');
+        //         $this->method = 'PUT';
+        //     } else {
+        //         throw new Exception("Unexpected Header");
+        //     }
+        // }
+
+        // print_r($this->method);
     }
 
     public function run() {
@@ -65,6 +77,7 @@ abstract class Api
             404 => 'Not Found',
             405 => 'Method Not Allowed',
             500 => 'Internal Server Error',
+            400 => 'Update error',
         );
         return ($status[$code])?$status[$code]:$status[500];
     }
@@ -98,5 +111,5 @@ abstract class Api
     abstract protected function viewAction();
     abstract protected function createAction();
     abstract protected function updateAction();
-    // abstract protected function deleteAction();
+    abstract protected function deleteAction();
 }

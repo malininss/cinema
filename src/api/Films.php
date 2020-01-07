@@ -19,6 +19,8 @@ class Films
     $keysString = substr($keysString,0,-1);
     $valuesString = substr($valuesString,0,-1);
 
+    print_r($keysString);
+
     $sql = mysqli_query($db, "INSERT INTO films($keysString) VALUES ($valuesString)");
 
     if ($sql) {
@@ -48,6 +50,39 @@ class Films
     $sql = mysqli_query($db, "SELECT * FROM films WHERE film_id=$id");
     return mysqli_fetch_assoc($sql);
   }
+
+  static public function updateFilm($db, $filmId, $arr) {
+
+    $result = "";
+
+    foreach ($arr as $key => $value) {
+      $result .= "`$key` = '$value',";
+    }
+
+    $result = substr($result,0,-1);
+
+    print_r($result);
+
+    $sql = mysqli_query($db, "UPDATE `films` SET $result WHERE `films`.`film_id` = $filmId;");
+    if($sql) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  static public function deleteById($db, $filmId) {
+    $sql = mysqli_query($db, "DELETE FROM `films` WHERE `films`.`film_id` = $filmId");
+    if($sql) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+
+
+
 
 
   // public function addFilm()

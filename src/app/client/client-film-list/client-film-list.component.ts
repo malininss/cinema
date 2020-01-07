@@ -10,41 +10,16 @@ export class ClientFilmListComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    let xhr = new XMLHttpRequest(); // у конструктора нет аргументовx
-    xhr.open('DELETE', 'http://localhost/api/films/6');
-    let formData = new FormData();
-    formData.append("film_name", "Имя фильма2");
-    // formData.append("film_description", "Описание");
-    // formData.append("film_duration", '130');
-    // formData.append("film_country", "Страна");
-    // formData.append("film_img", "Картинка");
+    const xhr = new XMLHttpRequest(); // у конструктора нет аргументовx
 
+    xhr.open('POST', 'http://localhost/api/halls/3/');
+    // const formData = new FormData();
 
-    xhr.send(formData);
+    // formData.append('hall_name', 'Зал 11111');
+    // formData.append('hall_chair_price', '100');
+    // formData.append('hall_vip_chair_price', '200');
 
-    xhr.onload = function() {
-
-      console.log(xhr.status)
-      // if (xhr.status != 200) { // анализируем HTTP-статус ответа, если статус не 200, то произошла ошибка
-      //   alert(`Ошибка ${xhr.status}: ${xhr.statusText}`); // Например, 404: Not Found
-      // } else { // если всё прошло гладко, выводим результат
-      //   alert(`Готово, получили ${xhr.response.length} байт`); // response -- это ответ сервера
-      // }
-    };
-
-    // xhr.onprogress = function(event) {
-    //   if (event.lengthComputable) {
-    //     alert(`Получено ${event.loaded} из ${event.total} байт`);
-    //   } else {
-    //     alert(`Получено ${event.loaded} байт`); // если в ответе нет заголовка Content-Length
-    //   }
-
-    // };
-
-    // xhr.onerror = function() {
-    //   alert('Запрос не удался');
-    // };
-
+    xhr.send();
 
 
   }
