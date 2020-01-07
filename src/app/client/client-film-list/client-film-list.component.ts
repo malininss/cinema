@@ -12,15 +12,16 @@ export class ClientFilmListComponent implements OnInit {
   ngOnInit() {
     const xhr = new XMLHttpRequest(); // у конструктора нет аргументовx
 
-    xhr.open('POST', 'http://localhost/api/halls/3/');
-    // const formData = new FormData();
+    xhr.open('POST', 'http://localhost/api/films');
+    const formData = new FormData();
 
-    // formData.append('hall_name', 'Зал 11111');
-    // formData.append('hall_chair_price', '100');
-    // formData.append('hall_vip_chair_price', '200');
+    formData.append('film_name', 'тестовое название1112');
+    formData.append('film_description', 'тестовое описание');
+    formData.append('film_duration', '150');
+    formData.append('film_country', 'россия');
+    formData.append('film_img', 'картинка');
 
-    xhr.send();
-
+    xhr.send(formData);
 
   }
 

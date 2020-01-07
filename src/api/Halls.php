@@ -1,9 +1,13 @@
 <?php
 
-class Halls
-{
+class Halls {
 
-  public function saveHall($db, $arr) {
+  /**
+   * Метод для создания зала
+   * Принимает соединение с базой данных $db и масссив $arr с данными для создания зала из HallsApi.php
+   * @return boolean
+   */
+  static public function createHall($db, $arr) {
     $keysString = '';
     $valuesString = '';
 
@@ -23,15 +27,17 @@ class Halls
 
     if ($sql) {
       return true;
-      // echo '<p>Данные успешно добавлены в таблицу.</p>';
     } else {
       return false;
-      // echo '<p>Произошла ошибка: ' . mysqli_error($db) . '</p>';
     }
   }
 
 
-
+  /**
+   * Метод получения всех залов
+   * Принимает соединение с базой данных $db из HallsApi.php
+   * @return boolean
+   */
   static public function getAll($db) {
     $sql = mysqli_query($db, "SELECT * FROM halls");
 
@@ -42,21 +48,27 @@ class Halls
         $allHalls[] = $result;
       }
     }
-
     return $allHalls;
-
   }
 
 
-
+  /**
+   * Метод получения конкретного зала по IP
+   * Принимает соединение с базой данных $db и $id из HallsApi.php
+   * @return boolean
+   */
   static public function getById($db, $id){
     $sql = mysqli_query($db, "SELECT * FROM halls WHERE hall_id=$id");
     return mysqli_fetch_assoc($sql);
   }
 
 
+  /**
+   * Метод обновления зала по id
+   * Принимает соединение с базой данных $db, $hallId и массив $arr с параметрами для обновления из HallsApi.php
+   * @return boolean
+   */
   static public function updateHall($db, $hallId, $arr) {
-
     $result = "";
 
     foreach ($arr as $key => $value) {
@@ -64,8 +76,6 @@ class Halls
     }
 
     $result = substr($result,0,-1);
-
-    print_r($result);
 
     $sql = mysqli_query($db, "UPDATE `halls` SET $result WHERE `halls`.`hall_id` = $hallId;");
     if($sql) {
@@ -76,7 +86,11 @@ class Halls
   }
 
 
-
+  /**
+   * Метод удаления зала
+   * Принимает соединение с базой данных $db и $hallId из HallsApi.php
+   * @return boolean
+   */
   static public function deleteById($db, $hallId) {
     $sql = mysqli_query($db, "DELETE FROM `halls` WHERE `halls`.`hall_id` = $hallId");
     if($sql) {
@@ -85,8 +99,4 @@ class Halls
       return false;
     }
   }
-
-
 }
-
-

@@ -2,6 +2,8 @@
 
 require_once 'FilmsApi.php';
 require_once 'HallsApi.php';
+require_once 'ScheduleApi.php';
+
 
 
 $url = explode('/', trim($_SERVER['REQUEST_URI'],'/'));
@@ -16,6 +18,13 @@ if ($url[1] === 'films') {
 } elseif ($url[1] === 'halls') {
   try {
     $api = new HallsApi();
+    echo $api->run();
+  } catch (Exception $e) {
+      echo json_encode(Array('error' => $e->getMessage()));
+  }
+} elseif ($url[1] === 'schedule') {
+  try {
+    $api = new ScheduleApi();
     echo $api->run();
   } catch (Exception $e) {
       echo json_encode(Array('error' => $e->getMessage()));
