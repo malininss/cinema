@@ -11,6 +11,7 @@
   z-index: 10;
 
   .page-nav__day {
+    cursor: pointer;
     flex-basis: calc(100% / 8);
     font-size: 1.2rem;
     padding: 1rem;
@@ -30,6 +31,17 @@
 
     .page-nav__day-number::before {
       content: ' ';
+    }
+
+    .page-nav__wrapper {
+      flex-basis: calc(100% / 8);
+      font-size: 1.2rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.24), 0px 0px 2px rgba(0, 0, 0, 0.12);
+      border-radius: 2px;
+      text-decoration: none;
+      color: #000000;
     }
 
     .page-nav__day-week, .page-nav__day-number {
@@ -53,6 +65,18 @@
 
     &::before {
       content: '>';
+      font-family: monospace;
+      font-weight: 700;
+      font-size: 2.4rem;
+    }
+  }
+
+  .page-nav__day_prev {
+    text-align: center;
+
+    &::before {
+      cursor: pointer;
+      content: '<';
       font-family: monospace;
       font-weight: 700;
       font-size: 2.4rem;

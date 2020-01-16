@@ -39,6 +39,7 @@ class Films {
    * @return boolean
    */
   static public function getAll($db) {
+
     $sql = mysqli_query($db, "SELECT * FROM films");
 
     $allFilms = [];
@@ -102,4 +103,9 @@ class Films {
       return false;
     }
   }
+
+
+  // static public function getFilmWithSchedule() {
+
+  // }
 }

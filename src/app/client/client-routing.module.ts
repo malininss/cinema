@@ -16,8 +16,9 @@ const routes: Routes = [
             component: ClientFilmListComponent
           },
           {
-            path: 'hall',
+            path: 'hall/:hallId/:filmId/:currentDay',
             component: ClientHallComponent
+            // products/:productId', component: ProductDetailsComponent
           },
           {
             path: 'ticket',

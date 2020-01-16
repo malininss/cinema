@@ -8,7 +8,9 @@ require_once 'ScheduleApi.php';
 
 $url = explode('/', trim($_SERVER['REQUEST_URI'],'/'));
 
-if ($url[1] === 'films') {
+if (!isset($url[1])) {
+  echo 'API не найдено';
+} elseif ($url[1] === 'films') {
   try {
     $api = new FilmsApi();
     echo $api->run();

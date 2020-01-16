@@ -67,7 +67,7 @@ class FilmsApi extends Api {
    * Метод POST
    * Обновление отдельной записи (по ее id)
    * http://ДОМЕН/api/films/1/PUT
-   * Отправлять параметры обновления: film_name, film_description, film_duration, film_country, film_img
+   * Отправлять параметры обновления: film_name, film_description, film_duration, film_country, film_img, film_schedule (json)
    * @return string
    */
   public function updateAction() {

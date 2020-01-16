@@ -1,3 +1,4 @@
+import { ClientPaymentService } from './client-payment.service';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -7,9 +8,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ClientPaymentComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private clientPaymentService: ClientPaymentService
+    ) {}
 
   ngOnInit() {
+    console.log(this.clientPaymentService.getData());
   }
 
 }

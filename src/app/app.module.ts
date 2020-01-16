@@ -8,6 +8,12 @@ import { AppComponent } from './app.component';
 import { AdminComponent } from './admin/admin/admin.component';
 import { LoginComponent } from './admin/login/login.component';
 
+import { registerLocaleData } from '@angular/common';
+import localeRu from '@angular/common/locales/ru';
+import localeRuExtra from '@angular/common/locales/extra/ru';
+
+registerLocaleData(localeRu, 'ru', localeRuExtra);
+
 @NgModule({
   declarations: [
     AppComponent,
