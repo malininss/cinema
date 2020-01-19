@@ -1,16 +1,18 @@
+import { DatePipe } from '@angular/common';
 import { ClientPaymentService } from './../client-payment/client-payment.service';
-import { Shcedule, Hall, Film } from './../client-film-list/client-film-list.service';
+import { Shcedule, Hall } from './../client-film-list/client-film-list.service';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ClientFilmListService } from '../client-film-list/client-film-list.service';
+import { ClientFilmListService, Film } from '../client-film-list/client-film-list.service';
+
 
 export interface ObjectForPayment {
   filmName: string;
-  plases: string;
   hallName: string;
   timeToStart: string;
-  totalPrice: string;
-  obj?: object;
+  hallConfiguration?: object;
+  checkedPlaces: string[];
+  totalPrice: number;
 }
 
 @Component({
@@ -20,8 +22,6 @@ export interface ObjectForPayment {
 })
 
 export class ClientHallComponent implements OnInit {
-  objectForSand: ObjectForPayment;
-
   hallId: number;
   filmId: number;
   currentTime: any;
@@ -45,16 +45,22 @@ export class ClientHallComponent implements OnInit {
     hall_vip_chair_price: ''
   };
 
+  objectForSand: ObjectForPayment = {
+    filmName: '',
+    hallName: '',
+    timeToStart: '',
+    checkedPlaces: [],
+    totalPrice: 0
+  };
+
   constructor(
     private route: ActivatedRoute,
     private clientFilmListService: ClientFilmListService,
-    private clientPaymentService: ClientPaymentService
+    private clientPaymentService: ClientPaymentService,
+    private datePipe: DatePipe
   ) { }
 
   ngOnInit() {
-
-    this.clientPaymentService.setData('test');
-    console.log(this.clientPaymentService.getData());
 
     this.route.paramMap.subscribe(params => {
       this.hallId = +params.get('hallId');
@@ -94,22 +100,55 @@ export class ClientHallComponent implements OnInit {
     .subscribe((film: Film) => {
       this.film = film;
     });
+
+
   }
 
   getHall() {
     this.clientFilmListService.getHallById(this.hallId)
     .subscribe((hall: Hall) => {
       this.hall = hall;
+      // console.log(this.hall.hall_configuration);
     });
   }
 
-  changePlaseStatus(rowIndex, placeIndex) {
+  changePlaceStatus(rowIndex, placeIndex) {
+
     const currentElem = this.currentSchedulePlaces[rowIndex][placeIndex];
     if (currentElem.status === 'free') {
       currentElem.status = 'checked';
+      // console.log(currentElem);
     } else if (currentElem.status === 'checked') {
       currentElem.status = 'free';
     }
+
+  }
+
+  createObjectForPayment() {
+    this.objectForSand.filmName = this.film.film_name;
+    this.objectForSand.hallName = this.hall.hall_name;
+    // Хрень с тысячами. Разобраться!
+    this.objectForSand.timeToStart = this.datePipe.transform(this.currentTime * 1000, 'HH:mm');
+    this.objectForSand.hallConfiguration = this.currentSchedulePlaces;
+
+
+    this.currentSchedulePlaces.forEach(row => {
+      row.forEach(place => {
+        if (place.status === 'checked') {
+          this.objectForSand.checkedPlaces.push(place.place);
+
+          if (place.type === 'simple') {
+            this.objectForSand.totalPrice += +this.hall.hall_chair_price;
+          } else {
+            this.objectForSand.totalPrice += +this.hall.hall_vip_chair_price;
+          }
+        }
+      });
+    });
+
+
+    this.clientPaymentService.setData(this.objectForSand);
+
   }
 
 }

@@ -8,12 +8,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ClientPaymentComponent implements OnInit {
 
+  dataObject: any;
+
   constructor(
     private clientPaymentService: ClientPaymentService
     ) {}
 
   ngOnInit() {
-    console.log(this.clientPaymentService.getData());
+    this.dataObject = this.clientPaymentService.getData();
+    console.log(this.dataObject);
   }
 
 }

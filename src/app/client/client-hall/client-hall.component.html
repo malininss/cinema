@@ -24,7 +24,7 @@
                 'buying-scheme__chair_selected': place.status === 'checked',
                 'buying-scheme__chair_vip': place.type === 'vip'
                 }"
-              (click)="changePlaseStatus(rowIndex, placeIndex)"
+              (click)="changePlaceStatus(rowIndex, placeIndex)"
             ></span>
           </div>
       </div>
@@ -39,6 +39,6 @@
         </div>
       </div>
     </div>
-    <button class="acceptin-button" routerLink="/payment">Забронировать</button>
+    <button class="acceptin-button" (click)="createObjectForPayment()" routerLink="/payment">Забронировать</button>
   </section>
 </main>

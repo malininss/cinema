@@ -1,9 +1,6 @@
 <nav class="page-nav">
 
-    <a class="page-nav__day page-nav__day_prev"
-      *ngIf="prevButton"
-      (click)="getDays(-6)">
-    </a>
+    <a class="page-nav__day page-nav__day_prev" *ngIf="prevButton" (click)="getDays(-6)"></a>
 
     <a class="page-nav__day page-nav__day_today"
       [ngClass]="{
@@ -14,19 +11,17 @@
       *ngFor="let day of days"
       (click)="checkCurrentDay(day)">
 
-      <span class="page-nav__day-week">{{ day | date: 'EE' | titlecase }}</span><span class="page-nav__day-number">{{ day | date: 'dd'}}</span>
+      <span class="page-nav__day-week">{{ day | date: 'EE' | titlecase }}</span>
+      <span class="page-nav__day-number">{{ day | date: 'dd'}}</span>
+
     </a>
 
     <a class="page-nav__day page-nav__day_next" (click)="getDays(6)"></a>
   </nav>
 
   <main>
-
-
     <div class="movie-container" *ngFor="let film of films">
       <section class="movie" *ngIf="film.film_schedule" >
-
-
           <div class="movie__info">
             <div class="movie__poster">
               <img class="movie__poster-image" alt="Звёздные войны постер" src="../assets/i/poster1.jpg">
@@ -45,14 +40,10 @@
           <h3 class="movie-seances__hall-title"> {{ schedule.hallName }}</h3>
             <ul class="movie-seances__list">
               <li class="movie-seances__time-block" *ngFor="let scheduleTime of schedule.time">
-              <!-- <a class="movie-seances__time" (click)="getReservedDateAndTime(scheduleTime)"> {{ scheduleTime }}</a> -->
               <a class="movie-seances__time"[routerLink]="['/hall', schedule.hallId, film.film_id, getReservedDateAndTime(scheduleTime)]"> {{ scheduleTime }}</a>
               </li>
             </ul>
           </div>
-
-
       </section>
     </div>
-
   </main>

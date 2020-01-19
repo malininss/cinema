@@ -1,6 +1,5 @@
-import { ClientFilmListService } from './client-film-list.service';
+import { ClientFilmListService, Film } from './client-film-list.service';
 import { Component, OnInit } from '@angular/core';
-import { Film } from './client-film-list.service';
 
 @Component({
   selector: 'app-client-film-list',
@@ -22,16 +21,12 @@ export class ClientFilmListComponent implements OnInit {
 
   ngOnInit() {
     this.currentDay.setHours(0, 0, 0, 0);
-
     this.getFilms();
     this.getDays();
-
-    // console.log(this.currentDay);
   }
 
   checkCurrentDay(day: Date) {
     this.currentDay = day;
-    // console.log(this.currentDay);
   }
 
   getDays(count = 0) {
@@ -47,7 +42,6 @@ export class ClientFilmListComponent implements OnInit {
       dayCounterAdder++;
     }
 
-    // Доработать!
     if (this.days[0].getDate() === (new Date()).getDate() &&
         this.days[0].getMonth() === (new Date()).getMonth()) {
       this.prevButton = false;
@@ -62,7 +56,6 @@ export class ClientFilmListComponent implements OnInit {
         // ПЕРЕДЕЛАТЬ!!
         films.forEach(element => {
           element.film_schedule = JSON.parse(element.film_schedule);
-          // console.log(element.film_schedule);
         });
         this.films = films;
       });
@@ -79,12 +72,4 @@ export class ClientFilmListComponent implements OnInit {
     const reservedDateAndTime = new Date(this.currentDay);
     return reservedDateAndTime.setHours(timeArr[0], timeArr[1]) / 1000; // делением убрали милисекунды
   }
-
-  // getHallNameById(hallId) {
-  //   this.clientFilmListService.getHallById(hallId)
-  //   .subscribe(hall => {
-  //     console.log(hall);
-  //   });
-  // }
-
 }
