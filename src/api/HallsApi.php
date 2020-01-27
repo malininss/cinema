@@ -22,7 +22,6 @@ class HallsApi extends Api {
     return $this->response('Data not found', 404);
   }
 
-
   /**
    * Метод GET
    * Просмотр отдельной записи (по id)
@@ -55,16 +54,20 @@ class HallsApi extends Api {
   public function createAction() {
     $db = (new Connection())->getConnection();
 
-    if($this->requestParams){
-      if (!array_key_exists('hall_configuration', $this->requestParams)) {
-        $this->requestParams['hall_configuration'] = file_get_contents('standart-hall-configuration.json');
+    // Нужно получать данные через json_decode!!!
+    $params = json_decode($this->requestParams,true);
+    // print_r($this->requestParams);
+
+    if($params){
+      if (!array_key_exists('hall_configuration', $params)) {
+        $params['hall_configuration'] = file_get_contents('standart-hall-configuration.json');
       }
 
-      if(Halls::createHall($db, $this->requestParams)){
+
+      if(Halls::createHall($db, $params)){
         return $this->response('Data saved.', 200);
       }
     }
-    return $this->response("Saving error", 500);
   }
 
 
@@ -96,9 +99,9 @@ class HallsApi extends Api {
 
 
   /**
-   * Метод DELETE
+   * Метод POST
    * Удаление отдельной записи (по ее id)
-   * http://ДОМЕН/users/halls/1/DELETE
+   * http://ДОМЕН/api/halls/1/DELETE
    * @return string
    */
   public function deleteAction() {

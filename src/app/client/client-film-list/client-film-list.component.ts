@@ -1,10 +1,10 @@
-import { ClientFilmListService, Film } from './client-film-list.service';
+import { AppApiService, Film } from '../../app-api.service';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-client-film-list',
   templateUrl: './client-film-list.component.html',
-  providers: [ClientFilmListService],
+  providers: [AppApiService],
   styleUrls: ['./client-film-list.component.scss']
 })
 
@@ -17,7 +17,7 @@ export class ClientFilmListComponent implements OnInit {
   scheduleList: any;
   currentHallId = 0;
 
-  constructor(private clientFilmListService: ClientFilmListService) { }
+  constructor(private appApiService: AppApiService) { }
 
   ngOnInit() {
     this.currentDay.setHours(0, 0, 0, 0);
@@ -51,7 +51,7 @@ export class ClientFilmListComponent implements OnInit {
   }
 
   getFilms() {
-    this.clientFilmListService.getFilms()
+    this.appApiService.getFilms()
       .subscribe((films: Film[]) => {
         // ПЕРЕДЕЛАТЬ!!
         films.forEach(element => {
@@ -62,7 +62,7 @@ export class ClientFilmListComponent implements OnInit {
   }
 
   getScheduleById(id) {
-    this.clientFilmListService.getScheduleById(id)
+    this.appApiService.getScheduleById(id)
     .subscribe(scheduleList => {
     });
   }

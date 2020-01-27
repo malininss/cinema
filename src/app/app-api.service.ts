@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 
 import { Observable, throwError } from 'rxjs';
@@ -11,7 +11,7 @@ export interface Film {
   film_duration: string;
   film_country: string;
   film_img: string;
-  film_schedule?: string;
+  film_schedule?: any;
 }
 
 export interface Shcedule {
@@ -35,14 +35,13 @@ export interface Hall {
   providedIn: 'root'
 })
 
-export class ClientFilmListService {
+export class AppApiService {
   constructor(private http: HttpClient) { }
 
   getFilms() {
     const requestUrl = 'http://localhost/api/films/';
     return this.http.get<Film[]>(requestUrl);
   }
-
 
   getFilmById(filmId) {
     const requestUrl = 'http://localhost/api/films/' + filmId;
@@ -63,4 +62,26 @@ export class ClientFilmListService {
     const requestUrl = 'http://localhost/api/halls/' + hallId;
     return this.http.get<Hall>(requestUrl);
   }
+
+  getHalls() {
+    const requestUrl = 'http://localhost/api/halls/';
+    return this.http.get<Hall[]>(requestUrl);
+  }
+
+  newHall(hall) {
+    const requestUrl = 'http://localhost/api/halls';
+    return this.http.post(requestUrl, hall);
+  }
+
+  deleteHall(hallId) {
+    const requestUrl = 'http://localhost/api/halls/' + hallId + '/DELETE';
+    // console.log(hall);
+    return this.http.post(requestUrl, {});
+  }
+
+  newFilm(filmObj) {
+    const requestUrl = 'http://localhost/api/films';
+    return this.http.post(requestUrl, filmObj);
+  }
+
 }

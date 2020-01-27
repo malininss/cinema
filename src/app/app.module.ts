@@ -11,6 +11,9 @@ import { LoginComponent } from './admin/login/login.component';
 import { registerLocaleData } from '@angular/common';
 import localeRu from '@angular/common/locales/ru';
 import localeRuExtra from '@angular/common/locales/extra/ru';
+import { FormsModule } from '@angular/forms';
+
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 registerLocaleData(localeRu, 'ru', localeRuExtra);
 
@@ -23,10 +26,11 @@ registerLocaleData(localeRu, 'ru', localeRuExtra);
   ],
   imports: [
     BrowserModule,
+    FormsModule,
     AppRoutingModule,
-    ClientModule
+    ClientModule,
+    BrowserAnimationsModule
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule { }

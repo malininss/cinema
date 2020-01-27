@@ -8,17 +8,16 @@
       <header class="conf-step__header conf-step__header_opend" appShowOrHide>
         <h2 class="conf-step__title">Управление залами</h2>
       </header>
+
       <div class="conf-step__wrapper">
         <p class="conf-step__paragraph">Доступные залы:</p>
-        <ul class="conf-step__list">
-          <li>Зал 1
-            <button class="conf-step__button conf-step__button-trash"></button>
-          </li>
-          <li>Зал 2
-            <button class="conf-step__button conf-step__button-trash"></button>
+        <ul class="conf-step__list" *ngFor="let hall of halls">
+          <li> {{ hall.hall_name }}
+            <button class="conf-step__button conf-step__button-trash"
+            (click)="showDeleteHallPopup(hall)"></button>
           </li>
         </ul>
-        <button class="conf-step__button conf-step__button-accent">Создать зал</button>
+        <button class="conf-step__button conf-step__button-accent" (click)="showCreateHallPopup()">Создать зал</button>
       </div>
     </section>
 
@@ -28,15 +27,39 @@
       </header>
       <div class="conf-step__wrapper">
         <p class="conf-step__paragraph">Выберите зал для конфигурации:</p>
+
+
         <ul class="conf-step__selectors-box">
-          <li><input type="radio" class="conf-step__radio" name="chairs-hall" value="Зал 1" checked><span class="conf-step__selector">Зал 1</span></li>
-          <li><input type="radio" class="conf-step__radio" name="chairs-hall" value="Зал 2"><span class="conf-step__selector">Зал 2</span></li>
+
+          <li *ngFor="let hall of halls">
+            <input
+              type="radio"
+              class="conf-step__radio"
+              name="chairs-hall"
+              value="{{ hall.hall_name }}"
+              [attr.checked]="halls.indexOf(hall) === 0 ? true:null"
+              (click)='setActiveHallIndex(halls.indexOf(hall))'
+            >
+                <span class="conf-step__selector"> {{ hall.hall_name }} </span>
+          </li>
+
+
         </ul>
+
         <p class="conf-step__paragraph">Укажите количество рядов и максимальное количество кресел в ряду:</p>
         <div class="conf-step__legend">
-          <label class="conf-step__label">Рядов, шт<input type="text" class="conf-step__input" placeholder="10" ></label>
+          <label class="conf-step__label">Рядов, шт<input type="text" class="conf-step__input"
+            [(ngModel)]="currentRow"
+            placeholder="10"
+            (keyup)="editHallConf(currentRow, currentPlace)"
+            ></label>
           <span class="multiplier">x</span>
-          <label class="conf-step__label">Мест, шт<input type="text" class="conf-step__input" placeholder="8" ></label>
+          <label
+            class="conf-step__label">Мест, шт<input type="text" class="conf-step__input"
+            [(ngModel)]="currentPlace"
+            placeholder="8"
+            (keyup)="editHallConf(currentRow, currentPlace)"
+            ></label>
         </div>
         <p class="conf-step__paragraph">Теперь вы можете указать типы кресел на схеме зала:</p>
         <div class="conf-step__legend">
@@ -48,81 +71,29 @@
 
         <div class="conf-step__hall">
           <div class="conf-step__hall-wrapper">
-            <div class="conf-step__row">
-              <span class="conf-step__chair conf-step__chair_disabled"></span><span class="conf-step__chair conf-step__chair_disabled"></span>
-              <span class="conf-step__chair conf-step__chair_disabled"></span><span class="conf-step__chair conf-step__chair_standart"></span>
-              <span class="conf-step__chair conf-step__chair_standart"></span><span class="conf-step__chair conf-step__chair_disabled"></span>
-              <span class="conf-step__chair conf-step__chair_disabled"></span><span class="conf-step__chair conf-step__chair_disabled"></span>
-            </div>
-
-            <div class="conf-step__row">
-              <span class="conf-step__chair conf-step__chair_disabled"></span><span class="conf-step__chair conf-step__chair_disabled"></span>
-              <span class="conf-step__chair conf-step__chair_standart"></span><span class="conf-step__chair conf-step__chair_standart"></span>
-              <span class="conf-step__chair conf-step__chair_standart"></span><span class="conf-step__chair conf-step__chair_standart"></span>
-              <span class="conf-step__chair conf-step__chair_disabled"></span><span class="conf-step__chair conf-step__chair_disabled"></span>
-            </div>
-
-            <div class="conf-step__row">
-              <span class="conf-step__chair conf-step__chair_disabled"></span><span class="conf-step__chair conf-step__chair_standart"></span>
-              <span class="conf-step__chair conf-step__chair_standart"></span><span class="conf-step__chair conf-step__chair_standart"></span>
-              <span class="conf-step__chair conf-step__chair_standart"></span><span class="conf-step__chair conf-step__chair_standart"></span>
-              <span class="conf-step__chair conf-step__chair_standart"></span><span class="conf-step__chair conf-step__chair_disabled"></span>
-            </div>
-
-            <div class="conf-step__row">
-              <span class="conf-step__chair conf-step__chair_standart"></span><span class="conf-step__chair conf-step__chair_standart"></span>
-              <span class="conf-step__chair conf-step__chair_standart"></span><span class="conf-step__chair conf-step__chair_vip"></span>
-              <span class="conf-step__chair conf-step__chair_vip"></span><span class="conf-step__chair conf-step__chair_standart"></span>
-              <span class="conf-step__chair conf-step__chair_standart"></span><span class="conf-step__chair conf-step__chair_disabled"></span>
-            </div>
-
-            <div class="conf-step__row">
-              <span class="conf-step__chair conf-step__chair_standart"></span><span class="conf-step__chair conf-step__chair_standart"></span>
-              <span class="conf-step__chair conf-step__chair_vip"></span><span class="conf-step__chair conf-step__chair_vip"></span>
-              <span class="conf-step__chair conf-step__chair_vip"></span><span class="conf-step__chair conf-step__chair_vip"></span>
-              <span class="conf-step__chair conf-step__chair_standart"></span><span class="conf-step__chair conf-step__chair_disabled"></span>
-            </div>
-
-            <div class="conf-step__row">
-              <span class="conf-step__chair conf-step__chair_standart"></span><span class="conf-step__chair conf-step__chair_standart"></span>
-              <span class="conf-step__chair conf-step__chair_vip"></span><span class="conf-step__chair conf-step__chair_vip"></span>
-              <span class="conf-step__chair conf-step__chair_vip"></span><span class="conf-step__chair conf-step__chair_vip"></span>
-              <span class="conf-step__chair conf-step__chair_standart"></span><span class="conf-step__chair conf-step__chair_disabled"></span>
-            </div>
-
-            <div class="conf-step__row">
-              <span class="conf-step__chair conf-step__chair_standart"></span><span class="conf-step__chair conf-step__chair_standart"></span>
-              <span class="conf-step__chair conf-step__chair_vip"></span><span class="conf-step__chair conf-step__chair_vip"></span>
-              <span class="conf-step__chair conf-step__chair_vip"></span><span class="conf-step__chair conf-step__chair_vip"></span>
-              <span class="conf-step__chair conf-step__chair_standart"></span><span class="conf-step__chair conf-step__chair_disabled"></span>
-            </div>
-
-            <div class="conf-step__row">
-              <span class="conf-step__chair conf-step__chair_standart"></span><span class="conf-step__chair conf-step__chair_standart"></span>
-              <span class="conf-step__chair conf-step__chair_standart"></span><span class="conf-step__chair conf-step__chair_standart"></span>
-              <span class="conf-step__chair conf-step__chair_standart"></span><span class="conf-step__chair conf-step__chair_standart"></span>
-              <span class="conf-step__chair conf-step__chair_standart"></span><span class="conf-step__chair conf-step__chair_disabled"></span>
-            </div>
-
-            <div class="conf-step__row">
-              <span class="conf-step__chair conf-step__chair_standart"></span><span class="conf-step__chair conf-step__chair_standart"></span>
-              <span class="conf-step__chair conf-step__chair_standart"></span><span class="conf-step__chair conf-step__chair_standart"></span>
-              <span class="conf-step__chair conf-step__chair_standart"></span><span class="conf-step__chair conf-step__chair_standart"></span>
-              <span class="conf-step__chair conf-step__chair_standart"></span><span class="conf-step__chair conf-step__chair_standart"></span>
-            </div>
-
-            <div class="conf-step__row">
-              <span class="conf-step__chair conf-step__chair_standart"></span><span class="conf-step__chair conf-step__chair_standart"></span>
-              <span class="conf-step__chair conf-step__chair_standart"></span><span class="conf-step__chair conf-step__chair_standart"></span>
-              <span class="conf-step__chair conf-step__chair_standart"></span><span class="conf-step__chair conf-step__chair_standart"></span>
-              <span class="conf-step__chair conf-step__chair_standart"></span><span class="conf-step__chair conf-step__chair_standart"></span>
+            <div class="conf-step__row" *ngFor="let row of halls[indexOfSelectedHall].hall_configuration" >
+              <span
+                class="conf-step__chair"
+                [ngClass]="{
+                  'conf-step__chair_disabled': place.status === 'disabled',
+                  'conf-step__chair_standart': place.status === 'siimple',
+                  'conf-step__chair_vip': place.status === 'vip'
+                  }"
+                *ngFor="let place of row"
+                (click)="changePlaceType(place)"
+              ></span>
             </div>
           </div>
         </div>
 
         <fieldset class="conf-step__buttons text-center">
-          <button class="conf-step__button conf-step__button-regular">Отмена</button>
-          <input type="submit" value="Сохранить" class="conf-step__button conf-step__button-accent">
+
+          <button class="conf-step__button conf-step__button-regular"
+            (click)="canselChanges()"
+            >Отмена</button>
+
+          <input type="submit" value="Сохранить" class="conf-step__button conf-step__button-accent"
+          (click)="submitHallConfiguration()">
         </fieldset>
       </div>
     </section>
@@ -134,23 +105,51 @@
       <div class="conf-step__wrapper">
         <p class="conf-step__paragraph">Выберите зал для конфигурации:</p>
         <ul class="conf-step__selectors-box">
-          <li><input type="radio" class="conf-step__radio" name="prices-hall" value="Зал 1"><span class="conf-step__selector">Зал 1</span></li>
-          <li><input type="radio" class="conf-step__radio" name="prices-hall" value="Зал 2" checked><span class="conf-step__selector">Зал 2</span></li>
+
+          <li *ngFor="let hall of halls">
+            <input
+              type="radio"
+              class="conf-step__radio"
+              name="chairs-hall"
+              value="{{ hall.hall_name }}"
+              [attr.checked]="halls.indexOf(hall) === 0 ? true:null"
+              (click)='setActiveHallIndex(halls.indexOf(hall))'
+            >
+                <span class="conf-step__selector"> {{ hall.hall_name }} </span>
+          </li>
         </ul>
 
         <p class="conf-step__paragraph">Установите цены для типов кресел:</p>
           <div class="conf-step__legend">
-            <label class="conf-step__label">Цена, рублей<input type="text" class="conf-step__input" placeholder="0" ></label>
+            <label class="conf-step__label">Цена, рублей
+              <input
+              type="text"
+              class="conf-step__input"
+              placeholder="0"
+              [(ngModel)] = "currentStandartPrice"
+              (keyup)="saveHallPrice()">
+            </label>
             за <span class="conf-step__chair conf-step__chair_standart"></span> обычные кресла
           </div>
           <div class="conf-step__legend">
-            <label class="conf-step__label">Цена, рублей<input type="text" class="conf-step__input" placeholder="0" value="350"></label>
+            <label class="conf-step__label">Цена, рублей
+              <input type="text"
+              class="conf-step__input"
+              placeholder="0"
+              [(ngModel)] = "currentVipPrice"
+              (keyup)="saveHallPrice()">
+            </label>
             за <span class="conf-step__chair conf-step__chair_vip"></span> VIP кресла
           </div>
 
         <fieldset class="conf-step__buttons text-center">
-          <button class="conf-step__button conf-step__button-regular">Отмена</button>
-          <input type="submit" value="Сохранить" class="conf-step__button conf-step__button-accent">
+          <button class="conf-step__button conf-step__button-regular"
+            (click)="canselChanges()"
+          >Отмена</button>
+          <input type="submit"
+            value="Сохранить"
+            class="conf-step__button conf-step__button-accent"
+            (click)="submitPriceConfiguration()">
         </fieldset>
       </div>
     </section>
@@ -161,69 +160,47 @@
       </header>
       <div class="conf-step__wrapper">
         <p class="conf-step__paragraph">
-          <button class="conf-step__button conf-step__button-accent">Добавить фильм</button>
+          <button class="conf-step__button conf-step__button-accent" (click)="showCreateFilmPopup()">Добавить фильм</button>
         </p>
+
+
+
         <div class="conf-step__movies">
-          <div class="conf-step__movie">
-            <img class="conf-step__movie-poster" alt="poster" src="i/poster.png">
-            <h3 class="conf-step__movie-title">Звёздные войны XXIII: Атака клонированных клонов</h3>
-            <p class="conf-step__movie-duration">130 минут</p>
+          <div
+            class="conf-step__movie"
+            *ngFor="let film of films"
+          >
+            <img class="conf-step__movie-poster" alt="poster" src="../assets/i/poster1.jpg">
+            <h3 class="conf-step__movie-title">{{ film.film_name }}</h3>
+            <p class="conf-step__movie-duration">{{ film.film_duration }} минут</p>
           </div>
 
-          <div class="conf-step__movie">
-            <img class="conf-step__movie-poster" alt="poster" src="i/poster.png">
-            <h3 class="conf-step__movie-title">Миссия выполнима</h3>
-            <p class="conf-step__movie-duration">120 минут</p>
-          </div>
-
-          <div class="conf-step__movie">
-            <img class="conf-step__movie-poster" alt="poster" src="i/poster.png">
-            <h3 class="conf-step__movie-title">Серая пантера</h3>
-            <p class="conf-step__movie-duration">90 минут</p>
-          </div>
-
-          <div class="conf-step__movie">
-            <img class="conf-step__movie-poster" alt="poster" src="i/poster.png">
-            <h3 class="conf-step__movie-title">Движение вбок</h3>
-            <p class="conf-step__movie-duration">95 минут</p>
-          </div>
-
-          <div class="conf-step__movie">
-            <img class="conf-step__movie-poster" alt="poster" src="i/poster.png">
-            <h3 class="conf-step__movie-title">Кот Да Винчи</h3>
-            <p class="conf-step__movie-duration">100 минут</p>
-          </div>
         </div>
 
-        <div class="conf-step__seances">
-          <div class="conf-step__seances-hall">
-            <h3 class="conf-step__seances-title">Зал 1</h3>
+        <div
+          class="conf-step__seances"
+          *ngFor="let hall of hallTimeLine | keyvalue"
+        >
+          <div
+            class="conf-step__seances-hall">
+            <h3 class="conf-step__seances-title"> <pre>{{ hall.key }}</pre></h3>
             <div class="conf-step__seances-timeline">
-              <div class="conf-step__seances-movie" style="width: 60px; background-color: rgb(133, 255, 137); left: 0;">
-                <p class="conf-step__seances-movie-title">Миссия выполнима</p>
-                <p class="conf-step__seances-movie-start">00:00</p>
+
+              <div
+                class="conf-step__seances-movie"
+                [ngStyle]="{
+                  'width': getWidth(getFilmById(scheduleItem.value).film_duration),
+                  'background-color': 'rgb(133, 255, 137)',
+                  'left': getLeftPosition(scheduleItem.key)
+                }"
+                *ngFor="let scheduleItem of hall.value | keyvalue"
+              >
+
+
+                <p class="conf-step__seances-movie-title">{{ getFilmById(scheduleItem.value).film_name }}</p>
+                <p class="conf-step__seances-movie-start">{{ scheduleItem.key }}</p>
               </div>
-              <div class="conf-step__seances-movie" style="width: 60px; background-color: rgb(133, 255, 137); left: 360px;">
-                <p class="conf-step__seances-movie-title">Миссия выполнима</p>
-                <p class="conf-step__seances-movie-start">12:00</p>
-              </div>
-              <div class="conf-step__seances-movie" style="width: 65px; background-color: rgb(202, 255, 133); left: 420px;">
-                <p class="conf-step__seances-movie-title">Звёздные войны XXIII: Атака клонированных клонов</p>
-                <p class="conf-step__seances-movie-start">14:00</p>
-              </div>
-            </div>
-          </div>
-          <div class="conf-step__seances-hall">
-            <h3 class="conf-step__seances-title">Зал 2</h3>
-            <div class="conf-step__seances-timeline">
-              <div class="conf-step__seances-movie" style="width: 65px; background-color: rgb(202, 255, 133); left: 595px;">
-                <p class="conf-step__seances-movie-title">Звёздные войны XXIII: Атака клонированных клонов</p>
-                <p class="conf-step__seances-movie-start">19:50</p>
-              </div>
-              <div class="conf-step__seances-movie" style="width: 60px; background-color: rgb(133, 255, 137); left: 660px;">
-                <p class="conf-step__seances-movie-title">Миссия выполнима</p>
-                <p class="conf-step__seances-movie-start">22:00</p>
-              </div>
+
             </div>
           </div>
         </div>
@@ -245,4 +222,150 @@
       </div>
     </section>
   </main>
+</div>
+
+
+
+
+<!-- Попап "Создать холл" -->
+<div
+  class="popup"
+  [ngClass]="{'active': visibleCreateHallPopup === true}"
+>
+  <div class="popup__container">
+    <div class="popup__content">
+      <div class="popup__header">
+        <h2 class="popup__title">
+          Добавление зала
+          <a class="popup__dismiss" (click)="closeCreateHallPopup()"><img src="../../../assets/i/close.png" alt="Закрыть"></a>
+        </h2>
+
+      </div>
+      <div class="popup__wrapper">
+        <form action="add_hall" method="post" accept-charset="utf-8">
+          <label class="conf-step__label conf-step__label-fullsize" for="name">
+            Название зала
+            <input class="conf-step__inputв" type="text" name='name' [(ngModel)]="newHallName" required>
+          </label>
+          <div class="conf-step__buttons text-center">
+            <input type="submit" value="Добавить зал" class="conf-step__button conf-step__button-accent" (click)="createHall()" >
+            <button class="conf-step__button conf-step__button-regular" (click)="closeCreateHallPopup()">Отменить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Попап "Удалить холл" -->
+
+<div
+  class="popup"
+  [ngClass]="{'active': visibleDeleteHallPopup === true}"
+>
+  <div class="popup__container">
+    <div class="popup__content">
+      <div class="popup__header">
+        <h2 class="popup__title">
+          Удаление зала
+          <a class="popup__dismiss" (click)="closeDeleteHallPopup()"><img src="../../../assets/i/close.png" alt="Закрыть"></a>
+        </h2>
+
+      </div>
+      <div class="popup__wrapper">
+        <form action="delete_hall" method="post" accept-charset="utf-8">
+          <p class="conf-step__paragraph">Вы действительно хотите удалить зал <span>{{ hallToDelete.hall_name | uppercase }}</span>?</p>
+          <!-- В span будет подставляться название зала -->
+          <div class="conf-step__buttons text-center">
+            <input type="submit" value="Удалить" class="conf-step__button conf-step__button-accent"
+            (click)="deleteHall()"
+            >
+            <button class="conf-step__button conf-step__button-regular"
+            (click)="closeDeleteHallPopup()"
+            >Отменить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Попап сеанса -->
+
+
+
+<!-- Попап добавления фильма -->
+
+<div
+class="popup active"
+[ngClass]="{'active': visibleCreateFilmPopup === true}"
+>
+  <div class="popup__container">
+    <div class="popup__content">
+      <div class="popup__header">
+        <h2 class="popup__title">
+          Добавление фильма
+          <a class="popup__dismiss"><img src="../../../assets/i/close.png" alt="Закрыть" (click)="closeCreateFilmPopup()"></a>
+        </h2>
+
+      </div>
+      <div class="popup__wrapper">
+        <form action="add_movie" method="post" accept-charset="utf-8">
+          <label class="conf-step__label conf-step__label-fullsize" for="name">
+            Название
+            <input
+              class="conf-step__input"
+              type="text"
+              placeholder="Например, &laquo;Гражданин Кейн&raquo;"
+              name="film_name"
+              required
+              [(ngModel)]="newFilmName"
+            >
+          </label>
+
+          <label class="conf-step__label conf-step__label-fullsize">
+            Описание
+            <input
+              class="conf-step__input"
+              type="text"
+              placeholder="Например, &laquo;Самый лучший фильм&raquo;"
+              name="film_description"
+              required
+              [(ngModel)]="newFilmDescriprion"
+            >
+          </label>
+
+          <label class="conf-step__label conf-step__label-fullsize" for="name">
+            Длительность (мин)
+            <input
+              class="conf-step__input"
+              type="text"
+              placeholder="Например, &laquo;130&raquo;"
+              name="film_duration"
+              required
+              [(ngModel)]="newFilmDuration"
+            >
+          </label>
+
+          <label class="conf-step__label conf-step__label-fullsize" for="name">
+            Страна
+            <input
+              class="conf-step__input"
+              type="text"
+              placeholder="Например, &laquo;Румыния&raquo;"
+              name="film_country"
+              [(ngModel)]="newFilmCountry"
+              required
+            >
+          </label>
+
+          <div class="conf-step__buttons text-center">
+            <input type="submit" value="Добавить фильм" class="conf-step__button conf-step__button-accent" for="name"(click)="createFilm()">
+            <button class="conf-step__button conf-step__button-regular" (click)="closeCreateFilmPopup()">Отменить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>

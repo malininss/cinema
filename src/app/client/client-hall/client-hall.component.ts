@@ -1,10 +1,8 @@
 import { DatePipe } from '@angular/common';
 import { ClientPaymentService } from './../client-payment/client-payment.service';
-import { Shcedule, Hall } from './../client-film-list/client-film-list.service';
+import { AppApiService, Film, Shcedule, Hall } from '../../app-api.service';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ClientFilmListService, Film } from '../client-film-list/client-film-list.service';
-
 
 export interface ObjectForPayment {
   filmName: string;
@@ -55,7 +53,7 @@ export class ClientHallComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private clientFilmListService: ClientFilmListService,
+    private appApiService: AppApiService,
     private clientPaymentService: ClientPaymentService,
     private datePipe: DatePipe
   ) { }
@@ -66,21 +64,20 @@ export class ClientHallComponent implements OnInit {
       this.hallId = +params.get('hallId');
       this.currentTime = params.get('currentDay');
       this.filmId = +params.get('filmId');
-
     });
-    this.getHall();
 
+    this.getHall();
     this.getScheduleByDateAndHallId();
     this.getFilm();
 
   }
 
   getScheduleByDateAndHallId() {
-    this.clientFilmListService.getScheduleByDateAndHallId(this.currentTime, this.hallId)
+    this.appApiService.getScheduleByDateAndHallId(this.currentTime, this.hallId)
       .subscribe((currentSchedule: Shcedule) => {
-
         if (!currentSchedule) {
           this.currentSchedulePlaces = JSON.parse(this.hall.hall_configuration);
+          console.log(this.currentSchedulePlaces);
 
         } else {
           currentSchedule.current_hall = JSON.parse(currentSchedule.current_hall);
@@ -91,37 +88,29 @@ export class ClientHallComponent implements OnInit {
       error => {
         console.log(error.message);
       });
-
-
   }
 
   getFilm() {
-    this.clientFilmListService.getFilmById(this.filmId)
+    this.appApiService.getFilmById(this.filmId)
     .subscribe((film: Film) => {
       this.film = film;
     });
-
-
   }
 
   getHall() {
-    this.clientFilmListService.getHallById(this.hallId)
+    this.appApiService.getHallById(this.hallId)
     .subscribe((hall: Hall) => {
       this.hall = hall;
-      // console.log(this.hall.hall_configuration);
     });
   }
 
   changePlaceStatus(rowIndex, placeIndex) {
-
     const currentElem = this.currentSchedulePlaces[rowIndex][placeIndex];
     if (currentElem.status === 'free') {
       currentElem.status = 'checked';
-      // console.log(currentElem);
     } else if (currentElem.status === 'checked') {
       currentElem.status = 'free';
     }
-
   }
 
   createObjectForPayment() {
@@ -130,8 +119,6 @@ export class ClientHallComponent implements OnInit {
     // Хрень с тысячами. Разобраться!
     this.objectForSand.timeToStart = this.datePipe.transform(this.currentTime * 1000, 'HH:mm');
     this.objectForSand.hallConfiguration = this.currentSchedulePlaces;
-
-
     this.currentSchedulePlaces.forEach(row => {
       row.forEach(place => {
         if (place.status === 'checked') {
@@ -145,10 +132,6 @@ export class ClientHallComponent implements OnInit {
         }
       });
     });
-
-
     this.clientPaymentService.setData(this.objectForSand);
-
   }
-
 }

@@ -21,7 +21,7 @@ abstract class Api
 
         //Разбиваем строку GET параметров разделенных слешем
         $this->requestUri = explode('/', trim($_SERVER['REQUEST_URI'],'/'));
-        $this->requestParams = $_REQUEST;
+        $this->requestParams = file_get_contents('php://input');
         $this->method = $_SERVER['REQUEST_METHOD'];
 
         if ($this->method == 'POST' && $this->requestUri[count($this->requestUri) - 1] == 'PUT') {

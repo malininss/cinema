@@ -53,9 +53,11 @@ class FilmsApi extends Api {
    */
   public function createAction() {
     $db = (new Connection())->getConnection();
+    $params = json_decode($this->requestParams,true);
 
-    if($this->requestParams){
-      if(Films::createFilm($db, $this->requestParams)){
+    // print_r($this->requestParams);
+    if($params){
+      if(Films::createFilm($db, $params)){
         return $this->response('Data saved.', 200);
       }
     }
