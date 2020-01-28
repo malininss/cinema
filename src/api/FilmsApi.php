@@ -78,13 +78,14 @@ class FilmsApi extends Api {
     $filmId = $parse_url['path'] ?? null;
 
     $db = (new Connection())->getConnection();
+    $params = json_decode($this->requestParams,true);
 
     if(!$filmId || !Films::getById($db, $filmId)){
       return $this->response("Film with id=$filmId not found", 404);
     }
 
-    if($this->requestParams){
-      if($film = Films::updateFilm($db, $filmId, $this->requestParams)){
+    if($params){
+      if($film = Films::updateFilm($db, $filmId, $params)){
         return $this->response('Data updated.', 200);
       }
     }

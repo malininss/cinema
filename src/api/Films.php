@@ -11,6 +11,7 @@ class Films {
     $keysString = '';
     $valuesString = '';
 
+    print_r($arr);
     foreach ($arr as $key => $value) {
       $keysString .= $key . ',';
       if (is_integer($value)) {
@@ -74,7 +75,9 @@ class Films {
     $result = "";
 
     foreach ($arr as $key => $value) {
-      $result .= "`$key` = '$value',";
+      print_r($arr);
+
+      // $result .= "`$key` = '$value',";
     }
 
     $result = substr($result,0,-1);

@@ -84,4 +84,8 @@ export class AppApiService {
     return this.http.post(requestUrl, filmObj);
   }
 
+  updateFilm(updateObj, filmId) {
+    const requestUrl = 'http://localhost/api/films/' + filmId + '/PUT';
+    return this.http.post(requestUrl, updateObj);
+  }
 }

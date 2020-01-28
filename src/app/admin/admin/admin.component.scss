@@ -74,6 +74,10 @@ input[type='radio'], input[type='submit'], button, .conf-step__header, select {
   padding: 35px $colwidth 35px (2 * $colwidth + $gapwidth);
 }
 
+.conf-step_notice {
+  color: red;
+}
+
 .page-header {
   color: $white;
   text-transform: uppercase;

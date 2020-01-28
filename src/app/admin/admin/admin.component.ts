@@ -1,6 +1,7 @@
 import { AppApiService, Hall, Film } from './../../app-api.service';
 import { Component, OnInit } from '@angular/core';
 import { Scheduler } from 'rxjs';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-admin',
@@ -26,6 +27,7 @@ export class AdminComponent implements OnInit {
   visibleCreateHallPopup = false;
   visibleDeleteHallPopup = false;
   visibleCreateFilmPopup = false;
+  visibleShowtimeAddPopup = false;
 
   newHallName = '';
   indexOfSelectedHall = 0;
@@ -46,6 +48,13 @@ export class AdminComponent implements OnInit {
   newFilmDuration: any;
   newFilmCountry: any;
 
+  addShowtimeFilmId: any;
+  addShowtimeCurrentFilmTime = '00:00';
+  addShowtimeHall: any;
+
+  addShowtimeFormGroup: FormGroup;
+
+  // activeHallForAddSession: any;
 
   constructor(
     private appApiService: AppApiService
@@ -55,7 +64,11 @@ export class AdminComponent implements OnInit {
     this.getHalls();
     this.getHallTimeLine();
     this.getFilms();
-    // this.getMinuteFromMidnight('09:00');
+
+    this.addShowtimeFormGroup = new FormGroup({
+      hallId: new FormControl('', Validators.required),
+      time: new FormControl('18:40')
+    });
   }
 
   createHall() {
@@ -97,6 +110,7 @@ export class AdminComponent implements OnInit {
       this.currentVipPrice = halls[this.indexOfSelectedHall].hall_vip_chair_price;
 
       this.halls = halls;
+      console.log(this.halls[0].hall_name);
     });
   }
 
@@ -113,6 +127,13 @@ export class AdminComponent implements OnInit {
     this.visibleCreateFilmPopup = true;
   }
 
+  showShowtimeAddPopup(filmId) {
+    this.addShowtimeFilmId = filmId;
+    console.log(this.addShowtimeFilmId);
+
+    this.visibleShowtimeAddPopup = true;
+  }
+
   closeCreateHallPopup() {
     this.hallToDelete = '';
     this.visibleCreateHallPopup = false;
@@ -124,6 +145,10 @@ export class AdminComponent implements OnInit {
 
   closeCreateFilmPopup() {
     this.visibleCreateFilmPopup = false;
+  }
+
+  closeShowtimeAddPopup() {
+    this.visibleShowtimeAddPopup = false;
   }
 
   setActiveHallIndex(index) {
@@ -140,7 +165,6 @@ export class AdminComponent implements OnInit {
   editHallConf(rows, places) {
 
     const testHall: any = this.halls[this.indexOfSelectedHall].hall_configuration;
-
     // Если нужно добавить места
     if (places > testHall[0].length) {
 
@@ -242,15 +266,15 @@ export class AdminComponent implements OnInit {
               timeObj[time] = film.film_id;
             });
 
-            if (hallLineObj[schedule.hallName]) {
+            if (hallLineObj[schedule.hallId]) {
 
               /// Проверки здесь нет. Но, может, и не нужна?
-              hallLineObj[schedule.hallName] = {...hallLineObj[schedule.hallName], ...timeObj};
+              hallLineObj[schedule.hallId] = {...hallLineObj[schedule.hallId], ...timeObj};
 
 
               // console.log('Зал уже был добален, нужна проверка!');
             } else {
-              hallLineObj[schedule.hallName] = timeObj;
+              hallLineObj[schedule.hallId] = timeObj;
 
               // console.log('Добавляем зал первый раз');
             }
@@ -322,7 +346,6 @@ export class AdminComponent implements OnInit {
       film_img: '..\/assets\/i\/poster1.jpg'
     };
 
-
     if (obj.film_name &&
         obj.film_description &&
         obj.film_duration &&
@@ -341,6 +364,190 @@ export class AdminComponent implements OnInit {
       });
 
     }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // Проверяем, можно ли сохранить добавить фильм в ленту.
+  checkSessionTime(hallId, currentTime) {
+
+    // Время нового фильма и длительность. Далее добавлять в конструкторе
+    // const currentTime =  this.addShowtimeCurrentFilmTime;
+
+    // const currentTime = '00:00';
+    // console.log(currentTime);
+
+    const currentFilmDuration = +(this.getFilmById(this.addShowtimeFilmId).film_duration);
+
+    // Преобразуем время из строки в количество минут, прошедших с полуночи
+    const minutesFromMidnight = (time) => {
+      const arr = time.split(':');
+      return  (+arr[0] * 60) + +arr[1];
+    };
+
+    // Получаем количество пинут нового фильма, прошедших с полуноси
+    const currentTimeDate = minutesFromMidnight(currentTime);
+
+    for (const hall in this.hallTimeLine) {
+      if (hall) {
+
+        // Проверяем для совпадение зала по имени. Далее сделать автоматом
+        if (hall === hallId) {
+
+          // Здесь преваращаем объект в массив и второе значение (ID фильма) превращаем в длительности фильма
+          let timeArr = Object.entries(this.hallTimeLine[hall]);
+          timeArr = timeArr.map(elem => {
+            const film = this.getFilmById(elem[1]);
+            const filmDuration = film.film_duration;
+            elem[1] = filmDuration;
+            return [elem[0], elem[1]];
+          });
+
+          // Идём по полученному массиву
+          for (let i = 0; i < timeArr.length; i++) {
+
+            // Определяем дату старта и дату окончания фильма
+            const timeStartFilm = minutesFromMidnight(timeArr[i][0]);
+            const timeEndFilm = timeStartFilm + +timeArr[i][1];
+
+            // Если совпадение по дате есть, выкидываем ошибку
+            if ( currentTimeDate >= timeStartFilm &&
+                currentTimeDate < timeEndFilm
+            ) {
+
+              const notice = document.querySelector('.conf-step_notice');
+              notice.innerHTML = `
+                Время сеанса совпадает со временем уже идущего фильма.<br>
+                Время старта фильма, с которым происходит конфликт: ${timeArr[i][0]} <br>
+                Название зала: ${hall}
+              `;
+
+              console.log('Время сопадения: ' + timeArr[i][0]);
+              console.log('Зал: ' + hall);
+
+              return false;
+            }
+
+            // Проверяем, есть ли следующее значение
+            if (timeArr[i + 1]) {
+
+              // Если значение есть, получаем количество минут, прошедших с полуночи у этого значения.
+              const nextFilmMinutesFromMidnight = minutesFromMidnight(timeArr[i + 1][0]);
+
+              // Если новый фильм наачинаетс, пока старые ещё идёт, выкидываем ошибку
+              if ( nextFilmMinutesFromMidnight > currentTimeDate &&
+                   currentTimeDate + currentFilmDuration > nextFilmMinutesFromMidnight
+              ) {
+
+                const notice = document.querySelector('.conf-step_notice');
+                notice.innerHTML = `
+                  Время добавленного сеанса наезжает на следующий сеанса.<br>
+                  Время старта фильма, с которым происходит конфликт: ${timeArr[i + 1][0]} <br>
+                  Название зала: ${hall}
+                `;
+
+                console.log('Время добавленного сеанса наезжает на следующий сеанс');
+                console.log('Время старта фильма, с которым происходит конфликт: ' + timeArr[i + 1][0]);
+                console.log('Название зала: ' + hall);
+
+                return false;
+              }
+            }
+          }
+        }
+      }
+    }
+    return true;
+  }
+
+
+
+  createTimelineElem() {
+    const formData = { ...this.addShowtimeFormGroup.value };
+
+    if (this.checkSessionTime(formData.hallId, formData.time)) {
+      const filmSchedule = this.getFilmById(this.addShowtimeFilmId).film_schedule;
+      let arrToSend = [];
+
+      if (filmSchedule) {
+
+        const currentHall = filmSchedule.filter(item => {
+          return item.hallId === formData.hallId;
+        });
+
+        if (currentHall.length === 1) {
+          arrToSend = filmSchedule.map(item => {
+            if (item.hallId === formData.hallId) {
+              item.time.push(formData.time);
+            } else {
+
+            }
+            return item;
+          });
+
+        } else {
+
+          const hallName = this.halls.filter(item => {
+            return item.hall_id === formData.hallId;
+          })[0].hall_name;
+
+          arrToSend = filmSchedule.slice();
+
+          arrToSend.push({
+            hallId: formData.hallId,
+            hallName,
+            time: [formData.time]
+          });
+        }
+
+      } else {
+
+        const hallName = this.halls.filter(item => {
+          return item.hall_id === formData.hallId;
+        })[0].hall_name;
+
+        arrToSend = [
+          {
+            hallId: formData.hallId,
+            hallName,
+            time: [formData.time]
+          }
+        ];
+
+      }
+
+      // Тут отправляем данные
+      console.log(arrToSend);
+
+      const test = {
+        film_schedule: arrToSend
+      }
+
+      this.appApiService.updateFilm(test, this.addShowtimeFilmId)
+        .subscribe(response => {
+          console.log(response);
+        });
+
+
+    } else {
+      // ничего не делаем, ошибка
+      return false;
+    }
+
   }
 
 }

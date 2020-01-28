@@ -163,12 +163,12 @@
           <button class="conf-step__button conf-step__button-accent" (click)="showCreateFilmPopup()">Добавить фильм</button>
         </p>
 
-
-
         <div class="conf-step__movies">
           <div
             class="conf-step__movie"
             *ngFor="let film of films"
+            draggable="true"
+            (click)="showShowtimeAddPopup(film.film_id)"
           >
             <img class="conf-step__movie-poster" alt="poster" src="../assets/i/poster1.jpg">
             <h3 class="conf-step__movie-title">{{ film.film_name }}</h3>
@@ -298,8 +298,8 @@
 <!-- Попап добавления фильма -->
 
 <div
-class="popup active"
-[ngClass]="{'active': visibleCreateFilmPopup === true}"
+  class="popup active"
+  [ngClass]="{'active': visibleCreateFilmPopup === true}"
 >
   <div class="popup__container">
     <div class="popup__content">
@@ -340,7 +340,7 @@ class="popup active"
             Длительность (мин)
             <input
               class="conf-step__input"
-              type="text"
+              type="number"
               placeholder="Например, &laquo;130&raquo;"
               name="film_duration"
               required
@@ -363,6 +363,68 @@ class="popup active"
           <div class="conf-step__buttons text-center">
             <input type="submit" value="Добавить фильм" class="conf-step__button conf-step__button-accent" for="name"(click)="createFilm()">
             <button class="conf-step__button conf-step__button-regular" (click)="closeCreateFilmPopup()">Отменить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Попап сеанса -->
+<div
+  class="popup"
+  [ngClass]="{'active': visibleShowtimeAddPopup === true}"
+>
+  <div class="popup__container">
+    <div class="popup__content">
+      <div class="popup__header">
+        <h2 class="popup__title">
+          Добавление сеанса
+          <a class="popup__dismiss" (click)="closeShowtimeAddPopup()"><img src="../../../assets/i/close.png" alt="Закрыть"></a>
+        </h2>
+
+      </div>
+      <div class="popup__wrapper">
+        <form
+          action="add_movie"
+          method="post"
+          accept-charset="utf-8"
+          [formGroup]="addShowtimeFormGroup"
+          (ngSubmit)="createTimelineElem()"
+        >
+          <label class="conf-step__label conf-step__label-fullsize" for="hall">
+            Название зала
+            <select
+              class="conf-step__input"
+              name="hall"
+              required
+              formControlName="hallId"
+            >
+              <option
+                value="null"
+              > Выберите зал</option>
+              <option
+                *ngFor="let hall of halls"
+                value="{{ hall.hall_id }}"
+              > {{ hall.hall_name }}</option>
+            </select>
+          </label>
+          <label class="conf-step__label conf-step__label-fullsize" for="name">
+            Время начала
+            <input
+              class="conf-step__input"
+              type="time"
+              value="00:00"
+              name="start_time"
+              required
+              formControlName="time"
+            >
+          </label>
+          <div class="conf-step_notice"></div>
+          <div class="conf-step__buttons text-center">
+            <button type="submit" class="conf-step__button conf-step__button-accent" [disabled]="addShowtimeFormGroup.invalid">Добавить</button>
+            <button type="button" class="conf-step__button conf-step__button-regular" (click)="closeShowtimeAddPopup()">Отменить</button>
           </div>
         </form>
       </div>
