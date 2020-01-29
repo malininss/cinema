@@ -58,7 +58,7 @@ export class AppApiService {
     return this.http.get(requestUrl);
   }
 
-  getHallById(hallId): Observable<any> {
+  getHallById(hallId) {
     const requestUrl = 'http://localhost/api/halls/' + hallId;
     return this.http.get<Hall>(requestUrl);
   }

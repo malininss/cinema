@@ -11,7 +11,7 @@ class Films {
     $keysString = '';
     $valuesString = '';
 
-    print_r($arr);
+    // print_r($arr);
     foreach ($arr as $key => $value) {
       $keysString .= $key . ',';
       if (is_integer($value)) {
@@ -75,14 +75,10 @@ class Films {
     $result = "";
 
     foreach ($arr as $key => $value) {
-      print_r($arr);
-
-      // $result .= "`$key` = '$value',";
+      $result .= "`$key` = '$value',";
     }
 
     $result = substr($result,0,-1);
-
-    print_r($result);
 
     $sql = mysqli_query($db, "UPDATE `films` SET $result WHERE `films`.`film_id` = $filmId;");
     if($sql) {

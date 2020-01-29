@@ -181,9 +181,10 @@
           class="conf-step__seances"
           *ngFor="let hall of hallTimeLine | keyvalue"
         >
+
           <div
             class="conf-step__seances-hall">
-            <h3 class="conf-step__seances-title"> <pre>{{ hall.key }}</pre></h3>
+            <h3 class="conf-step__seances-title"> {{ getHallNameById(hall.key) }}</h3>
             <div class="conf-step__seances-timeline">
 
               <div
@@ -242,14 +243,18 @@
 
       </div>
       <div class="popup__wrapper">
-        <form action="add_hall" method="post" accept-charset="utf-8">
+        <form
+          [formGroup]="addHallFormGroup"
+          (ngSubmit)="createHall()"
+        >
+
           <label class="conf-step__label conf-step__label-fullsize" for="name">
             Название зала
-            <input class="conf-step__inputв" type="text" name='name' [(ngModel)]="newHallName" required>
+            <input class="conf-step__inputв" type="text" name='name' formControlName="hallName">
           </label>
           <div class="conf-step__buttons text-center">
-            <input type="submit" value="Добавить зал" class="conf-step__button conf-step__button-accent" (click)="createHall()" >
-            <button class="conf-step__button conf-step__button-regular" (click)="closeCreateHallPopup()">Отменить</button>
+            <button type="submit" class="conf-step__button conf-step__button-accent" [disabled]="addHallFormGroup.invalid" >Добавить зал</button>
+            <button type="button" class="conf-step__button conf-step__button-regular" (click)="closeCreateHallPopup()">Отменить</button>
           </div>
         </form>
       </div>
@@ -274,14 +279,16 @@
 
       </div>
       <div class="popup__wrapper">
-        <form action="delete_hall" method="post" accept-charset="utf-8">
+        <form
+        [formGroup]="deleteHallFormGroup"
+        (ngSubmit)="deleteHall()"
+        >
           <p class="conf-step__paragraph">Вы действительно хотите удалить зал <span>{{ hallToDelete.hall_name | uppercase }}</span>?</p>
           <!-- В span будет подставляться название зала -->
           <div class="conf-step__buttons text-center">
-            <input type="submit" value="Удалить" class="conf-step__button conf-step__button-accent"
-            (click)="deleteHall()"
-            >
-            <button class="conf-step__button conf-step__button-regular"
+            <button type="submit" value="Удалить" class="conf-step__button conf-step__button-accent"
+            >Удалить</button>
+            <button type="button" class="conf-step__button conf-step__button-regular"
             (click)="closeDeleteHallPopup()"
             >Отменить</button>
           </div>
@@ -387,9 +394,6 @@
       </div>
       <div class="popup__wrapper">
         <form
-          action="add_movie"
-          method="post"
-          accept-charset="utf-8"
           [formGroup]="addShowtimeFormGroup"
           (ngSubmit)="createTimelineElem()"
         >

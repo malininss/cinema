@@ -21,17 +21,20 @@ export class AdminComponent implements OnInit {
   ];
 
   films: Film[] = [];
-
   hallTimeLine: any = [];
+
+  addShowtimeFormGroup: FormGroup;
+  addHallFormGroup: FormGroup;
+  deleteHallFormGroup: FormGroup;
+  hallToDelete: any = '';
+
 
   visibleCreateHallPopup = false;
   visibleDeleteHallPopup = false;
   visibleCreateFilmPopup = false;
   visibleShowtimeAddPopup = false;
 
-  newHallName = '';
   indexOfSelectedHall = 0;
-
   activeHall: number;
   activeHallRowNumber: number;
   activeHallPlacesNumber: number;
@@ -41,7 +44,6 @@ export class AdminComponent implements OnInit {
 
   currentStandartPrice: any = 0;
   currentVipPrice: any = 0;
-  hallToDelete: any = '';
 
   newFilmName: any;
   newFilmDescriprion: any;
@@ -51,10 +53,6 @@ export class AdminComponent implements OnInit {
   addShowtimeFilmId: any;
   addShowtimeCurrentFilmTime = '00:00';
   addShowtimeHall: any;
-
-  addShowtimeFormGroup: FormGroup;
-
-  // activeHallForAddSession: any;
 
   constructor(
     private appApiService: AppApiService
@@ -67,21 +65,29 @@ export class AdminComponent implements OnInit {
 
     this.addShowtimeFormGroup = new FormGroup({
       hallId: new FormControl('', Validators.required),
-      time: new FormControl('18:40')
+      time: new FormControl('00:00')
+    });
+
+    this.addHallFormGroup = new FormGroup({
+      hallName: new FormControl('')
+    });
+
+    this.deleteHallFormGroup = new FormGroup({
+      hallId: new FormControl(null)
     });
   }
 
   createHall() {
 
-    const obj = {
-      hall_name: this.newHallName
+    const formdata = {...this.addHallFormGroup.value};
+    const objToSend = {
+      hall_name: formdata.hallName
     };
 
-    this.appApiService.newHall(obj)
+    this.appApiService.newHall(objToSend)
     .subscribe(data => {
       this.getHalls();
       this.closeCreateHallPopup();
-      this.newHallName = '';
     });
 
   }
@@ -110,7 +116,7 @@ export class AdminComponent implements OnInit {
       this.currentVipPrice = halls[this.indexOfSelectedHall].hall_vip_chair_price;
 
       this.halls = halls;
-      console.log(this.halls[0].hall_name);
+      console.log(this.halls);
     });
   }
 
@@ -129,8 +135,6 @@ export class AdminComponent implements OnInit {
 
   showShowtimeAddPopup(filmId) {
     this.addShowtimeFilmId = filmId;
-    console.log(this.addShowtimeFilmId);
-
     this.visibleShowtimeAddPopup = true;
   }
 
@@ -149,6 +153,8 @@ export class AdminComponent implements OnInit {
 
   closeShowtimeAddPopup() {
     this.visibleShowtimeAddPopup = false;
+    const notice = document.querySelector('.conf-step_notice');
+    notice.innerHTML = '';
   }
 
   setActiveHallIndex(index) {
@@ -246,8 +252,6 @@ export class AdminComponent implements OnInit {
     console.log(this.halls);
   }
 
-
-  // Получаем массив для ленты с фильмами!
   getHallTimeLine() {
     this.appApiService.getFilms()
     .subscribe((films: Film[]) => {
@@ -267,29 +271,14 @@ export class AdminComponent implements OnInit {
             });
 
             if (hallLineObj[schedule.hallId]) {
-
-              /// Проверки здесь нет. Но, может, и не нужна?
               hallLineObj[schedule.hallId] = {...hallLineObj[schedule.hallId], ...timeObj};
-
-
-              // console.log('Зал уже был добален, нужна проверка!');
             } else {
               hallLineObj[schedule.hallId] = timeObj;
-
-              // console.log('Добавляем зал первый раз');
             }
           });
         }
       });
-
-      // console.log(hallLineObj);
       this.hallTimeLine = hallLineObj;
-
-      console.log(this.hallTimeLine);
-      // Object.assign(this.hallTimeLine, hallLineObj);
-      // this.test.push(hallLineObj);
-
-
     });
   }
 
@@ -366,23 +355,6 @@ export class AdminComponent implements OnInit {
     }
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  // Проверяем, можно ли сохранить добавить фильм в ленту.
   checkSessionTime(hallId, currentTime) {
 
     // Время нового фильма и длительность. Далее добавлять в конструкторе
@@ -474,8 +446,6 @@ export class AdminComponent implements OnInit {
     return true;
   }
 
-
-
   createTimelineElem() {
     const formData = { ...this.addShowtimeFormGroup.value };
 
@@ -500,7 +470,6 @@ export class AdminComponent implements OnInit {
           });
 
         } else {
-
           const hallName = this.halls.filter(item => {
             return item.hall_id === formData.hallId;
           })[0].hall_name;
@@ -516,10 +485,7 @@ export class AdminComponent implements OnInit {
 
       } else {
 
-        const hallName = this.halls.filter(item => {
-          return item.hall_id === formData.hallId;
-        })[0].hall_name;
-
+        const hallName = this.getHallNameById(formData.hallId);
         arrToSend = [
           {
             hallId: formData.hallId,
@@ -527,28 +493,28 @@ export class AdminComponent implements OnInit {
             time: [formData.time]
           }
         ];
-
       }
 
-      // Тут отправляем данные
-      console.log(arrToSend);
-
-      const test = {
-        film_schedule: arrToSend
-      }
-
-      this.appApiService.updateFilm(test, this.addShowtimeFilmId)
+      this.appApiService.updateFilm(JSON.stringify({film_schedule: arrToSend}), this.addShowtimeFilmId)
         .subscribe(response => {
-          console.log(response);
+          this.closeShowtimeAddPopup();
+          this.getHallTimeLine();
         });
 
-
     } else {
-      // ничего не делаем, ошибка
       return false;
     }
 
   }
 
+  getHallNameById(id) {
+    const hall: Hall = this.halls.filter(item => {
+      return item.hall_id === id;
+    })[0];
+
+    if (hall) {
+      return hall.hall_name;
+    }
+  }
 }
 

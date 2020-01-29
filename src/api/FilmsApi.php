@@ -55,7 +55,6 @@ class FilmsApi extends Api {
     $db = (new Connection())->getConnection();
     $params = json_decode($this->requestParams,true);
 
-    // print_r($this->requestParams);
     if($params){
       if(Films::createFilm($db, $params)){
         return $this->response('Data saved.', 200);
@@ -79,6 +78,10 @@ class FilmsApi extends Api {
 
     $db = (new Connection())->getConnection();
     $params = json_decode($this->requestParams,true);
+
+    if (isset($params['film_schedule'])) {
+      $params['film_schedule'] = json_encode($params['film_schedule']);
+    }
 
     if(!$filmId || !Films::getById($db, $filmId)){
       return $this->response("Film with id=$filmId not found", 404);
