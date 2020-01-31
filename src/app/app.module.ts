@@ -16,6 +16,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { DatePipe } from '@angular/common';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
 
 registerLocaleData(localeRu, 'ru', localeRuExtra);
@@ -26,6 +27,7 @@ registerLocaleData(localeRu, 'ru', localeRuExtra);
     AdminComponent,
     LoginComponent,
     ShowOrHideDirective,
+    PageNotFoundComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,3 +1,4 @@
+import { PageNotFoundComponent } from './../page-not-found/page-not-found.component';
 import { ClientPaymentComponent } from './client-payment/client-payment.component';
 import { ClientTicketComponent } from './client-ticket/ticket.component';
 import { ClientHallComponent } from './client-hall/client-hall.component';
@@ -27,6 +28,15 @@ const routes: Routes = [
           {
             path: 'payment',
             component: ClientPaymentComponent
+          },
+          {
+            path: '404',
+            component: PageNotFoundComponent
+          },
+          {
+            path: '**',
+            redirectTo: '404',
+            pathMatch: 'prefix'
           }
         ]
     }
