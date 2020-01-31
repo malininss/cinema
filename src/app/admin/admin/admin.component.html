@@ -30,7 +30,6 @@
 
 
         <ul class="conf-step__selectors-box">
-
           <li *ngFor="let hall of halls">
             <input
               type="radio"
@@ -42,8 +41,6 @@
             >
                 <span class="conf-step__selector"> {{ hall.hall_name }} </span>
           </li>
-
-
         </ul>
 
         <p class="conf-step__paragraph">Укажите количество рядов и максимальное количество кресел в ряду:</p>
@@ -195,6 +192,7 @@
                   'left': getLeftPosition(scheduleItem.key)
                 }"
                 *ngFor="let scheduleItem of hall.value | keyvalue"
+                (click)="showDeleteSessionPopup(hall.key, scheduleItem)"
               >
 
 
@@ -318,17 +316,18 @@
 
       </div>
       <div class="popup__wrapper">
-        <form action="add_movie" method="post" accept-charset="utf-8">
+        <form
+          [formGroup]="addFilmFormGroup"
+          (ngSubmit)="createFilm()"
+        >
           <label class="conf-step__label conf-step__label-fullsize" for="name">
             Название
             <input
               class="conf-step__input"
               type="text"
               placeholder="Например, &laquo;Гражданин Кейн&raquo;"
-              name="film_name"
-              required
-              [(ngModel)]="newFilmName"
-            >
+              formControlName="film_name"
+              >
           </label>
 
           <label class="conf-step__label conf-step__label-fullsize">
@@ -337,9 +336,7 @@
               class="conf-step__input"
               type="text"
               placeholder="Например, &laquo;Самый лучший фильм&raquo;"
-              name="film_description"
-              required
-              [(ngModel)]="newFilmDescriprion"
+              formControlName="film_description"
             >
           </label>
 
@@ -349,9 +346,7 @@
               class="conf-step__input"
               type="number"
               placeholder="Например, &laquo;130&raquo;"
-              name="film_duration"
-              required
-              [(ngModel)]="newFilmDuration"
+              formControlName="film_duration"
             >
           </label>
 
@@ -361,15 +356,13 @@
               class="conf-step__input"
               type="text"
               placeholder="Например, &laquo;Румыния&raquo;"
-              name="film_country"
-              [(ngModel)]="newFilmCountry"
-              required
+              formControlName="film_country"
             >
           </label>
 
           <div class="conf-step__buttons text-center">
-            <input type="submit" value="Добавить фильм" class="conf-step__button conf-step__button-accent" for="name"(click)="createFilm()">
-            <button class="conf-step__button conf-step__button-regular" (click)="closeCreateFilmPopup()">Отменить</button>
+            <button type="submit" class="conf-step__button conf-step__button-accent">Добавить фильм </button>
+            <button type="button" class="conf-step__button conf-step__button-regular" (click)="closeCreateFilmPopup()">Отменить</button>
           </div>
         </form>
       </div>
@@ -429,6 +422,41 @@
           <div class="conf-step__buttons text-center">
             <button type="submit" class="conf-step__button conf-step__button-accent" [disabled]="addShowtimeFormGroup.invalid">Добавить</button>
             <button type="button" class="conf-step__button conf-step__button-regular" (click)="closeShowtimeAddPopup()">Отменить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Попап "Удалить сессию" -->
+
+<div
+  class="popup"
+  [ngClass]="{'active': visibleDeleteSessionPopup === true}"
+>
+  <div class="popup__container">
+    <div class="popup__content">
+      <div class="popup__header">
+        <h2 class="popup__title">
+          Удаление сессии
+          <a class="popup__dismiss" (click)="closeDeleteSessionPopup()"><img src="../../../assets/i/close.png" alt="Закрыть"></a>
+        </h2>
+
+      </div>
+      <div class="popup__wrapper">
+        <form
+        [formGroup]="deleteSessionFormGroup"
+        (ngSubmit)="deleteSession()"
+        >
+          <p class="conf-step__paragraph">Вы действительно хотите удалить сессию фильма "{{getFilmById(this.deleteSessionFormGroup.value.filmId).film_name }}"? </p>
+          <!-- В span будет подставляться название зала -->
+          <div class="conf-step__buttons text-center">
+            <button type="submit" value="Удалить" class="conf-step__button conf-step__button-accent"
+            >Удалить</button>
+            <button type="button" class="conf-step__button conf-step__button-regular"
+            (click)="closeDeleteSessionPopup()"
+            >Отменить</button>
           </div>
         </form>
       </div>

@@ -82,7 +82,9 @@ class HallsApi extends Api {
 
     $parse_url = parse_url($this->requestUri[0]);
     $hallId = $parse_url['path'] ?? null;
+    $params = json_decode($this->requestParams,true);
 
+    $params['hall_configuration'] = json_encode($params['hall_configuration']);
     $db = (new Connection())->getConnection();
 
     if(!$hallId || !Halls::getById($db, $hallId)){
@@ -90,7 +92,7 @@ class HallsApi extends Api {
     }
 
     if($this->requestParams){
-      if($hall = Halls::updateHall($db, $hallId, $this->requestParams)){
+      if($hall = Halls::updateHall($db, $hallId, $params)){
         return $this->response('Data updated.', 200);
       }
     }

@@ -72,10 +72,16 @@ class Halls {
     $result = "";
 
     foreach ($arr as $key => $value) {
-      $result .= "`$key` = '$value',";
+      if ($value === null) {
+        $result .= "`$key` = NULL,";
+      } else {
+        $result .= "`$key` = '$value',";
+      }
     }
 
     $result = substr($result,0,-1);
+
+    // print_r($result);
 
     $sql = mysqli_query($db, "UPDATE `halls` SET $result WHERE `halls`.`hall_id` = $hallId;");
     if($sql) {

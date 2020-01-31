@@ -79,8 +79,9 @@ class FilmsApi extends Api {
     $db = (new Connection())->getConnection();
     $params = json_decode($this->requestParams,true);
 
+
     if (isset($params['film_schedule'])) {
-      $params['film_schedule'] = json_encode($params['film_schedule']);
+      $params['film_schedule'] = json_encode($params['film_schedule'], JSON_UNESCAPED_UNICODE);
     }
 
     if(!$filmId || !Films::getById($db, $filmId)){

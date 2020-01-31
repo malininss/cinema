@@ -1,6 +1,6 @@
 import { AppApiService, Hall, Film } from './../../app-api.service';
 import { Component, OnInit } from '@angular/core';
-import { Scheduler } from 'rxjs';
+import { Scheduler, timer } from 'rxjs';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 @Component({
@@ -15,8 +15,8 @@ export class AdminComponent implements OnInit {
       hall_id: '',
       hall_name: '',
       hall_vip_chair_price: '',
-      hall_chair_price: '',
-      hall_configuration: ''
+      hall_chair_price: null,
+      hall_configuration: null
     }
   ];
 
@@ -27,32 +27,27 @@ export class AdminComponent implements OnInit {
   addHallFormGroup: FormGroup;
   deleteHallFormGroup: FormGroup;
   hallToDelete: any = '';
-
+  addFilmFormGroup: FormGroup;
+  deleteSessionFormGroup: FormGroup;
 
   visibleCreateHallPopup = false;
   visibleDeleteHallPopup = false;
   visibleCreateFilmPopup = false;
   visibleShowtimeAddPopup = false;
+  visibleDeleteSessionPopup = false;
 
   indexOfSelectedHall = 0;
   activeHall: number;
   activeHallRowNumber: number;
   activeHallPlacesNumber: number;
 
-  currentRow: any = 0;
-  currentPlace: any = 0;
+  currentRow = 0;
+  currentPlace = 0;
 
-  currentStandartPrice: any = 0;
-  currentVipPrice: any = 0;
+  currentStandartPrice = '0';
+  currentVipPrice = '0';
 
-  newFilmName: any;
-  newFilmDescriprion: any;
-  newFilmDuration: any;
-  newFilmCountry: any;
-
-  addShowtimeFilmId: any;
-  addShowtimeCurrentFilmTime = '00:00';
-  addShowtimeHall: any;
+  addShowtimeFilmId: string;
 
   constructor(
     private appApiService: AppApiService
@@ -62,6 +57,7 @@ export class AdminComponent implements OnInit {
     this.getHalls();
     this.getHallTimeLine();
     this.getFilms();
+
 
     this.addShowtimeFormGroup = new FormGroup({
       hallId: new FormControl('', Validators.required),
@@ -74,6 +70,19 @@ export class AdminComponent implements OnInit {
 
     this.deleteHallFormGroup = new FormGroup({
       hallId: new FormControl(null)
+    });
+
+    this.deleteSessionFormGroup = new FormGroup({
+      filmId: new FormControl(null),
+      hallId: new FormControl(null),
+      sessionTime: new FormControl(null)
+    });
+
+    this.addFilmFormGroup = new FormGroup({
+      film_name: new FormControl(null),
+      film_description: new FormControl(null),
+      film_duration: new FormControl(null),
+      film_country: new FormControl(null)
     });
   }
 
@@ -93,12 +102,30 @@ export class AdminComponent implements OnInit {
   }
 
   deleteHall() {
+
+    this.getFilms();
     this.appApiService.deleteHall(this.hallToDelete.hall_id)
     .subscribe(data => {
+      this.films.forEach(film => {
+        if (film.film_schedule) {
+          film.film_schedule.forEach((scheduleItem, scheduleIndex) => {
+            if (scheduleItem.hallId === this.hallToDelete.hall_id) {
+              film.film_schedule.splice(scheduleIndex, 1);
+              this.appApiService.updateFilm(JSON.stringify({film_schedule: film.film_schedule}) , film.film_id)
+              .subscribe(response => {
+                this.getHallTimeLine();
+              });
+            }
+          });
+        }
+      });
+
       this.getHalls();
       this.closeDeleteHallPopup();
       this.hallToDelete = '';
+
     });
+
   }
 
   getHalls() {
@@ -108,7 +135,6 @@ export class AdminComponent implements OnInit {
         item.hall_configuration = JSON.parse(item.hall_configuration);
       });
 
-      // Устанавливаем количество мест и рядов для блока конфигурации зала
       this.currentRow = halls[this.indexOfSelectedHall].hall_configuration.length;
       this.currentPlace = halls[this.indexOfSelectedHall].hall_configuration[0].length;
 
@@ -116,7 +142,6 @@ export class AdminComponent implements OnInit {
       this.currentVipPrice = halls[this.indexOfSelectedHall].hall_vip_chair_price;
 
       this.halls = halls;
-      console.log(this.halls);
     });
   }
 
@@ -138,6 +163,14 @@ export class AdminComponent implements OnInit {
     this.visibleShowtimeAddPopup = true;
   }
 
+  showDeleteSessionPopup(hallId, filmIdAndTime) {
+    this.deleteSessionFormGroup.value.hallId = hallId;
+    this.deleteSessionFormGroup.value.filmId = filmIdAndTime.value;
+    this.deleteSessionFormGroup.value.sessionTime = filmIdAndTime.key;
+
+    this.visibleDeleteSessionPopup = true;
+  }
+
   closeCreateHallPopup() {
     this.hallToDelete = '';
     this.visibleCreateHallPopup = false;
@@ -155,6 +188,11 @@ export class AdminComponent implements OnInit {
     this.visibleShowtimeAddPopup = false;
     const notice = document.querySelector('.conf-step_notice');
     notice.innerHTML = '';
+  }
+
+  closeDeleteSessionPopup() {
+    this.deleteSessionFormGroup.value.filmId = null;
+    this.visibleDeleteSessionPopup = false;
   }
 
   setActiveHallIndex(index) {
@@ -188,8 +226,6 @@ export class AdminComponent implements OnInit {
 
     // Если нужно обрезать места (везде)
     if (places < testHall[0].length) {
-      console.log('Убираем места');
-
       const placesForSubtraction = places - testHall[0].length;
       for (let i = 0; i < testHall.length; i++) {
         testHall[i] = testHall[i].slice(0, placesForSubtraction);
@@ -231,14 +267,24 @@ export class AdminComponent implements OnInit {
   }
 
   submitHallConfiguration() {
-    console.log('Здесь мы должны отправить put-запрос на изменение каждого холла? Или только изменнного? Подумать', this.halls);
+    // Неправивльно перебирать всё
+    this.halls.forEach(hall => {
+        this.appApiService.editHall(hall, hall.hall_id)
+          .subscribe(response => {
+            // console.log(response);
+          });
+    });
   }
 
   changePlaceType(place) {
     const statuses = ['disabled', 'simple', 'vip'];
+    // console.log(statuses.indexOf(place));
+    // console.log(statuses.length);
+
     if (statuses.indexOf(place) === statuses.length) {
       place.status = statuses[0];
     } else {
+      // console.log('Прибавляем 1');
       place.status = statuses[statuses.indexOf(place.status) + 1];
     }
   }
@@ -249,7 +295,13 @@ export class AdminComponent implements OnInit {
   }
 
   submitPriceConfiguration() {
-    console.log(this.halls);
+    // Неправивльно перебирать всё
+    this.halls.forEach(hall => {
+      this.appApiService.editHall(hall, hall.hall_id)
+        .subscribe(response => {
+          console.log(response);
+        });
+    });
   }
 
   getHallTimeLine() {
@@ -327,13 +379,9 @@ export class AdminComponent implements OnInit {
   }
 
   createFilm() {
-    const obj = {
-      film_name: this.newFilmName,
-      film_description: this.newFilmDescriprion,
-      film_duration: this.newFilmDuration,
-      film_country: this.newFilmCountry,
-      film_img: '..\/assets\/i\/poster1.jpg'
-    };
+
+    const obj = {...this.addFilmFormGroup.value, film_img: '..\/assets\/i\/poster1.jpg'};
+
 
     if (obj.film_name &&
         obj.film_description &&
@@ -343,11 +391,7 @@ export class AdminComponent implements OnInit {
 
       this.appApiService.newFilm(obj)
       .subscribe(data => {
-        this.newFilmName = '';
-        this.newFilmDescriprion = '';
-        this.newFilmDuration = '';
-        this.newFilmCountry = '';
-
+        // тут обнулить значения формы при добавлении фильма
         this.closeCreateFilmPopup();
         this.getFilms();
       });
@@ -356,12 +400,6 @@ export class AdminComponent implements OnInit {
   }
 
   checkSessionTime(hallId, currentTime) {
-
-    // Время нового фильма и длительность. Далее добавлять в конструкторе
-    // const currentTime =  this.addShowtimeCurrentFilmTime;
-
-    // const currentTime = '00:00';
-    // console.log(currentTime);
 
     const currentFilmDuration = +(this.getFilmById(this.addShowtimeFilmId).film_duration);
 
@@ -405,11 +443,19 @@ export class AdminComponent implements OnInit {
               notice.innerHTML = `
                 Время сеанса совпадает со временем уже идущего фильма.<br>
                 Время старта фильма, с которым происходит конфликт: ${timeArr[i][0]} <br>
-                Название зала: ${hall}
+                Название зала: "${this.getHallNameById(hall)}"
               `;
 
-              console.log('Время сопадения: ' + timeArr[i][0]);
-              console.log('Зал: ' + hall);
+              return false;
+            }
+
+            // Если время окончания фильма - после 24:00
+            const minutesInDay = 1440;
+            if (currentTimeDate + currentFilmDuration > minutesInDay) {
+              const notice = document.querySelector('.conf-step_notice');
+              notice.innerHTML = `
+                Сеанс не может заканчиваться позже 24:00.
+              `;
 
               return false;
             }
@@ -429,13 +475,8 @@ export class AdminComponent implements OnInit {
                 notice.innerHTML = `
                   Время добавленного сеанса наезжает на следующий сеанса.<br>
                   Время старта фильма, с которым происходит конфликт: ${timeArr[i + 1][0]} <br>
-                  Название зала: ${hall}
+                  Название зала: "${this.getHallNameById(hall)}"
                 `;
-
-                console.log('Время добавленного сеанса наезжает на следующий сеанс');
-                console.log('Время старта фильма, с которым происходит конфликт: ' + timeArr[i + 1][0]);
-                console.log('Название зала: ' + hall);
-
                 return false;
               }
             }
@@ -495,10 +536,14 @@ export class AdminComponent implements OnInit {
         ];
       }
 
+      // console.log(arrToSend);
+
+
       this.appApiService.updateFilm(JSON.stringify({film_schedule: arrToSend}), this.addShowtimeFilmId)
         .subscribe(response => {
           this.closeShowtimeAddPopup();
           this.getHallTimeLine();
+          this.getFilms();
         });
 
     } else {
@@ -515,6 +560,35 @@ export class AdminComponent implements OnInit {
     if (hall) {
       return hall.hall_name;
     }
+  }
+
+  deleteSession() {
+    const film = this.getFilmById(this.deleteSessionFormGroup.value.filmId);
+    const hallId = this.deleteSessionFormGroup.value.hallId;
+    const sessionTime = this.deleteSessionFormGroup.value.sessionTime;
+
+    const filmSchedule = film.film_schedule;
+
+    filmSchedule.forEach((item, index) => {
+      if (item.hallId === hallId) {
+
+        const currentTimeIndex = item.time.indexOf(sessionTime);
+
+        item.time.splice(currentTimeIndex, 1);
+
+        if (item.time.length <= 0) {
+          filmSchedule.splice(index, 1);
+        }
+
+      }
+    });
+
+
+    this.appApiService.updateFilm(JSON.stringify({film_schedule: filmSchedule}) , film.film_id)
+      .subscribe(response => {
+        this.closeDeleteSessionPopup();
+        this.getHallTimeLine();
+      });
   }
 }
 

@@ -75,8 +75,12 @@ export class AppApiService {
 
   deleteHall(hallId) {
     const requestUrl = 'http://localhost/api/halls/' + hallId + '/DELETE';
-    // console.log(hall);
     return this.http.post(requestUrl, {});
+  }
+
+  editHall(updateObj, hallId) {
+    const requestUrl = 'http://localhost/api/halls/' + hallId + '/PUT';
+    return this.http.post(requestUrl, updateObj);
   }
 
   newFilm(filmObj) {
