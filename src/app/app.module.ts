@@ -15,6 +15,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import { DatePipe } from '@angular/common';
+
+
 registerLocaleData(localeRu, 'ru', localeRuExtra);
 
 @NgModule({
@@ -32,6 +35,7 @@ registerLocaleData(localeRu, 'ru', localeRuExtra);
     ClientModule,
     BrowserAnimationsModule
   ],
+  providers: [DatePipe],
   bootstrap: [AppComponent],
 })
 export class AppModule { }

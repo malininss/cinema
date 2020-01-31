@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
-
 import { Observable, throwError } from 'rxjs';
 
 export interface Film {
@@ -15,7 +14,7 @@ export interface Film {
 }
 
 export interface Shcedule {
-  schedule_Id: string;
+  schedule_id: string;
   hall_id: string;
   current_hall: string;
   datatime: string;
@@ -36,60 +35,75 @@ export interface Hall {
 })
 
 export class AppApiService {
+  apiUrl = 'http://localhost/api';
+
+
   constructor(private http: HttpClient) { }
 
   getFilms() {
-    const requestUrl = 'http://localhost/api/films/';
+    const requestUrl = this.apiUrl + '/films/';
     return this.http.get<Film[]>(requestUrl);
   }
 
   getFilmById(filmId) {
-    const requestUrl = 'http://localhost/api/films/' + filmId;
+    const requestUrl = this.apiUrl + '/films/' + filmId;
     return this.http.get<Film>(requestUrl);
   }
 
   getScheduleById(id) {
-    const requestUrl = 'http://localhost/api/schedule/' + id;
+    const requestUrl = this.apiUrl + '/schedule/' + id;
     return this.http.get<Shcedule>(requestUrl);
   }
 
+
+  editSchedule(updateObj, scneduleId) {
+    const requestUrl = this.apiUrl + '/schedule/' + scneduleId + '/PUT';
+    return this.http.post(requestUrl, updateObj);
+  }
+
   getScheduleByDateAndHallId(date, hallId) {
-    const requestUrl = 'http://localhost/api/schedule/' + hallId + '/' + date;
+    console.log(date);
+    const requestUrl = this.apiUrl + '/schedule/' + hallId + '/' + date;
     return this.http.get(requestUrl);
   }
 
+  createSchedule(dataObj) {
+    const requestUrl = this.apiUrl + '/schedule/';
+    return this.http.post(requestUrl, dataObj);
+  }
+
   getHallById(hallId) {
-    const requestUrl = 'http://localhost/api/halls/' + hallId;
+    const requestUrl = this.apiUrl + '/halls/' + hallId;
     return this.http.get<Hall>(requestUrl);
   }
 
   getHalls() {
-    const requestUrl = 'http://localhost/api/halls/';
+    const requestUrl = this.apiUrl + '/halls/';
     return this.http.get<Hall[]>(requestUrl);
   }
 
   newHall(hall) {
-    const requestUrl = 'http://localhost/api/halls';
+    const requestUrl = this.apiUrl + '/halls';
     return this.http.post(requestUrl, hall);
   }
 
   deleteHall(hallId) {
-    const requestUrl = 'http://localhost/api/halls/' + hallId + '/DELETE';
+    const requestUrl = this.apiUrl + '/halls/' + hallId + '/DELETE';
     return this.http.post(requestUrl, {});
   }
 
   editHall(updateObj, hallId) {
-    const requestUrl = 'http://localhost/api/halls/' + hallId + '/PUT';
+    const requestUrl = this.apiUrl + '/halls/' + hallId + '/PUT';
     return this.http.post(requestUrl, updateObj);
   }
 
   newFilm(filmObj) {
-    const requestUrl = 'http://localhost/api/films';
+    const requestUrl = this.apiUrl + '/films';
     return this.http.post(requestUrl, filmObj);
   }
 
   updateFilm(updateObj, filmId) {
-    const requestUrl = 'http://localhost/api/films/' + filmId + '/PUT';
+    const requestUrl = this.apiUrl + '/films/' + filmId + '/PUT';
     return this.http.post(requestUrl, updateObj);
   }
 }

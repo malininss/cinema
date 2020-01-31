@@ -67,7 +67,11 @@ class ScheduleApi extends Api {
   public function createAction() {
     $db = (new Connection())->getConnection();
 
-    if(Schedule::createScheduleElement($db, $this->requestParams)){
+    $params = json_decode($this->requestParams,true);
+    $params['current_hall'] = json_encode($params['current_hall']);
+
+    // print_r($params);
+    if(Schedule::createScheduleElement($db, $params)){
       return $this->response('Data saved.', 200);
     }
     return $this->response("Saving error", 500);
@@ -85,15 +89,18 @@ class ScheduleApi extends Api {
 
     $parse_url = parse_url($this->requestUri[0]);
     $scheduleId = $parse_url['path'] ?? null;
+    $params = json_decode($this->requestParams,true);
+    $params['current_hall'] = json_encode($params['current_hall']);
 
+    // print_r($params);
     $db = (new Connection())->getConnection();
 
     if(!$scheduleId || !Schedule::getById($db, $scheduleId)){
       return $this->response("Hall with id=$hallId not found", 404);
     }
 
-    if($this->requestParams){
-      if($schedule = Schedule::updateScheduleElement($db, $scheduleId, $this->requestParams)){
+    if($params){
+      if($schedule = Schedule::updateScheduleElement($db, $scheduleId, $params)){
         return $this->response('Data updated.', 200);
       }
     }

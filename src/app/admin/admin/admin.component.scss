@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
 $font-stack: 'Roboto', sans-serif;
 
 $lilac: #63536C;
@@ -42,7 +43,7 @@ $gapwidth: 20px;
 }
 
 html {
-  font-family: $font-stack;
+  font-family: "Roboto", sans-serif;
   font-size: 62.5%;
 }
 
@@ -297,6 +298,7 @@ input[type='radio'], input[type='submit'], button, .conf-step__header, select {
 
 .conf-step__buttons {
   margin-top: 10px;
+  border: none;
 }
 
 .conf-step__button-regular {

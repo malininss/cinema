@@ -81,7 +81,7 @@ class Schedule {
     $result = "";
 
     foreach ($arr as $key => $value) {
-      $result .= "`$key` = '$value',";
+      $result .= "`$key` = $value,";
     }
 
     $result = substr($result,0,-1);

@@ -5,12 +5,14 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 export interface ObjectForPayment {
-  filmName: string;
-  hallName: string;
+  film: any;
+  hall: any;
   timeToStart: string;
-  hallConfiguration?: object;
+  hallConfiguration?: Array<any>;
   checkedPlaces: string[];
   totalPrice: number;
+  scheduleId: string;
+  timestamp: number;
 }
 
 @Component({
@@ -24,6 +26,7 @@ export class ClientHallComponent implements OnInit {
   filmId: number;
   currentTime: any;
   currentSchedulePlaces: any;
+  currentSchedileId: string;
 
   film: Film = {
     film_id: '',
@@ -44,11 +47,13 @@ export class ClientHallComponent implements OnInit {
   };
 
   objectForSand: ObjectForPayment = {
-    filmName: '',
-    hallName: '',
+    film: '',
+    hall: '',
     timeToStart: '',
     checkedPlaces: [],
-    totalPrice: 0
+    totalPrice: 0,
+    scheduleId: '',
+    timestamp: 0,
   };
 
   constructor(
@@ -69,24 +74,31 @@ export class ClientHallComponent implements OnInit {
     this.getHall();
     this.getScheduleByDateAndHallId();
     this.getFilm();
+    // console.log(this.currentTime);
 
   }
 
   getScheduleByDateAndHallId() {
     this.appApiService.getScheduleByDateAndHallId(this.currentTime, this.hallId)
       .subscribe((currentSchedule: Shcedule) => {
+        this.currentSchedileId = currentSchedule.schedule_id;
+        // console.log(currentSchedule);
+
         if (!currentSchedule) {
           this.currentSchedulePlaces = JSON.parse(this.hall.hall_configuration);
-          console.log(this.currentSchedulePlaces);
+          // console.log('Расписания нет, нужно создавать!');
+          // console.log(this.currentSchedulePlaces);
 
         } else {
+          // console.log(currentSchedule.current_hall);
+
           currentSchedule.current_hall = JSON.parse(currentSchedule.current_hall);
           this.currentSchedulePlaces = currentSchedule.current_hall;
-          console.log(this.currentSchedulePlaces);
+          // console.log(this.currentSchedulePlaces);
         }
       },
       error => {
-        console.log(error.message);
+        // console.log(error.message);
       });
   }
 
@@ -114,10 +126,12 @@ export class ClientHallComponent implements OnInit {
   }
 
   createObjectForPayment() {
-    this.objectForSand.filmName = this.film.film_name;
-    this.objectForSand.hallName = this.hall.hall_name;
+    this.objectForSand.film = this.film;
+    this.objectForSand.hall = this.hall;
+    this.objectForSand.scheduleId = this.currentSchedileId;
     // Хрень с тысячами. Разобраться!
     this.objectForSand.timeToStart = this.datePipe.transform(this.currentTime * 1000, 'HH:mm');
+    this.objectForSand.timestamp = this.currentTime;
     this.objectForSand.hallConfiguration = this.currentSchedulePlaces;
     this.currentSchedulePlaces.forEach(row => {
       row.forEach(place => {

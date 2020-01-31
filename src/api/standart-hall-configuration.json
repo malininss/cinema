@@ -1,33 +1,35 @@
 [
+
+
   [
     {
         "row": "1",
         "place": "1",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
         "row": "1",
         "place": "2",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
         "row": "1",
         "place": "3",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
         "row": "1",
         "place": "4",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
         "row": "1",
         "place": "5",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
@@ -45,31 +47,31 @@
     {
         "row": "1",
         "place": "8",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
         "row": "1",
         "place": "9",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
         "row": "1",
         "place": "10",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
         "row": "1",
         "place": "11",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
         "row": "1",
         "place": "12",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     }
   ],
@@ -77,25 +79,25 @@
     {
         "row": "2",
         "place": "1",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
         "row": "2",
         "place": "2",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
         "row": "2",
         "place": "3",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
         "row": "2",
         "place": "4",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
@@ -125,25 +127,25 @@
     {
         "row": "2",
         "place": "9",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
         "row": "2",
         "place": "10",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
         "row": "2",
         "place": "11",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
         "row": "2",
         "place": "12",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     }
   ],
@@ -151,7 +153,7 @@
     {
         "row": "3",
         "place": "1",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
@@ -205,19 +207,19 @@
     {
         "row": "3",
         "place": "10",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
         "row": "3",
         "place": "11",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
         "row": "3",
         "place": "12",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     }
   ],
@@ -279,19 +281,19 @@
     {
         "row": "4",
         "place": "10",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
         "row": "4",
         "place": "11",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
         "row": "4",
         "place": "12",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     }
   ],
@@ -353,19 +355,19 @@
     {
         "row": "5",
         "place": "10",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
         "row": "5",
         "place": "11",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
         "row": "5",
         "place": "12",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     }
   ],
@@ -427,19 +429,19 @@
     {
         "row": "6",
         "place": "10",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
         "row": "6",
         "place": "11",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
         "row": "6",
         "place": "12",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     }
   ],
@@ -501,19 +503,19 @@
     {
         "row": "7",
         "place": "10",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
         "row": "7",
         "place": "11",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
         "row": "7",
         "place": "12",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     }
   ],
@@ -575,19 +577,19 @@
     {
         "row": "8",
         "place": "10",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
         "row": "8",
         "place": "11",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     },
     {
         "row": "8",
         "place": "12",
-        "status": "disabled",
+        "status": "free",
         "type": "simple"
     }
   ],

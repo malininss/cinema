@@ -17,9 +17,9 @@
             <span class="buying-scheme__chair"
               *ngFor="let place of row; let placeIndex = index"
               [ngClass]="{
-                'buying-scheme__chair_standart': place.status === 'free',
                 'buying-scheme__chair_taken': place.status === 'reserved',
-                'buying-scheme__chair_disabled': place.status === 'disabled',
+                'buying-scheme__chair_standart': place.status === 'free',
+                'buying-scheme__chair_disabled': place.type === 'disabled',
                 'buying-scheme__chair_selected': place.status === 'checked',
                 'buying-scheme__chair_vip': place.type === 'vip'
                 }"

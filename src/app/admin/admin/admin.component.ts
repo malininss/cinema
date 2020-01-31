@@ -277,15 +277,11 @@ export class AdminComponent implements OnInit {
   }
 
   changePlaceType(place) {
-    const statuses = ['disabled', 'simple', 'vip'];
-    // console.log(statuses.indexOf(place));
-    // console.log(statuses.length);
-
-    if (statuses.indexOf(place) === statuses.length) {
-      place.status = statuses[0];
+    const types = ['disabled', 'simple', 'vip'];
+    if (types.indexOf(place.type) === types.length - 1) {
+      place.type = types[0];
     } else {
-      // console.log('Прибавляем 1');
-      place.status = statuses[statuses.indexOf(place.status) + 1];
+      place.type = types[types.indexOf(place.type) + 1];
     }
   }
 
@@ -590,5 +586,6 @@ export class AdminComponent implements OnInit {
         this.getHallTimeLine();
       });
   }
+
 }
 
