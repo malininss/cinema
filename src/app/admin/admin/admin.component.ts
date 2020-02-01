@@ -58,9 +58,8 @@ export class AdminComponent implements OnInit {
     this.getHallTimeLine();
     this.getFilms();
 
-
     this.addShowtimeFormGroup = new FormGroup({
-      hallId: new FormControl('', Validators.required),
+      hallId: new FormControl(''),
       time: new FormControl('00:00')
     });
 
@@ -84,6 +83,7 @@ export class AdminComponent implements OnInit {
       film_duration: new FormControl(null),
       film_country: new FormControl(null)
     });
+
   }
 
   createHall() {
@@ -337,6 +337,7 @@ export class AdminComponent implements OnInit {
           element.film_schedule = JSON.parse(element.film_schedule);
         });
         this.films = films;
+        // console.log(this.films);
       });
   }
 
@@ -397,6 +398,7 @@ export class AdminComponent implements OnInit {
 
   checkSessionTime(hallId, currentTime) {
 
+    // console.log(hallId);
     const currentFilmDuration = +(this.getFilmById(this.addShowtimeFilmId).film_duration);
 
     // Преобразуем время из строки в количество минут, прошедших с полуночи
@@ -405,13 +407,13 @@ export class AdminComponent implements OnInit {
       return  (+arr[0] * 60) + +arr[1];
     };
 
-    // Получаем количество пинут нового фильма, прошедших с полуноси
+    // Получаем количество минут нового фильма, прошедших с полуночи
     const currentTimeDate = minutesFromMidnight(currentTime);
 
     for (const hall in this.hallTimeLine) {
       if (hall) {
 
-        // Проверяем для совпадение зала по имени. Далее сделать автоматом
+        // Проверяем для совпадение зала по имени.
         if (hall === hallId) {
 
           // Здесь преваращаем объект в массив и второе значение (ID фильма) превращаем в длительности фильма
@@ -457,10 +459,10 @@ export class AdminComponent implements OnInit {
             }
 
             // Проверяем, есть ли следующее значение
-            if (timeArr[i + 1]) {
 
+            if (timeArr[i]) {
               // Если значение есть, получаем количество минут, прошедших с полуночи у этого значения.
-              const nextFilmMinutesFromMidnight = minutesFromMidnight(timeArr[i + 1][0]);
+              const nextFilmMinutesFromMidnight = minutesFromMidnight(timeArr[i][0]);
 
               // Если новый фильм наачинаетс, пока старые ещё идёт, выкидываем ошибку
               if ( nextFilmMinutesFromMidnight > currentTimeDate &&
@@ -470,7 +472,7 @@ export class AdminComponent implements OnInit {
                 const notice = document.querySelector('.conf-step_notice');
                 notice.innerHTML = `
                   Время добавленного сеанса наезжает на следующий сеанса.<br>
-                  Время старта фильма, с которым происходит конфликт: ${timeArr[i + 1][0]} <br>
+                  Время старта фильма, с которым происходит конфликт: ${timeArr[i][0]} <br>
                   Название зала: "${this.getHallNameById(hall)}"
                 `;
                 return false;
@@ -540,8 +542,9 @@ export class AdminComponent implements OnInit {
           this.closeShowtimeAddPopup();
           this.getHallTimeLine();
           this.getFilms();
-        });
 
+
+        });
     } else {
       return false;
     }
@@ -587,5 +590,71 @@ export class AdminComponent implements OnInit {
       });
   }
 
+
+  setSeancesFilmColor(filmId) {
+    const elem = document.getElementById(filmId);
+    if (elem) {
+      return getComputedStyle(elem, '').backgroundColor;
+    }
+  }
+
+  registerDragAndDropEvents() {
+
+    const dragAndDropElements: any = document.querySelectorAll('.conf-step__movie');
+    const dragAndDropContainers: any = document.querySelectorAll('.conf-step__seances-timeline');
+
+    const dragStart = (e) => {
+      e.dataTransfer.setData('text/plain', e.target.id);
+    };
+
+    const dragEnter = (e) => {
+      e.preventDefault();
+      return true;
+    };
+
+    const dragDrop = (e) => {
+      const filmId = e.dataTransfer.getData('text/plain');
+      const hallId = e.target.getAttribute('data-draginfo');
+
+      this.addShowtimeFormGroup.value.hallId = hallId;
+      this.addShowtimeFormGroup.value.hallId = hallId;
+
+      this.showShowtimeAddPopup(filmId);
+
+      this.addShowtimeFormGroup = new FormGroup({
+        hallId: new FormControl(hallId),
+        time: new FormControl('00:00')
+      });
+
+      e.dataTransfer.getData('text/plain', null);
+
+      // Научиться отменить зарегистрированные события!
+
+      return true;
+    };
+
+    const dragOver = (e) => {
+      e.preventDefault();
+      return true;
+    };
+
+    const dragLeave = (e) => {
+      e.preventDefault();
+      // dragAndDropContainer.style.background = 'none';
+      return true;
+    };
+
+    dragAndDropElements.forEach(element => {
+      element.addEventListener('dragstart', dragStart);
+    });
+
+    dragAndDropContainers.forEach(container => {
+      // console.log(container);
+      container.addEventListener('dragenter', dragEnter);
+      container.addEventListener('drop', dragDrop);
+      container.addEventListener('dragover', dragOver);
+      container.addEventListener('dragleave', dragLeave);
+    });
+  }
 }
 

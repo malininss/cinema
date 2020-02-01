@@ -28,6 +28,8 @@ export class ClientHallComponent implements OnInit {
   currentSchedulePlaces: any;
   currentSchedileId: string;
 
+  zoom = false;
+
   film: Film = {
     film_id: '',
     film_name: '',
@@ -64,37 +66,25 @@ export class ClientHallComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-
     this.route.paramMap.subscribe(params => {
       this.hallId = +params.get('hallId');
       this.currentTime = params.get('currentDay');
       this.filmId = +params.get('filmId');
     });
-
     this.getHall();
-    this.getScheduleByDateAndHallId();
     this.getFilm();
-    // console.log(this.currentTime);
-
   }
 
   getScheduleByDateAndHallId() {
     this.appApiService.getScheduleByDateAndHallId(this.currentTime, this.hallId)
       .subscribe((currentSchedule: Shcedule) => {
         this.currentSchedileId = currentSchedule.schedule_id;
-        // console.log(currentSchedule);
 
         if (!currentSchedule) {
           this.currentSchedulePlaces = JSON.parse(this.hall.hall_configuration);
-          // console.log('Расписания нет, нужно создавать!');
-          // console.log(this.currentSchedulePlaces);
-
         } else {
-          // console.log(currentSchedule.current_hall);
-
           currentSchedule.current_hall = JSON.parse(currentSchedule.current_hall);
           this.currentSchedulePlaces = currentSchedule.current_hall;
-          // console.log(this.currentSchedulePlaces);
         }
       },
       error => {
@@ -113,6 +103,7 @@ export class ClientHallComponent implements OnInit {
     this.appApiService.getHallById(this.hallId)
     .subscribe((hall: Hall) => {
       this.hall = hall;
+      this.getScheduleByDateAndHallId();
     });
   }
 
@@ -147,5 +138,9 @@ export class ClientHallComponent implements OnInit {
       });
     });
     this.clientPaymentService.setData(this.objectForSand);
+  }
+
+  zoomHall() {
+    this.zoom = !this.zoom;
   }
 }

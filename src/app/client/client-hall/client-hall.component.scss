@@ -152,4 +152,24 @@
   .buying-scheme__legend-price + .buying-scheme__legend-price {
     margin-top: 1rem;
   }
+
+}
+
+.buying-scheme-zoom {
+  overflow: scroll;
+}
+
+.buying-scheme-zoom .buying-scheme__wrapper {
+  min-width: 540px;
+  padding-top: 60px;
+}
+
+.buying-scheme-zoom .buying-scheme__chair {
+  width: 36px;
+  height: 36px;
+}
+
+
+.buying-scheme-zoom .buying-scheme__legend {
+  min-width: 540px;
 }

@@ -129,6 +129,7 @@ input[type='radio'], input[type='submit'], button, .conf-step__header, select {
 }
 
 .conf-step__header {
+  user-select: none;
   position: relative;
   box-sizing: border-box;
   background-color: $lilac;

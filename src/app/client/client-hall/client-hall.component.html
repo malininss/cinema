@@ -1,5 +1,5 @@
 <main>
-  <section class="buying">
+  <section class="buying" (dblclick)="zoomHall()">
     <div class="buying__info">
       <div class="buying__info-description">
         <h2 class="buying__info-title">{{ film.film_name }}</h2>
@@ -11,7 +11,8 @@
         <p>Тапните дважды,<br>чтобы увеличить</p>
       </div>
     </div>
-    <div class="buying-scheme">
+    <div class="buying-scheme"
+      [ngClass]="{'buying-scheme-zoom': zoom}">
       <div class="buying-scheme__wrapper">
           <div class="buying-scheme__row" *ngFor="let row of currentSchedulePlaces; let rowIndex = index" >
             <span class="buying-scheme__chair"

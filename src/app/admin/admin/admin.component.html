@@ -161,6 +161,7 @@
       <header class="conf-step__header conf-step__header_opend" appShowOrHide>
         <h2 class="conf-step__title">Сетка сеансов</h2>
       </header>
+      <!-- <p (mousedown)="registerDragAndDropEvents()">test</p> -->
       <div class="conf-step__wrapper">
         <p class="conf-step__paragraph">
           <button class="conf-step__button conf-step__button-accent" (click)="showCreateFilmPopup()">Добавить фильм</button>
@@ -169,9 +170,11 @@
         <div class="conf-step__movies">
           <div
             class="conf-step__movie"
+            id="{{ film.film_id }}"
             *ngFor="let film of films"
             draggable="true"
             (click)="showShowtimeAddPopup(film.film_id)"
+            (mousedown)="registerDragAndDropEvents()"
           >
             <img class="conf-step__movie-poster" alt="poster" src="../assets/i/poster1.jpg">
             <h3 class="conf-step__movie-title">{{ film.film_name }}</h3>
@@ -188,19 +191,18 @@
           <div
             class="conf-step__seances-hall">
             <h3 class="conf-step__seances-title"> {{ getHallNameById(hall.key) }}</h3>
-            <div class="conf-step__seances-timeline">
+            <div class="conf-step__seances-timeline" [attr.data-dragInfo]="hall.key">
 
               <div
                 class="conf-step__seances-movie"
                 [ngStyle]="{
                   'width': getWidth(getFilmById(scheduleItem.value).film_duration),
-                  'background-color': 'rgb(133, 255, 137)',
+                  'background-color': setSeancesFilmColor(scheduleItem.value),
                   'left': getLeftPosition(scheduleItem.key)
                 }"
                 *ngFor="let scheduleItem of hall.value | keyvalue"
                 (click)="showDeleteSessionPopup(hall.key, scheduleItem)"
               >
-
 
                 <p class="conf-step__seances-movie-title">{{ getFilmById(scheduleItem.value).film_name }}</p>
                 <p class="conf-step__seances-movie-start">{{ scheduleItem.key }}</p>
@@ -217,7 +219,7 @@
       </div>
     </section>
 
-    <!-- <section class="conf-step">
+    <section class="conf-step">
       <header class="conf-step__header conf-step__header_opend" appShowOrHide>
         <h2 class="conf-step__title">Открыть продажи</h2>
       </header>
@@ -225,12 +227,9 @@
         <p class="conf-step__paragraph">Всё готово, теперь можно:</p>
         <button class="conf-step__button conf-step__button-accent">Открыть продажу билетов</button>
       </div>
-    </section> -->
+    </section>
   </main>
 </div>
-
-
-
 
 <!-- Попап "Создать холл" -->
 <div
@@ -404,9 +403,9 @@
               required
               formControlName="hallId"
             >
-              <option
+              <!-- <option
                 value="null"
-              > Выберите зал</option>
+              > Выберите зал</option> -->
               <option
                 *ngFor="let hall of halls"
                 value="{{ hall.hall_id }}"
@@ -456,7 +455,6 @@
         (ngSubmit)="deleteSession()"
         >
           <p class="conf-step__paragraph">Вы действительно хотите удалить сессию фильма "{{getFilmById(this.deleteSessionFormGroup.value.filmId).film_name }}"? </p>
-          <!-- В span будет подставляться название зала -->
           <div class="conf-step__buttons text-center">
             <button type="submit" value="Удалить" class="conf-step__button conf-step__button-accent"
             >Удалить</button>
