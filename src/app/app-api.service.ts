@@ -25,6 +25,7 @@ export interface Shcedule {
 export interface Hall {
   hall_id: string;
   hall_name: string;
+  hall_activity: string;
   hall_configuration: string;
   hall_chair_price: string;
   hall_vip_chair_price: string;

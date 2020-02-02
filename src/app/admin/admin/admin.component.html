@@ -21,6 +21,10 @@
       </div>
     </section>
 
+
+
+
+    <!-- КОНФИГУРАЦИЯ ЗАЛА!! -->
     <section class="conf-step">
       <header class="conf-step__header conf-step__header_opend" appShowOrHide>
         <h2 class="conf-step__title">Конфигурация залов</h2>
@@ -37,10 +41,10 @@
               <input
                 type="radio"
                 class="conf-step__radio"
-                name="activeHall"
+                name="activeHallId"
                 (change)='getRowAndPlaceValue()'
                 value='{{hall.hall_id}}'
-                formControlName="activeHall"
+                formControlName="activeHallId"
               >
               <span class="conf-step__selector"> {{ hall.hall_name }} </span>
             </li>
@@ -92,7 +96,7 @@
           <fieldset class="conf-step__buttons text-center">
 
             <button type="button" class="conf-step__button conf-step__button-regular"
-              (click)="canselChanges()"
+              (click)="canselHallChanges()"
               >Отмена</button>
 
             <button type="submit" class="conf-step__button conf-step__button-accent">Сохранить</button>
@@ -102,60 +106,75 @@
       </div>
     </section>
 
+
+
+
+
+
+
+
+
+
+    <!-- КОНФИГУРАЦИЯ ЦЕН! -->
     <section class="conf-step">
       <header class="conf-step__header conf-step__header_opend" appShowOrHide>
         <h2 class="conf-step__title">Конфигурация цен</h2>
       </header>
       <div class="conf-step__wrapper">
 
-        <p class="conf-step__paragraph">Выберите зал для конфигурации:</p>
+        <form
+          [formGroup]="hallPriceConfigurationFormGroup"
+          (ngSubmit)="submitPriceConfiguration()"
+        >
+          <p class="conf-step__paragraph">Выберите зал для конфигурации:</p>
 
-        <ul class="conf-step__selectors-box">
-          <li *ngFor="let hall of halls">
-            <input
-              type="radio"
-              class="conf-step__radio"
-              name="prises-hall"
-              value="{{ hall.hall_name }}"
-              [attr.checked]="halls.indexOf(hall) === 0 ? true:null"
-              (click)='setActiveHallIndex(halls.indexOf(hall))'
-            >
-                <span class="conf-step__selector"> {{ hall.hall_name }} </span>
-          </li>
-        </ul>
-
-        <p class="conf-step__paragraph">Установите цены для типов кресел:</p>
-          <div class="conf-step__legend">
-            <label class="conf-step__label">Цена, рублей
+          <ul class="conf-step__selectors-box">
+            <li *ngFor="let hall of halls">
               <input
-              type="text"
-              class="conf-step__input"
-              placeholder="0"
-              [(ngModel)] = "currentStandartPrice"
-              (keyup)="saveHallPrice()">
-            </label>
-            за <span class="conf-step__chair conf-step__chair_standart"></span> обычные кресла
-          </div>
-          <div class="conf-step__legend">
-            <label class="conf-step__label">Цена, рублей
-              <input type="text"
-              class="conf-step__input"
-              placeholder="0"
-              [(ngModel)] = "currentVipPrice"
-              (keyup)="saveHallPrice()">
-            </label>
-            за <span class="conf-step__chair conf-step__chair_vip"></span> VIP кресла
-          </div>
+                type="radio"
+                class="conf-step__radio"
+                name="pricesActiveHallId"
+                value="{{ hall.hall_id }}"
+                formControlName="pricesActiveHallId"
+                (change)="getPricesHallForPriceConfiguration()"
 
-        <fieldset class="conf-step__buttons text-center">
-          <button class="conf-step__button conf-step__button-regular"
-            (click)="canselChanges()"
-          >Отмена</button>
-          <input type="submit"
-            value="Сохранить"
-            class="conf-step__button conf-step__button-accent"
-            (click)="submitPriceConfiguration()">
-        </fieldset>
+              >
+              <span class="conf-step__selector"> {{ hall.hall_name }} </span>
+            </li>
+          </ul>
+
+          <p class="conf-step__paragraph">Установите цены для типов кресел:</p>
+            <div class="conf-step__legend">
+              <label class="conf-step__label">Цена, рублей
+                <input
+                  type="text"
+                  class="conf-step__input"
+                  placeholder="0"
+                  formControlName="currentStandartPrice"
+                  (change)="saveHallPrice()"
+                >
+              </label>
+              за <span class="conf-step__chair conf-step__chair_standart"></span> обычные кресла
+            </div>
+            <div class="conf-step__legend">
+              <label class="conf-step__label">Цена, рублей
+                <input type="text"
+                  class="conf-step__input"
+                  placeholder="0"
+                  formControlName="currentVipPrice"
+                  (change)="saveHallPrice()"
+                >
+              </label>
+              за <span class="conf-step__chair conf-step__chair_vip"></span> VIP кресла
+            </div>
+
+          <fieldset class="conf-step__buttons text-center">
+            <button type="button" class="conf-step__button conf-step__button-regular"
+              (click)="canselHallChanges()">Отмена</button>
+            <button type="submit"
+              class="conf-step__button conf-step__button-accent">Сохранить</button>
+          </fieldset>
+        </form>
       </div>
     </section>
 
@@ -216,24 +235,88 @@
           </div>
         </div>
 
-        <fieldset class="conf-step__buttons text-center">
+        <!-- <fieldset class="conf-step__buttons text-center">
           <button class="conf-step__button conf-step__button-regular">Отмена</button>
           <input type="submit" value="Сохранить" class="conf-step__button conf-step__button-accent">
-        </fieldset>
+        </fieldset> -->
       </div>
     </section>
 
     <section class="conf-step">
-      <header class="conf-step__header conf-step__header_opend" appShowOrHide>
+        <header class="conf-step__header conf-step__header_opend" appShowOrHide>
+          <h2 class="conf-step__title">Открыть продажи</h2>
+        </header>
+      <div class="conf-step__wrapper">
+
+
+        <form
+          [formGroup]="hallActivityFormGroup"
+          (ngSubmit)="submitNewActivity()"
+        >
+          <p class="conf-step__paragraph">Выберите зал, чтобы назначить активность:</p>
+          <ul class="conf-step__selectors-box">
+            <li *ngFor="let hall of halls">
+              <input
+                type="radio"
+                class="conf-step__radio"
+                name="hallActivityActiveHall"
+                value="{{ hall.hall_id }}"
+                formControlName="hallActivityActiveHall"
+              >
+              <span class="conf-step__selector"> {{ hall.hall_name }} </span>
+            </li>
+
+            <div class="conf-step__wrapper text-center">
+              <button class="conf-step__button conf-step__button-accent">{{getActiveButtonText()}}</button>
+            </div>
+
+          </ul>
+        </form>
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+      <!-- <header class="conf-step__header conf-step__header_opend" appShowOrHide>
         <h2 class="conf-step__title">Открыть продажи</h2>
       </header>
       <div class="conf-step__wrapper text-center">
         <p class="conf-step__paragraph">Всё готово, теперь можно:</p>
         <button class="conf-step__button conf-step__button-accent">Открыть продажу билетов</button>
-      </div>
+      </div> -->
     </section>
   </main>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <!-- Попап "Создать холл" -->
 <div
@@ -423,13 +506,12 @@
               type="time"
               value="00:00"
               name="start_time"
-              required
               formControlName="time"
             >
           </label>
           <div class="conf-step_notice"></div>
           <div class="conf-step__buttons text-center">
-            <button type="submit" class="conf-step__button conf-step__button-accent" [disabled]="addShowtimeFormGroup.invalid">Добавить</button>
+            <button type="submit" class="conf-step__button conf-step__button-accent" [disabled]="addShowtimeFormGroup.invalid">Добавить сессию</button>
             <button type="button" class="conf-step__button conf-step__button-regular" (click)="closeShowtimeAddPopup()">Отменить</button>
           </div>
         </form>

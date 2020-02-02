@@ -44,6 +44,7 @@ export class ClientHallComponent implements OnInit {
     hall_id: '',
     hall_name: '',
     hall_configuration: '',
+    hall_activity: '',
     hall_chair_price: '',
     hall_vip_chair_price: ''
   };

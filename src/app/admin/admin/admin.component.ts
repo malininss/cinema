@@ -14,6 +14,7 @@ export class AdminComponent implements OnInit {
     {
       hall_id: '',
       hall_name: '',
+      hall_activity: '0',
       hall_vip_chair_price: '',
       hall_chair_price: null,
       hall_configuration: null
@@ -30,20 +31,14 @@ export class AdminComponent implements OnInit {
   addFilmFormGroup: FormGroup;
   deleteSessionFormGroup: FormGroup;
   hallConfigurateFormGroup: FormGroup;
+  hallPriceConfigurationFormGroup: FormGroup;
+  hallActivityFormGroup: FormGroup;
 
   visibleCreateHallPopup = false;
   visibleDeleteHallPopup = false;
   visibleCreateFilmPopup = false;
   visibleShowtimeAddPopup = false;
   visibleDeleteSessionPopup = false;
-
-  indexOfSelectedHall = 0;
-
-  currentRow = 0;
-  currentPlace = 0;
-
-  currentStandartPrice = '0';
-  currentVipPrice = '0';
 
   addShowtimeFilmId: string;
 
@@ -83,18 +78,75 @@ export class AdminComponent implements OnInit {
     });
 
     this.hallConfigurateFormGroup = new FormGroup({
-      activeHall: new FormControl(''),
+      activeHallId: new FormControl(''),
       currentRow: new FormControl(''),
       currentPlace: new FormControl('')
     });
 
+    this.hallPriceConfigurationFormGroup = new FormGroup({
+      pricesActiveHallId: new FormControl(''),
+      currentStandartPrice: new FormControl(''),
+      currentVipPrice: new FormControl('')
+    });
+
+    this.hallActivityFormGroup = new FormGroup({
+      hallActivityActiveHall: new FormControl('')
+    });
+  }
+
+
+
+
+  // Методы, связанные с холлом
+  getHalls() {
+    this.appApiService.getHalls()
+    .subscribe((halls: Hall[]) => {
+      halls.forEach(item => {
+        item.hall_configuration = JSON.parse(item.hall_configuration);
+      });
+
+      this.halls = halls;
+
+      this.hallConfigurateFormGroup.patchValue({
+        activeHallId: this.halls[0].hall_id,
+      });
+
+      this.hallPriceConfigurationFormGroup.patchValue({
+        pricesActiveHallId: this.halls[0].hall_id,
+        currentStandartPrice: this.halls[0].hall_chair_price,
+        currentVipPrice: this.halls[0].hall_vip_chair_price
+      });
+
+      this.hallActivityFormGroup.patchValue({
+        hallActivityActiveHall: this.halls[0].hall_id,
+      });
+
+      this.getRowAndPlaceValue();
+
+    });
+  }
+
+  getHallById(id) {
+    return this.halls.filter(item => {
+      return item.hall_id === id;
+    })[0];
+  }
+
+  getHallNameById(id) {
+    const hall: Hall = this.halls.filter(item => {
+      return item.hall_id === id;
+    })[0];
+
+    if (hall) {
+      return hall.hall_name;
+    }
   }
 
   createHall() {
-
     const formdata = {...this.addHallFormGroup.value};
     const objToSend = {
-      hall_name: formdata.hallName
+      hall_name: formdata.hallName,
+      hall_activity: '0'
     };
 
     this.appApiService.newHall(objToSend)
@@ -102,11 +154,9 @@ export class AdminComponent implements OnInit {
       this.getHalls();
       this.closeCreateHallPopup();
     });
-
   }
 
   deleteHall() {
-
     this.getFilms();
     this.appApiService.deleteHall(this.hallToDelete.hall_id)
     .subscribe(data => {
@@ -127,104 +177,16 @@ export class AdminComponent implements OnInit {
       this.getHalls();
       this.closeDeleteHallPopup();
       this.hallToDelete = '';
-
     });
-
-  }
-
-  getHalls() {
-    this.appApiService.getHalls()
-    .subscribe((halls: Hall[]) => {
-      halls.forEach(item => {
-        item.hall_configuration = JSON.parse(item.hall_configuration);
-      });
-
-      this.currentStandartPrice = halls[this.indexOfSelectedHall].hall_chair_price;
-      this.currentVipPrice = halls[this.indexOfSelectedHall].hall_vip_chair_price;
-      this.halls = halls;
-
-      this.hallConfigurateFormGroup.patchValue({
-        activeHall: this.halls[0].hall_id,
-      });
-
-      // console.log(this.hallConfigurateFormGroup.value);
-
-      this.getRowAndPlaceValue();
-
-    });
-  }
-
-  showDeleteHallPopup(hall) {
-    this.hallToDelete = hall;
-    this.visibleDeleteHallPopup = true;
-  }
-
-  showCreateHallPopup() {
-    this.visibleCreateHallPopup = true;
-  }
-
-  showCreateFilmPopup() {
-    this.visibleCreateFilmPopup = true;
-  }
-
-  showShowtimeAddPopup(filmId) {
-    this.addShowtimeFilmId = filmId;
-    this.visibleShowtimeAddPopup = true;
-  }
-
-  showDeleteSessionPopup(hallId, filmIdAndTime) {
-    this.deleteSessionFormGroup.value.hallId = hallId;
-    this.deleteSessionFormGroup.value.filmId = filmIdAndTime.value;
-    this.deleteSessionFormGroup.value.sessionTime = filmIdAndTime.key;
-
-    this.visibleDeleteSessionPopup = true;
-  }
-
-  closeCreateHallPopup() {
-    this.hallToDelete = '';
-    this.visibleCreateHallPopup = false;
-  }
-
-  closeDeleteHallPopup() {
-    this.visibleDeleteHallPopup = false;
-  }
-
-  closeCreateFilmPopup() {
-    this.visibleCreateFilmPopup = false;
-  }
-
-  closeShowtimeAddPopup() {
-    this.visibleShowtimeAddPopup = false;
-    const notice = document.querySelector('.conf-step_notice');
-    notice.innerHTML = '';
-  }
-
-  closeDeleteSessionPopup() {
-    this.deleteSessionFormGroup.value.filmId = null;
-    this.visibleDeleteSessionPopup = false;
-  }
-
-  setActiveHallIndex(index) {
-    this.indexOfSelectedHall = index;
-
-    // Устанавливаем количество мест и рядов для блока конфигурации зала
-    this.currentRow = this.halls[this.indexOfSelectedHall].hall_configuration.length;
-    this.currentPlace = this.halls[this.indexOfSelectedHall].hall_configuration[0].length;
-
-    this.currentStandartPrice = this.halls[this.indexOfSelectedHall].hall_chair_price;
-    this.currentVipPrice = this.halls[this.indexOfSelectedHall].hall_vip_chair_price;
   }
 
   editHallConf() {
 
     const rows = this.hallConfigurateFormGroup.value.currentRow;
     const places = this.hallConfigurateFormGroup.value.currentPlace;
-    const hall = this.getHallById(this.hallConfigurateFormGroup.value.activeHall);
-
-    // Переименовать
+    const hall = this.getHallById(this.hallConfigurateFormGroup.value.activeHallId);
     const updatedHallConfiguration: any = hall.hall_configuration;
 
-    // console.log(testHall);
     // Если нужно добавить места
     if (places > updatedHallConfiguration[0].length) {
 
@@ -257,7 +219,7 @@ export class AdminComponent implements OnInit {
 
     if (rowToAdd < 0) {
       // Тут надо удалить ряды, просто обрезаем
-      this.halls[this.indexOfSelectedHall].hall_configuration = updatedHallConfiguration.slice(0, rowToAdd);
+      hall.hall_configuration = updatedHallConfiguration.slice(0, rowToAdd);
     }
 
     if (rowToAdd > 0) {
@@ -278,10 +240,6 @@ export class AdminComponent implements OnInit {
     }
   }
 
-  canselChanges() {
-    this.getHalls();
-  }
-
   submitHallConfiguration() {
     this.halls.forEach(hall => {
         this.appApiService.editHall(hall, hall.hall_id)
@@ -299,9 +257,12 @@ export class AdminComponent implements OnInit {
     }
   }
 
+
   saveHallPrice() {
-    this.halls[this.indexOfSelectedHall].hall_chair_price = this.currentStandartPrice;
-    this.halls[this.indexOfSelectedHall].hall_vip_chair_price = this.currentVipPrice;
+    const priceValue = this.hallPriceConfigurationFormGroup.value;
+    const hall = this.getHallById(priceValue.pricesActiveHallId);
+    this.halls[this.halls.indexOf(hall)].hall_chair_price = priceValue.currentStandartPrice;
+    this.halls[this.halls.indexOf(hall)].hall_vip_chair_price = priceValue.currentVipPrice;
   }
 
   submitPriceConfiguration() {
@@ -340,10 +301,44 @@ export class AdminComponent implements OnInit {
         }
       });
       this.hallTimeLine = hallLineObj;
-      // console.log(hallLineObj);
     });
   }
 
+  getRowAndPlaceValue() {
+    const activeHallId = this.hallConfigurateFormGroup.get('activeHallId').value;
+    const activeHall = this.getHallById(activeHallId);
+
+    this.hallConfigurateFormGroup.patchValue({
+      currentRow: activeHall.hall_configuration.length,
+      currentPlace: activeHall.hall_configuration[0].length
+    });
+  }
+
+  getActiveHallForConfiguration() {
+    const activeHallId = this.hallConfigurateFormGroup.get('activeHallId').value;
+    const activeHall = this.getHallById(activeHallId);
+    return activeHall.hall_configuration;
+  }
+
+  getPricesHallForPriceConfiguration() {
+    const pricesActiveHallId = this.hallPriceConfigurationFormGroup.get('pricesActiveHallId').value;
+    const pricesActiveHall = this.getHallById(pricesActiveHallId);
+
+    this.hallPriceConfigurationFormGroup.patchValue({
+      currentStandartPrice: pricesActiveHall.hall_chair_price,
+      currentVipPrice: pricesActiveHall.hall_vip_chair_price
+
+    });
+  }
+
+  canselHallChanges() {
+    this.getHalls();
+  }
+
+
+
+
+  // Методы, относящиеся к фильмама и таймлайну
   getFilms() {
     this.appApiService.getFilms()
       .subscribe((films: Film[]) => {
@@ -550,16 +545,11 @@ export class AdminComponent implements OnInit {
         ];
       }
 
-      // console.log(arrToSend);
-
-
       this.appApiService.updateFilm(JSON.stringify({film_schedule: arrToSend}), this.addShowtimeFilmId)
         .subscribe(response => {
           this.closeShowtimeAddPopup();
           this.getHallTimeLine();
-          this.getFilms();
-
-
+          // this.getFilms();
         });
     } else {
       return false;
@@ -567,15 +557,6 @@ export class AdminComponent implements OnInit {
 
   }
 
-  getHallNameById(id) {
-    const hall: Hall = this.halls.filter(item => {
-      return item.hall_id === id;
-    })[0];
-
-    if (hall) {
-      return hall.hall_name;
-    }
-  }
 
   deleteSession() {
     const film = this.getFilmById(this.deleteSessionFormGroup.value.filmId);
@@ -665,7 +646,6 @@ export class AdminComponent implements OnInit {
     });
 
     dragAndDropContainers.forEach(container => {
-      // console.log(container);
       container.addEventListener('dragenter', dragEnter);
       container.addEventListener('drop', dragDrop);
       container.addEventListener('dragover', dragOver);
@@ -674,27 +654,85 @@ export class AdminComponent implements OnInit {
   }
 
 
-  getHallById(id) {
-    return this.halls.filter(item => {
-      return item.hall_id === id;
-    })[0];
-  }
+    // Попапы
+
+    showDeleteHallPopup(hall) {
+      this.hallToDelete = hall;
+      this.visibleDeleteHallPopup = true;
+    }
+
+    showCreateHallPopup() {
+      this.visibleCreateHallPopup = true;
+    }
+
+    showCreateFilmPopup() {
+      this.visibleCreateFilmPopup = true;
+    }
+
+    showShowtimeAddPopup(filmId) {
+      this.addShowtimeFilmId = filmId;
+      this.visibleShowtimeAddPopup = true;
+    }
+
+    showDeleteSessionPopup(hallId, filmIdAndTime) {
+      this.deleteSessionFormGroup.value.hallId = hallId;
+      this.deleteSessionFormGroup.value.filmId = filmIdAndTime.value;
+      this.deleteSessionFormGroup.value.sessionTime = filmIdAndTime.key;
+
+      this.visibleDeleteSessionPopup = true;
+    }
+
+    closeCreateHallPopup() {
+      this.hallToDelete = '';
+      this.visibleCreateHallPopup = false;
+    }
+
+    closeDeleteHallPopup() {
+      this.visibleDeleteHallPopup = false;
+    }
+
+    closeCreateFilmPopup() {
+      this.visibleCreateFilmPopup = false;
+    }
+
+    closeShowtimeAddPopup() {
+      this.visibleShowtimeAddPopup = false;
+      const notice = document.querySelector('.conf-step_notice');
+      notice.innerHTML = '';
+    }
+
+    closeDeleteSessionPopup() {
+      this.deleteSessionFormGroup.value.filmId = null;
+      this.visibleDeleteSessionPopup = false;
+    }
 
 
-  getRowAndPlaceValue() {
-    const activeHallId = this.hallConfigurateFormGroup.get('activeHall').value;
-    const activeHall = this.getHallById(activeHallId);
 
-    this.hallConfigurateFormGroup.patchValue({
-      currentRow: activeHall.hall_configuration.length,
-      currentPlace: activeHall.hall_configuration[0].length
-    });
-  }
+    /// Активность зала
 
-  getActiveHallForConfiguration() {
-    const activeHallId = this.hallConfigurateFormGroup.get('activeHall').value;
-    const activeHall = this.getHallById(activeHallId);
-    return activeHall.hall_configuration;
-  }
+    getActiveButtonText() {
+      const activeHallId = this.hallActivityFormGroup.value.hallActivityActiveHall;
+      const activeHall = this.getHallById(activeHallId);
+      if (activeHall.hall_activity === '1') {
+        return 'Остановить продажи';
+      } else {
+        return 'Начать продажи';
+      }
+    }
+
+    submitNewActivity() {
+      const activeHallId = this.hallActivityFormGroup.value.hallActivityActiveHall;
+      const activeHall = this.getHallById(activeHallId);
+
+      const newActiveStatus = activeHall.hall_activity === '0' ? '1' : '0';
+
+      this.appApiService.editHall({hall_activity: newActiveStatus}, activeHallId)
+        .subscribe(response => {
+          this.getHalls();
+        });
+
+
+    }
+
 }
 

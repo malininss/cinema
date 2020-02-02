@@ -83,7 +83,10 @@ class HallsApi extends Api {
     $parse_url = parse_url($this->requestUri[0]);
     $hallId = $parse_url['path'] ?? null;
     $params = json_decode($this->requestParams,true);
-    $params['hall_configuration'] = json_encode($params['hall_configuration']);
+
+    if (isset($params['hall_configuration'])) {
+      $params['hall_configuration'] = json_encode($params['hall_configuration']);
+    }
 
     $db = (new Connection())->getConnection();
 
