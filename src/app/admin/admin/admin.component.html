@@ -26,78 +26,79 @@
         <h2 class="conf-step__title">Конфигурация залов</h2>
       </header>
       <div class="conf-step__wrapper">
-        <p class="conf-step__paragraph">Выберите зал для конфигурации:</p>
+        <form
+          [formGroup]="hallConfigurateFormGroup"
+          (ngSubmit)="submitHallConfiguration()"
+        >
+          <p class="conf-step__paragraph">Выберите зал для конфигурации:</p>
 
-        <ul class="conf-step__selectors-box">
-          <li *ngFor="let hall of halls">
-            <input
-              type="radio"
-              class="conf-step__radio"
-              name="chairs-hall"
-              value="{{ hall.hall_name }}"
-              [attr.checked]="halls.indexOf(hall) === 0 ? true:null"
-              (click)='setActiveHallIndex(halls.indexOf(hall))'
-            >
-                <span class="conf-step__selector"> {{ hall.hall_name }} </span>
-          </li>
-        </ul>
+          <ul class="conf-step__selectors-box">
+            <li *ngFor="let hall of halls">
+              <input
+                type="radio"
+                class="conf-step__radio"
+                name="activeHall"
+                (change)='getRowAndPlaceValue()'
+                value='{{hall.hall_id}}'
+                formControlName="activeHall"
+              >
+              <span class="conf-step__selector"> {{ hall.hall_name }} </span>
+            </li>
+          </ul>
 
-        <p class="conf-step__paragraph">Укажите количество рядов и максимальное количество кресел в ряду:</p>
-        <div class="conf-step__legend">
-          <label class="conf-step__label">Рядов, шт<input type="number" class="conf-step__input"
-            [(ngModel)]="currentRow"
-            placeholder="10"
-            (change)="editHallConf(currentRow, currentPlace)"
-            ></label>
-          <span class="multiplier">x</span>
-          <label
-            class="conf-step__label">Мест, шт<input type="number" class="conf-step__input"
-            [(ngModel)]="currentPlace"
-            placeholder="8"
-            (change)="editHallConf(currentRow, currentPlace)"
-            ></label>
-        </div>
-        <p class="conf-step__paragraph">Теперь вы можете указать типы кресел на схеме зала:</p>
-        <div class="conf-step__legend">
-          <span class="conf-step__chair conf-step__chair_standart"></span> — обычные кресла
-          <span class="conf-step__chair conf-step__chair_vip"></span> — VIP кресла
-          <span class="conf-step__chair conf-step__chair_disabled"></span> — заблокированные (нет кресла)
-          <p class="conf-step__hint">Чтобы изменить вид кресла, нажмите по нему левой кнопкой мыши</p>
-        </div>
-
-        <!-- <div>
-          <pre>
-            {{halls[indexOfSelectedHall].hall_configuration | json}}
-          </pre>
-        </div> -->
+          <p class="conf-step__paragraph">Укажите количество рядов и максимальное количество кресел в ряду:</p>
+          <div class="conf-step__legend">
+            <label class="conf-step__label">Рядов, шт<input type="number" class="conf-step__input"
+              formControlName="currentRow"
+              placeholder="10"
+              (change)="editHallConf()"
+              ></label>
+            <span class="multiplier">x</span>
+            <label
+              class="conf-step__label">Мест, шт<input type="number" class="conf-step__input"
+              formControlName="currentPlace"
+              placeholder="8"
+              (change)="editHallConf()"
+              ></label>
+          </div>
 
 
-        <div class="conf-step__hall">
-          <div class="conf-step__hall-wrapper">
-            <div class="conf-step__row" *ngFor="let row of halls[indexOfSelectedHall].hall_configuration" >
-              <span
-                class="conf-step__chair"
-                [ngClass]="{
-                  'conf-step__chair_disabled': place.type === 'disabled',
-                  'conf-step__chair_standart': place.type === 'simple',
-                  'conf-step__chair_vip': place.type === 'vip'
-                  }"
-                *ngFor="let place of row"
-                (click)="changePlaceType(place)"
-              ></span>
+          <p class="conf-step__paragraph">Теперь вы можете указать типы кресел на схеме зала:</p>
+          <div class="conf-step__legend">
+            <span class="conf-step__chair conf-step__chair_standart"></span> — обычные кресла
+            <span class="conf-step__chair conf-step__chair_vip"></span> — VIP кресла
+            <span class="conf-step__chair conf-step__chair_disabled"></span> — заблокированные (нет кресла)
+            <p class="conf-step__hint">Чтобы изменить вид кресла, нажмите по нему левой кнопкой мыши</p>
+          </div>
+
+
+          <div class="conf-step__hall">
+            <div class="conf-step__hall-wrapper">
+              <div class="conf-step__row" *ngFor="let row of getActiveHallForConfiguration()" >
+                <span
+                  class="conf-step__chair"
+                  [ngClass]="{
+                    'conf-step__chair_disabled': place.type === 'disabled',
+                    'conf-step__chair_standart': place.type === 'simple',
+                    'conf-step__chair_vip': place.type === 'vip'
+                    }"
+                  *ngFor="let place of row"
+                  (click)="changePlaceType(place)"
+                ></span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <fieldset class="conf-step__buttons text-center">
+          <fieldset class="conf-step__buttons text-center">
 
-          <button class="conf-step__button conf-step__button-regular"
-            (click)="canselChanges()"
-            >Отмена</button>
+            <button type="button" class="conf-step__button conf-step__button-regular"
+              (click)="canselChanges()"
+              >Отмена</button>
 
-          <input type="submit" value="Сохранить" class="conf-step__button conf-step__button-accent"
-          (click)="submitHallConfiguration()">
-        </fieldset>
+            <button type="submit" class="conf-step__button conf-step__button-accent">Сохранить</button>
+
+          </fieldset>
+        </form>
       </div>
     </section>
 
@@ -106,6 +107,7 @@
         <h2 class="conf-step__title">Конфигурация цен</h2>
       </header>
       <div class="conf-step__wrapper">
+
         <p class="conf-step__paragraph">Выберите зал для конфигурации:</p>
 
         <ul class="conf-step__selectors-box">
@@ -182,6 +184,8 @@
           </div>
 
         </div>
+
+        <p class="conf-step__paragraph">Перетащите фильм в сетку сеансов</p>
 
         <div
           class="conf-step__seances"

@@ -29,6 +29,7 @@ export class AdminComponent implements OnInit {
   hallToDelete: any = '';
   addFilmFormGroup: FormGroup;
   deleteSessionFormGroup: FormGroup;
+  hallConfigurateFormGroup: FormGroup;
 
   visibleCreateHallPopup = false;
   visibleDeleteHallPopup = false;
@@ -37,9 +38,6 @@ export class AdminComponent implements OnInit {
   visibleDeleteSessionPopup = false;
 
   indexOfSelectedHall = 0;
-  activeHall: number;
-  activeHallRowNumber: number;
-  activeHallPlacesNumber: number;
 
   currentRow = 0;
   currentPlace = 0;
@@ -82,6 +80,12 @@ export class AdminComponent implements OnInit {
       film_description: new FormControl(null),
       film_duration: new FormControl(null),
       film_country: new FormControl(null)
+    });
+
+    this.hallConfigurateFormGroup = new FormGroup({
+      activeHall: new FormControl(''),
+      currentRow: new FormControl(''),
+      currentPlace: new FormControl('')
     });
 
   }
@@ -135,13 +139,18 @@ export class AdminComponent implements OnInit {
         item.hall_configuration = JSON.parse(item.hall_configuration);
       });
 
-      this.currentRow = halls[this.indexOfSelectedHall].hall_configuration.length;
-      this.currentPlace = halls[this.indexOfSelectedHall].hall_configuration[0].length;
-
       this.currentStandartPrice = halls[this.indexOfSelectedHall].hall_chair_price;
       this.currentVipPrice = halls[this.indexOfSelectedHall].hall_vip_chair_price;
-
       this.halls = halls;
+
+      this.hallConfigurateFormGroup.patchValue({
+        activeHall: this.halls[0].hall_id,
+      });
+
+      // console.log(this.hallConfigurateFormGroup.value);
+
+      this.getRowAndPlaceValue();
+
     });
   }
 
@@ -206,13 +215,20 @@ export class AdminComponent implements OnInit {
     this.currentVipPrice = this.halls[this.indexOfSelectedHall].hall_vip_chair_price;
   }
 
-  editHallConf(rows, places) {
+  editHallConf() {
 
-    const testHall: any = this.halls[this.indexOfSelectedHall].hall_configuration;
+    const rows = this.hallConfigurateFormGroup.value.currentRow;
+    const places = this.hallConfigurateFormGroup.value.currentPlace;
+    const hall = this.getHallById(this.hallConfigurateFormGroup.value.activeHall);
+
+    // Переименовать
+    const updatedHallConfiguration: any = hall.hall_configuration;
+
+    // console.log(testHall);
     // Если нужно добавить места
-    if (places > testHall[0].length) {
+    if (places > updatedHallConfiguration[0].length) {
 
-      for (const i of testHall) {
+      for (const i of updatedHallConfiguration) {
         const currentLength = i.length;
 
         for (let j = 0; j < (places - currentLength); j++ ) {
@@ -225,10 +241,10 @@ export class AdminComponent implements OnInit {
     }
 
     // Если нужно обрезать места (везде)
-    if (places < testHall[0].length) {
-      const placesForSubtraction = places - testHall[0].length;
-      for (let i = 0; i < testHall.length; i++) {
-        testHall[i] = testHall[i].slice(0, placesForSubtraction);
+    if (places < updatedHallConfiguration[0].length) {
+      const placesForSubtraction = places - updatedHallConfiguration[0].length;
+      for (let i = 0; i < updatedHallConfiguration.length; i++) {
+        updatedHallConfiguration[i] = updatedHallConfiguration[i].slice(0, placesForSubtraction);
       }
     }
 
@@ -237,11 +253,11 @@ export class AdminComponent implements OnInit {
     let rowToAdd = 0;
 
     // Считаем количество рядов для добавления / удаления
-    rowToAdd = rows - (testHall.length);
+    rowToAdd = rows - (updatedHallConfiguration.length);
 
     if (rowToAdd < 0) {
       // Тут надо удалить ряды, просто обрезаем
-      this.halls[this.indexOfSelectedHall].hall_configuration = testHall.slice(0, rowToAdd);
+      this.halls[this.indexOfSelectedHall].hall_configuration = updatedHallConfiguration.slice(0, rowToAdd);
     }
 
     if (rowToAdd > 0) {
@@ -257,7 +273,7 @@ export class AdminComponent implements OnInit {
           });
         }
 
-        testHall.push(arrayToPush);
+        updatedHallConfiguration.push(arrayToPush);
       }
     }
   }
@@ -267,11 +283,9 @@ export class AdminComponent implements OnInit {
   }
 
   submitHallConfiguration() {
-    // Неправивльно перебирать всё
     this.halls.forEach(hall => {
         this.appApiService.editHall(hall, hall.hall_id)
           .subscribe(response => {
-            // console.log(response);
           });
     });
   }
@@ -291,7 +305,6 @@ export class AdminComponent implements OnInit {
   }
 
   submitPriceConfiguration() {
-    // Неправивльно перебирать всё
     this.halls.forEach(hall => {
       this.appApiService.editHall(hall, hall.hall_id)
         .subscribe(response => {
@@ -327,6 +340,7 @@ export class AdminComponent implements OnInit {
         }
       });
       this.hallTimeLine = hallLineObj;
+      // console.log(hallLineObj);
     });
   }
 
@@ -386,12 +400,14 @@ export class AdminComponent implements OnInit {
         obj.film_country &&
         obj.film_img ) {
 
-      this.appApiService.newFilm(obj)
-      .subscribe(data => {
-        // тут обнулить значения формы при добавлении фильма
-        this.closeCreateFilmPopup();
-        this.getFilms();
-      });
+      console.log(obj);
+
+      // this.appApiService.newFilm(obj)
+      // .subscribe(data => {
+      //   // тут обнулить значения формы при добавлении фильма
+      //   this.closeCreateFilmPopup();
+      //   this.getFilms();
+      // });
 
     }
   }
@@ -655,6 +671,30 @@ export class AdminComponent implements OnInit {
       container.addEventListener('dragover', dragOver);
       container.addEventListener('dragleave', dragLeave);
     });
+  }
+
+
+  getHallById(id) {
+    return this.halls.filter(item => {
+      return item.hall_id === id;
+    })[0];
+  }
+
+
+  getRowAndPlaceValue() {
+    const activeHallId = this.hallConfigurateFormGroup.get('activeHall').value;
+    const activeHall = this.getHallById(activeHallId);
+
+    this.hallConfigurateFormGroup.patchValue({
+      currentRow: activeHall.hall_configuration.length,
+      currentPlace: activeHall.hall_configuration[0].length
+    });
+  }
+
+  getActiveHallForConfiguration() {
+    const activeHallId = this.hallConfigurateFormGroup.get('activeHall').value;
+    const activeHall = this.getHallById(activeHallId);
+    return activeHall.hall_configuration;
   }
 }
 
