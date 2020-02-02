@@ -197,7 +197,7 @@
             (click)="showShowtimeAddPopup(film.film_id)"
             (mousedown)="registerDragAndDropEvents()"
           >
-            <img class="conf-step__movie-poster" alt="poster" src="../assets/i/poster1.jpg">
+          <img class="conf-step__movie-poster" alt="poster" src="{{ film.film_img }}">
             <h3 class="conf-step__movie-title">{{ film.film_name }}</h3>
             <p class="conf-step__movie-duration">{{ film.film_duration }} минут</p>
           </div>
@@ -449,6 +449,17 @@
               type="text"
               placeholder="Например, &laquo;Румыния&raquo;"
               formControlName="film_country"
+            >
+          </label>
+
+          <label class="conf-step__label conf-step__label-fullsize" for="name">
+            Изображение фильма
+            <input
+              class="conf-step__input"
+              type="file"
+              id="film-image"
+              name="film-image"
+              (change)="test($event)"
             >
           </label>
 

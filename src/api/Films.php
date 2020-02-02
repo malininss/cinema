@@ -12,6 +12,8 @@ class Films {
     $valuesString = '';
 
     // print_r($arr);
+
+
     foreach ($arr as $key => $value) {
       $keysString .= $key . ',';
       if (is_integer($value)) {

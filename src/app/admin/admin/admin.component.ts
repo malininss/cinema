@@ -74,7 +74,8 @@ export class AdminComponent implements OnInit {
       film_name: new FormControl(null),
       film_description: new FormControl(null),
       film_duration: new FormControl(null),
-      film_country: new FormControl(null)
+      film_country: new FormControl(null),
+      film_img: new FormControl(null)
     });
 
     this.hallConfigurateFormGroup = new FormGroup({
@@ -386,7 +387,7 @@ export class AdminComponent implements OnInit {
 
   createFilm() {
 
-    const obj = {...this.addFilmFormGroup.value, film_img: '..\/assets\/i\/poster1.jpg'};
+    const obj = {...this.addFilmFormGroup.value};
 
 
     if (obj.film_name &&
@@ -397,12 +398,12 @@ export class AdminComponent implements OnInit {
 
       console.log(obj);
 
-      // this.appApiService.newFilm(obj)
-      // .subscribe(data => {
-      //   // тут обнулить значения формы при добавлении фильма
-      //   this.closeCreateFilmPopup();
-      //   this.getFilms();
-      // });
+      this.appApiService.newFilm(obj)
+      .subscribe(data => {
+        // тут обнулить значения формы при добавлении фильма
+        this.closeCreateFilmPopup();
+        this.getFilms();
+      });
 
     }
   }
@@ -734,5 +735,30 @@ export class AdminComponent implements OnInit {
 
     }
 
+    test(event) {
+      const file = event.target.files[0];
+      this.addFilmFormGroup.get('film_img').setValue(file);
+      // console.log(file);
+      this.addFilmFormGroup.patchValue({
+        film_img: file
+      });
+      console.log(this.addFilmFormGroup.value);
+
+
+      // const test = new FormData();
+      // test.append('image', file);
+
+      // this.appApiService.newFilm(test)
+      //   .subscribe(response => {
+      //     console,log(response);
+      //   });
+
+      // console.log(test);
+    }
 }
+
+
+// this.hallActivityFormGroup.patchValue({
+//   hallActivityActiveHall: this.halls[0].hall_id,
+// });
 

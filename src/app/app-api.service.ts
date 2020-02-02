@@ -99,12 +99,24 @@ export class AppApiService {
   }
 
   newFilm(filmObj) {
+    // this.toFormData(filmObj);
     const requestUrl = this.apiUrl + '/films';
-    return this.http.post(requestUrl, filmObj);
+    return this.http.post(requestUrl, this.toFormData(filmObj));
   }
 
   updateFilm(updateObj, filmId) {
     const requestUrl = this.apiUrl + '/films/' + filmId + '/PUT';
     return this.http.post(requestUrl, updateObj);
+  }
+
+  toFormData(object) {
+    const formData = new FormData();
+
+    for ( const key of Object.keys(object) ) {
+      const value = object[key];
+      formData.append(key, value);
+    }
+
+    return formData;
   }
 }

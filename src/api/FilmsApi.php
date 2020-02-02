@@ -53,7 +53,38 @@ class FilmsApi extends Api {
    */
   public function createAction() {
     $db = (new Connection())->getConnection();
-    $params = json_decode($this->requestParams,true);
+
+    // $uploaddir = __DIR__;
+    // $uploadfile = $uploaddir . basename($_FILES[0]);
+
+    $params = $_POST;
+
+    print_r($_FILES);
+
+    if(isset($_FILES)) {
+
+      if ((int)$_FILES['film_img']['size']  >= 1048576 ) {
+        print_r('файл больше 10 мегабайт не загружать!');
+        return $this->response("Saving error", 500);
+      } elseif ($_FILES['film_img']['type'] !== 'image/jpeg' && $_FILES['film_img']['type'] !== 'image/png') {
+
+        // print_r($_FILES['film_img']['type'] !== 'image/png')
+        print_r('Разрешено загружать только файлы .jpg и .png');
+        return $this->response("Saving error", 500);
+      }
+
+      $pathToPosters = '/home/sergey/Рабочий стол/Netology FInal/Cinema/src/assets/i/';
+      $file_name = time() . '-' .  $_FILES['film_img']['name'];
+
+      $destiation_dir = $pathToPosters .'/'. $file_name;
+
+      move_uploaded_file($_FILES['film_img']['tmp_name'], $destiation_dir ); // Перемещаем файл в желаемую директорию
+      print_r('Файл успешно загружен');
+
+      // ИЗМЕНИТЬ ПУТЬ ДО КАРТИНКИ!!
+      $params['film_img'] = 'http://localhost:4200/assets/i/' . $file_name;
+
+    }
 
     if($params){
       if(Films::createFilm($db, $params)){
