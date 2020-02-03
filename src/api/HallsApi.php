@@ -56,17 +56,18 @@ class HallsApi extends Api {
 
     // Нужно получать данные через json_decode!!!
     $params = json_decode($this->requestParams,true);
-    // print_r($this->requestParams);
 
     if($params){
       if (!array_key_exists('hall_configuration', $params)) {
         $params['hall_configuration'] = file_get_contents('standart-hall-configuration.json');
       }
 
-
       if(Halls::createHall($db, $params)){
         return $this->response('Data saved.', 200);
       }
+
+      return $this->response("Create error", 500);
+
     }
   }
 

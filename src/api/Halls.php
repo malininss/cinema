@@ -8,6 +8,8 @@ class Halls {
    * @return boolean
    */
   static public function createHall($db, $arr) {
+    // print_r($arr);
+
     $keysString = '';
     $valuesString = '';
 

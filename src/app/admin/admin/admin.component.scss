@@ -1,6 +1,3 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
-$font-stack: 'Roboto', sans-serif;
-
 $lilac: #63536C;
 $lightlilac: #BC95D6;
 $green: #16A6AF;
@@ -745,4 +742,14 @@ input[type='radio'], input[type='submit'], button, .conf-step__header, select {
       }
     }
   }
+}
+
+.conf-step__button:disabled, .conf-step__button:disabled:hover {
+  background-color: #e9e9e9;
+  color: #bab7b7;
+  box-shadow: none;
+}
+
+.notice {
+  color: red;
 }

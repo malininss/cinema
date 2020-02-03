@@ -27,7 +27,9 @@ export class AdminComponent implements OnInit {
   addShowtimeFormGroup: FormGroup;
   addHallFormGroup: FormGroup;
   deleteHallFormGroup: FormGroup;
+  deleteFilmFormGroup: FormGroup;
   hallToDelete: any = '';
+  filmToDelete: any = '';
   addFilmFormGroup: FormGroup;
   deleteSessionFormGroup: FormGroup;
   hallConfigurateFormGroup: FormGroup;
@@ -39,8 +41,11 @@ export class AdminComponent implements OnInit {
   visibleCreateFilmPopup = false;
   visibleShowtimeAddPopup = false;
   visibleDeleteSessionPopup = false;
+  visibleDeleteFilmPopup = false;
 
   addShowtimeFilmId: string;
+
+  isPlaceChanges = false;
 
   constructor(
     private appApiService: AppApiService
@@ -57,11 +62,15 @@ export class AdminComponent implements OnInit {
     });
 
     this.addHallFormGroup = new FormGroup({
-      hallName: new FormControl('')
+      hallName: new FormControl('', Validators.required)
     });
 
     this.deleteHallFormGroup = new FormGroup({
       hallId: new FormControl(null)
+    });
+
+    this.deleteFilmFormGroup = new FormGroup({
+      filmId: new FormControl(null)
     });
 
     this.deleteSessionFormGroup = new FormGroup({
@@ -71,23 +80,23 @@ export class AdminComponent implements OnInit {
     });
 
     this.addFilmFormGroup = new FormGroup({
-      film_name: new FormControl(null),
-      film_description: new FormControl(null),
-      film_duration: new FormControl(null),
-      film_country: new FormControl(null),
-      film_img: new FormControl(null)
+      film_name: new FormControl(null, Validators.required),
+      film_description: new FormControl(null, Validators.required),
+      film_duration: new FormControl(null, Validators.required),
+      film_country: new FormControl(null, Validators.required),
+      film_img: new FormControl(null, Validators.required)
     });
 
     this.hallConfigurateFormGroup = new FormGroup({
       activeHallId: new FormControl(''),
-      currentRow: new FormControl(''),
-      currentPlace: new FormControl('')
+      currentRow: new FormControl(0, [Validators.max(15), Validators.min(1)]),
+      currentPlace: new FormControl(0, [Validators.max(15), Validators.min(1)])
     });
 
     this.hallPriceConfigurationFormGroup = new FormGroup({
       pricesActiveHallId: new FormControl(''),
-      currentStandartPrice: new FormControl(''),
-      currentVipPrice: new FormControl('')
+      currentStandartPrice: new FormControl(0, Validators.min(1)),
+      currentVipPrice: new FormControl(0, Validators.min(1))
     });
 
     this.hallActivityFormGroup = new FormGroup({
@@ -108,10 +117,14 @@ export class AdminComponent implements OnInit {
 
       this.halls = halls;
 
+
+      this.hallConfigurateFormGroup.reset();
       this.hallConfigurateFormGroup.patchValue({
         activeHallId: this.halls[0].hall_id,
       });
 
+
+      this.hallPriceConfigurationFormGroup.reset();
       this.hallPriceConfigurationFormGroup.patchValue({
         pricesActiveHallId: this.halls[0].hall_id,
         currentStandartPrice: this.halls[0].hall_chair_price,
@@ -123,6 +136,7 @@ export class AdminComponent implements OnInit {
       });
 
       this.getRowAndPlaceValue();
+      this.isPlaceChanges = false;
 
     });
   }
@@ -152,8 +166,11 @@ export class AdminComponent implements OnInit {
 
     this.appApiService.newHall(objToSend)
     .subscribe(data => {
+      // console.log(data);
       this.getHalls();
       this.closeCreateHallPopup();
+
+      this.addHallFormGroup.reset();
     });
   }
 
@@ -188,6 +205,12 @@ export class AdminComponent implements OnInit {
     const hall = this.getHallById(this.hallConfigurateFormGroup.value.activeHallId);
     const updatedHallConfiguration: any = hall.hall_configuration;
 
+    if (+rows > 15 ||
+        +rows <= 0 ||
+        +places > 15 ||
+        +places <= 0) {
+      return false;
+    }
     // Если нужно добавить места
     if (places > updatedHallConfiguration[0].length) {
 
@@ -245,17 +268,27 @@ export class AdminComponent implements OnInit {
     this.halls.forEach(hall => {
         this.appApiService.editHall(hall, hall.hall_id)
           .subscribe(response => {
+            this.getHalls();
           });
     });
   }
 
   changePlaceType(place) {
+
+    if (this.hallPriceConfigurationFormGroup.dirty) {
+      this.hallPriceConfigurationFormGroup.reset();
+    }
+
+
+
     const types = ['disabled', 'simple', 'vip'];
     if (types.indexOf(place.type) === types.length - 1) {
       place.type = types[0];
     } else {
       place.type = types[types.indexOf(place.type) + 1];
     }
+
+    this.isPlaceChanges = true;
   }
 
 
@@ -270,7 +303,7 @@ export class AdminComponent implements OnInit {
     this.halls.forEach(hall => {
       this.appApiService.editHall(hall, hall.hall_id)
         .subscribe(response => {
-          console.log(response);
+          this.getHalls();
         });
     });
   }
@@ -284,6 +317,7 @@ export class AdminComponent implements OnInit {
       films.forEach(film => {
         film.film_schedule = JSON.parse(film.film_schedule);
 
+        // console.log(film.film_schedule);
         if (film.film_schedule) {
           film.film_schedule.forEach(schedule => {
 
@@ -301,6 +335,13 @@ export class AdminComponent implements OnInit {
           });
         }
       });
+
+      this.halls.forEach(hall => {
+        if (!hallLineObj[hall.hall_id]) {
+          hallLineObj[hall.hall_id] = {};
+        }
+      });
+
       this.hallTimeLine = hallLineObj;
     });
   }
@@ -336,10 +377,6 @@ export class AdminComponent implements OnInit {
     this.getHalls();
   }
 
-
-
-
-  // Методы, относящиеся к фильмама и таймлайну
   getFilms() {
     this.appApiService.getFilms()
       .subscribe((films: Film[]) => {
@@ -439,6 +476,8 @@ export class AdminComponent implements OnInit {
 
           // Идём по полученному массиву
           for (let i = 0; i < timeArr.length; i++) {
+
+            console.log(i);
 
             // Определяем дату старта и дату окончания фильма
             const timeStartFilm = minutesFromMidnight(timeArr[i][0]);
@@ -683,6 +722,12 @@ export class AdminComponent implements OnInit {
       this.visibleDeleteSessionPopup = true;
     }
 
+    showDeleteFilmPopup(film) {
+      this.filmToDelete = film;
+      this.visibleDeleteFilmPopup = true;
+    }
+
+
     closeCreateHallPopup() {
       this.hallToDelete = '';
       this.visibleCreateHallPopup = false;
@@ -707,7 +752,10 @@ export class AdminComponent implements OnInit {
       this.visibleDeleteSessionPopup = false;
     }
 
-
+    closeDeleteFilmPopup() {
+      this.filmToDelete = '';
+      this.visibleDeleteFilmPopup = false;
+    }
 
     /// Активность зала
 
@@ -735,30 +783,35 @@ export class AdminComponent implements OnInit {
 
     }
 
-    test(event) {
+    uploadImage(event) {
       const file = event.target.files[0];
       this.addFilmFormGroup.get('film_img').setValue(file);
-      // console.log(file);
       this.addFilmFormGroup.patchValue({
         film_img: file
       });
       console.log(this.addFilmFormGroup.value);
+    }
 
+    deleteFilm() {
 
-      // const test = new FormData();
-      // test.append('image', file);
+      this.appApiService.deleteFilmById(this.filmToDelete.film_id)
+        .subscribe(response => {
+          this.getHalls();
+          this.getFilms();
+          this.getHallTimeLine();
+          this.closeDeleteFilmPopup();
+        });
+    }
 
-      // this.appApiService.newFilm(test)
-      //   .subscribe(response => {
-      //     console,log(response);
-      //   });
+    resetHallConfigurateChanges() {
+      if (this.hallConfigurateFormGroup.dirty || this.isPlaceChanges) {
+        this.getHalls();
+      }
+    }
 
-      // console.log(test);
+    resetHallPriceChanges() {
+      if (this.hallPriceConfigurationFormGroup.dirty) {
+        this.getHalls();
+      }
     }
 }
-
-
-// this.hallActivityFormGroup.patchValue({
-//   hallActivityActiveHall: this.halls[0].hall_id,
-// });
-

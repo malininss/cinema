@@ -51,6 +51,12 @@ export class AppApiService {
     return this.http.get<Film>(requestUrl);
   }
 
+  deleteFilmById(filmId) {
+    const requestUrl = this.apiUrl + '/films/' + filmId + '/DELETE';
+    return this.http.post(requestUrl, {});
+  }
+
+
   getScheduleById(id) {
     const requestUrl = this.apiUrl + '/schedule/' + id;
     return this.http.get<Shcedule>(requestUrl);
@@ -99,7 +105,6 @@ export class AppApiService {
   }
 
   newFilm(filmObj) {
-    // this.toFormData(filmObj);
     const requestUrl = this.apiUrl + '/films';
     return this.http.post(requestUrl, this.toFormData(filmObj));
   }

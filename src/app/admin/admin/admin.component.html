@@ -21,10 +21,6 @@
       </div>
     </section>
 
-
-
-
-    <!-- КОНФИГУРАЦИЯ ЗАЛА!! -->
     <section class="conf-step">
       <header class="conf-step__header conf-step__header_opend" appShowOrHide>
         <h2 class="conf-step__title">Конфигурация залов</h2>
@@ -56,6 +52,7 @@
               formControlName="currentRow"
               placeholder="10"
               (change)="editHallConf()"
+              (focus)="resetHallPriceChanges()"
               ></label>
             <span class="multiplier">x</span>
             <label
@@ -63,7 +60,11 @@
               formControlName="currentPlace"
               placeholder="8"
               (change)="editHallConf()"
+              (focus)="resetHallPriceChanges()"
               ></label>
+          </div>
+          <div *ngIf="hallConfigurateFormGroup.invalid" >
+            <p class="conf-step__paragraph notice">Минимальное количество рядов / кресел: 1.<br>Максимальное: 15.</p>
           </div>
 
 
@@ -95,27 +96,24 @@
 
           <fieldset class="conf-step__buttons text-center">
 
-            <button type="button" class="conf-step__button conf-step__button-regular"
+            <button
+              type="button"
+              class="conf-step__button conf-step__button-regular"
+              [disabled]="!hallConfigurateFormGroup.get('currentRow').dirty && !hallConfigurateFormGroup.get('currentPlace').dirty && !isPlaceChanges"
               (click)="canselHallChanges()"
-              >Отмена</button>
+            >Отмена</button>
 
-            <button type="submit" class="conf-step__button conf-step__button-accent">Сохранить</button>
+            <button
+              type="submit"
+              class="conf-step__button conf-step__button-accent"
+              [disabled]="!hallConfigurateFormGroup.get('currentRow').dirty && !hallConfigurateFormGroup.get('currentPlace').dirty && !isPlaceChanges"
+            >Сохранить</button>
 
           </fieldset>
         </form>
       </div>
     </section>
 
-
-
-
-
-
-
-
-
-
-    <!-- КОНФИГУРАЦИЯ ЦЕН! -->
     <section class="conf-step">
       <header class="conf-step__header conf-step__header_opend" appShowOrHide>
         <h2 class="conf-step__title">Конфигурация цен</h2>
@@ -137,42 +135,59 @@
                 value="{{ hall.hall_id }}"
                 formControlName="pricesActiveHallId"
                 (change)="getPricesHallForPriceConfiguration()"
-
               >
               <span class="conf-step__selector"> {{ hall.hall_name }} </span>
             </li>
           </ul>
 
           <p class="conf-step__paragraph">Установите цены для типов кресел:</p>
-            <div class="conf-step__legend">
-              <label class="conf-step__label">Цена, рублей
-                <input
-                  type="text"
-                  class="conf-step__input"
-                  placeholder="0"
-                  formControlName="currentStandartPrice"
-                  (change)="saveHallPrice()"
-                >
-              </label>
-              за <span class="conf-step__chair conf-step__chair_standart"></span> обычные кресла
-            </div>
-            <div class="conf-step__legend">
-              <label class="conf-step__label">Цена, рублей
-                <input type="text"
-                  class="conf-step__input"
-                  placeholder="0"
-                  formControlName="currentVipPrice"
-                  (change)="saveHallPrice()"
-                >
-              </label>
-              за <span class="conf-step__chair conf-step__chair_vip"></span> VIP кресла
-            </div>
+          <div class="conf-step__legend">
+            <label class="conf-step__label">Цена, рублей
+              <input
+                type="number"
+                class="conf-step__input"
+                placeholder="0"
+                formControlName="currentStandartPrice"
+                (change)="saveHallPrice()"
+                (change)="resetHallConfigurateChanges()"
+              >
+            </label>
+            за <span class="conf-step__chair conf-step__chair_standart"></span> обычные кресла
+          </div>
+          <div class="conf-step__legend">
+            <label class="conf-step__label">Цена, рублей
+              <input type="number"
+                class="conf-step__input"
+                placeholder="0"
+                formControlName="currentVipPrice"
+                (change)="saveHallPrice()"
+                (change)="resetHallConfigurateChanges()"
+              >
+            </label>
+            за <span class="conf-step__chair conf-step__chair_vip"></span> VIP кресла
+          </div>
+
+          <div *ngIf="hallPriceConfigurationFormGroup.invalid" >
+            <p class="conf-step__paragraph notice">Минимальная стоимость места: 1 рубль</p>
+          </div>
 
           <fieldset class="conf-step__buttons text-center">
-            <button type="button" class="conf-step__button conf-step__button-regular"
-              (click)="canselHallChanges()">Отмена</button>
-            <button type="submit"
-              class="conf-step__button conf-step__button-accent">Сохранить</button>
+            <button
+              type="button"
+              class="conf-step__button conf-step__button-regular"
+              (click)="canselHallChanges()"
+              [disabled]="!hallPriceConfigurationFormGroup.get('currentStandartPrice').dirty &&
+                          !hallPriceConfigurationFormGroup.get('currentVipPrice').dirty"
+            >
+            Отмена</button>
+
+            <button
+              type="submit"
+              class="conf-step__button conf-step__button-accent"
+              [disabled]="!hallPriceConfigurationFormGroup.get('currentStandartPrice').dirty &&
+              !hallPriceConfigurationFormGroup.get('currentVipPrice').dirty"
+            >
+            Сохранить</button>
           </fieldset>
         </form>
       </div>
@@ -182,7 +197,6 @@
       <header class="conf-step__header conf-step__header_opend" appShowOrHide>
         <h2 class="conf-step__title">Сетка сеансов</h2>
       </header>
-      <!-- <p (mousedown)="registerDragAndDropEvents()">test</p> -->
       <div class="conf-step__wrapper">
         <p class="conf-step__paragraph">
           <button class="conf-step__button conf-step__button-accent" (click)="showCreateFilmPopup()">Добавить фильм</button>
@@ -194,7 +208,7 @@
             id="{{ film.film_id }}"
             *ngFor="let film of films"
             draggable="true"
-            (click)="showShowtimeAddPopup(film.film_id)"
+            (click)="showDeleteFilmPopup(film)"
             (mousedown)="registerDragAndDropEvents()"
           >
           <img class="conf-step__movie-poster" alt="poster" src="{{ film.film_img }}">
@@ -273,50 +287,9 @@
           </ul>
         </form>
       </div>
-
-
-
-
-
-
-
-
-
-
-
-      <!-- <header class="conf-step__header conf-step__header_opend" appShowOrHide>
-        <h2 class="conf-step__title">Открыть продажи</h2>
-      </header>
-      <div class="conf-step__wrapper text-center">
-        <p class="conf-step__paragraph">Всё готово, теперь можно:</p>
-        <button class="conf-step__button conf-step__button-accent">Открыть продажу билетов</button>
-      </div> -->
     </section>
   </main>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <!-- Попап "Создать холл" -->
 <div
@@ -352,9 +325,7 @@
   </div>
 </div>
 
-
 <!-- Попап "Удалить холл" -->
-
 <div
   class="popup"
   [ngClass]="{'active': visibleDeleteHallPopup === true}"
@@ -388,10 +359,6 @@
   </div>
 </div>
 
-<!-- Попап сеанса -->
-
-
-
 <!-- Попап добавления фильма -->
 
 <div
@@ -412,7 +379,7 @@
           [formGroup]="addFilmFormGroup"
           (ngSubmit)="createFilm()"
         >
-          <label class="conf-step__label conf-step__label-fullsize" for="name">
+          <label class="conf-step__label conf-step__label-fullsize">
             Название
             <input
               class="conf-step__input"
@@ -432,7 +399,7 @@
             >
           </label>
 
-          <label class="conf-step__label conf-step__label-fullsize" for="name">
+          <label class="conf-step__label conf-step__label-fullsize" >
             Длительность (мин)
             <input
               class="conf-step__input"
@@ -442,7 +409,7 @@
             >
           </label>
 
-          <label class="conf-step__label conf-step__label-fullsize" for="name">
+          <label class="conf-step__label conf-step__label-fullsize">
             Страна
             <input
               class="conf-step__input"
@@ -452,20 +419,60 @@
             >
           </label>
 
-          <label class="conf-step__label conf-step__label-fullsize" for="name">
+          <label class="conf-step__label conf-step__label-fullsize">
             Изображение фильма
             <input
               class="conf-step__input"
               type="file"
               id="film-image"
               name="film-image"
-              (change)="test($event)"
+              (change)="uploadImage($event)"
             >
           </label>
 
           <div class="conf-step__buttons text-center">
-            <button type="submit" class="conf-step__button conf-step__button-accent">Добавить фильм </button>
+            <button
+              type="submit"
+              class="conf-step__button conf-step__button-accent"
+              [disabled]="addFilmFormGroup.invalid"
+            >
+            Добавить фильм </button>
             <button type="button" class="conf-step__button conf-step__button-regular" (click)="closeCreateFilmPopup()">Отменить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Попап удаления фильма -->
+<div
+  class="popup"
+  [ngClass]="{'active': visibleDeleteFilmPopup === true}"
+>
+  <div class="popup__container">
+    <div class="popup__content">
+      <div class="popup__header">
+        <h2 class="popup__title">
+          Удаление фильма
+          <a class="popup__dismiss" (click)="closeDeleteFilmPopup()"><img src="../../../assets/i/close.png" alt="Закрыть"></a>
+        </h2>
+
+      </div>
+      <div class="popup__wrapper">
+        <form
+        [formGroup]="deleteFilmFormGroup"
+        (ngSubmit)="deleteFilm()"
+        >
+          <p class="conf-step__paragraph">Вы действительно хотите удалить фильм <span>{{ filmToDelete.film_name | uppercase }}</span>?</p>
+          <!-- В span будет подставляться название зала -->
+          <div class="conf-step__buttons text-center">
+            <button type="submit" value="Удалить" class="conf-step__button conf-step__button-accent"
+            >Удалить</button>
+            <button type="button" class="conf-step__button conf-step__button-regular"
+            (click)="closeDeleteFilmPopup()"
+            >Отменить</button>
           </div>
         </form>
       </div>
@@ -493,7 +500,7 @@
           [formGroup]="addShowtimeFormGroup"
           (ngSubmit)="createTimelineElem()"
         >
-          <label class="conf-step__label conf-step__label-fullsize" for="hall">
+          <label class="conf-step__label conf-step__label-fullsize">
             Название зала
             <select
               class="conf-step__input"
@@ -501,16 +508,13 @@
               required
               formControlName="hallId"
             >
-              <!-- <option
-                value="null"
-              > Выберите зал</option> -->
               <option
                 *ngFor="let hall of halls"
                 value="{{ hall.hall_id }}"
               > {{ hall.hall_name }}</option>
             </select>
           </label>
-          <label class="conf-step__label conf-step__label-fullsize" for="name">
+          <label class="conf-step__label conf-step__label-fullsize">
             Время начала
             <input
               class="conf-step__input"
@@ -532,7 +536,6 @@
 </div>
 
 <!-- Попап "Удалить сессию" -->
-
 <div
   class="popup"
   [ngClass]="{'active': visibleDeleteSessionPopup === true}"
