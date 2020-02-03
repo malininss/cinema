@@ -281,8 +281,6 @@ export class AdminComponent implements OnInit {
       this.hallPriceConfigurationFormGroup.reset();
     }
 
-
-
     const types = ['disabled', 'simple', 'vip'];
     if (types.indexOf(place.type) === types.length - 1) {
       place.type = types[0];

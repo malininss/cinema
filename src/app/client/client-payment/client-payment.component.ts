@@ -26,6 +26,7 @@ export class ClientPaymentComponent implements OnInit {
       this.router.navigate(['/film']);
     }
     this.dataObject = this.clientPaymentService.getData();
+    console.log(this.dataObject);
 
   }
 

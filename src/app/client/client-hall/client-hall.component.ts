@@ -125,19 +125,28 @@ export class ClientHallComponent implements OnInit {
     this.objectForSand.timeToStart = this.datePipe.transform(this.currentTime * 1000, 'HH:mm');
     this.objectForSand.timestamp = this.currentTime;
     this.objectForSand.hallConfiguration = this.currentSchedulePlaces;
-    this.currentSchedulePlaces.forEach(row => {
-      row.forEach(place => {
-        if (place.status === 'checked') {
-          this.objectForSand.checkedPlaces.push(place.place);
 
-          if (place.type === 'simple') {
+    let placeCounter = 0;
+
+    for (const currentRow of this.currentSchedulePlaces) {
+      for (const currentPlace of currentRow) {
+        if (currentPlace.type !== 'disabled') {
+
+          placeCounter++;
+        } else {
+        }
+        if (currentPlace.status === 'checked') {
+          this.objectForSand.checkedPlaces.push(placeCounter.toString());
+
+          if (currentPlace.type === 'simple') {
             this.objectForSand.totalPrice += +this.hall.hall_chair_price;
           } else {
             this.objectForSand.totalPrice += +this.hall.hall_vip_chair_price;
           }
         }
-      });
-    });
+      }
+    }
+
     this.clientPaymentService.setData(this.objectForSand);
   }
 
