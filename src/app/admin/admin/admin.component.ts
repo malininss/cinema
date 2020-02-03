@@ -168,6 +168,7 @@ export class AdminComponent implements OnInit {
     .subscribe(data => {
       // console.log(data);
       this.getHalls();
+      this.getHallTimeLine();
       this.closeCreateHallPopup();
 
       this.addHallFormGroup.reset();
@@ -193,6 +194,7 @@ export class AdminComponent implements OnInit {
       });
 
       this.getHalls();
+      this.getHallTimeLine();
       this.closeDeleteHallPopup();
       this.hallToDelete = '';
     });
@@ -589,7 +591,7 @@ export class AdminComponent implements OnInit {
         .subscribe(response => {
           this.closeShowtimeAddPopup();
           this.getHallTimeLine();
-          // this.getFilms();
+          this.getFilms();
         });
     } else {
       return false;

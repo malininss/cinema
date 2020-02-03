@@ -1,5 +1,9 @@
-import { AppApiService, Film } from '../../app-api.service';
+import { Observable } from 'rxjs';
+import { AppApiService, Hall } from './../../app-api.service';
+import { Film } from '../../app-api.service';
 import { Component, OnInit } from '@angular/core';
+import { map } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-client-film-list',
@@ -16,12 +20,14 @@ export class ClientFilmListComponent implements OnInit {
   prevButton: any = false;
   scheduleList: any;
   currentHallId = 0;
+  halls: Hall[] = [];
 
   constructor(private appApiService: AppApiService) { }
 
   ngOnInit() {
     this.currentDay.setHours(0, 0, 0, 0);
     this.getFilms();
+    this.getHalls();
     this.getDays();
   }
 
@@ -53,11 +59,11 @@ export class ClientFilmListComponent implements OnInit {
   getFilms() {
     this.appApiService.getFilms()
       .subscribe((films: Film[]) => {
-        // ПЕРЕДЕЛАТЬ!!
         films.forEach(element => {
           element.film_schedule = JSON.parse(element.film_schedule);
         });
         this.films = films;
+        // console.log(this.films);
       });
   }
 
@@ -71,5 +77,34 @@ export class ClientFilmListComponent implements OnInit {
     const timeArr = scheduleTime.split(':');
     const reservedDateAndTime = new Date(this.currentDay);
     return reservedDateAndTime.setHours(timeArr[0], timeArr[1]) / 1000; // делением убрали милисекунды
+  }
+
+  checkFilmActivity(film) {
+    if (film.film_schedule.length === 0) {
+      return false;
+    }
+
+    return !film.film_schedule.every(item => {
+      return !this.checkHallActivity(item.hallId);
+    });
+  }
+
+  checkHallActivity(hallId) {
+
+    const currentHall = this.halls.filter(item => {
+      return item.hall_id === hallId;
+    })[0];
+
+    if (currentHall) {
+      return currentHall.hall_activity === '0' ? false : true;
+    }
+  }
+
+
+  getHalls() {
+    this.appApiService.getHalls()
+      .subscribe(response => {
+        this.halls = response;
+      });
   }
 }

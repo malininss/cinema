@@ -21,7 +21,7 @@
 
   <main>
     <div class="movie-container" *ngFor="let film of films">
-      <section class="movie" *ngIf="film.film_schedule" >
+      <section class="movie" *ngIf="checkFilmActivity(film)" >
           <div class="movie__info">
             <div class="movie__poster">
               <img class="movie__poster-image" alt="Звёздные войны постер" src="../assets/i/poster1.jpg">
@@ -36,14 +36,28 @@
             </div>
           </div>
 
-          <div class="movie-seances__hall" *ngFor="let schedule of film.film_schedule">
-          <h3 class="movie-seances__hall-title"> {{ schedule.hallName }}</h3>
-            <ul class="movie-seances__list">
-              <li class="movie-seances__time-block" *ngFor="let scheduleTime of schedule.time">
-              <a class="movie-seances__time"[routerLink]="['/hall', schedule.hallId, film.film_id, getReservedDateAndTime(scheduleTime)]"> {{ scheduleTime }}</a>
-              </li>
-            </ul>
+
+          <div
+            class="movie-seances__wrapper"
+            *ngFor="let schedule of film.film_schedule"
+          >
+            <div
+              class="movie-seances__hall"
+              *ngIf="checkHallActivity(schedule.hallId)"
+            >
+            <h3 class="movie-seances__hall-title"> {{ schedule.hallName }}</h3>
+              <ul class="movie-seances__list">
+                <li class="movie-seances__time-block" *ngFor="let scheduleTime of schedule.time">
+                <a class="movie-seances__time" [routerLink]="['/hall', schedule.hallId, film.film_id, getReservedDateAndTime(scheduleTime)]"> {{ scheduleTime }}</a>
+                </li>
+              </ul>
+            </div>
           </div>
+
+
+
+
+
       </section>
     </div>
   </main>

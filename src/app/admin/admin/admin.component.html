@@ -211,7 +211,7 @@
             (click)="showDeleteFilmPopup(film)"
             (mousedown)="registerDragAndDropEvents()"
           >
-          <img class="conf-step__movie-poster" alt="poster" src="{{ film.film_img }}">
+          <img class="conf-step__movie-poster" alt="poster" draggable="false" src="{{ film.film_img }}">
             <h3 class="conf-step__movie-title">{{ film.film_name }}</h3>
             <p class="conf-step__movie-duration">{{ film.film_duration }} минут</p>
           </div>
