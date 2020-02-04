@@ -60,7 +60,7 @@ class Halls {
    * @return boolean
    */
   static public function getById($db, $id){
-    $sql = mysqli_query($db, "SELECT * FROM halls WHERE hall_id=$id");
+    $sql = mysqli_query($db, "SELECT * FROM halls WHERE hallId=$id");
     return mysqli_fetch_assoc($sql);
   }
 
@@ -85,7 +85,7 @@ class Halls {
 
     // print_r($result);
 
-    $sql = mysqli_query($db, "UPDATE `halls` SET $result WHERE `halls`.`hall_id` = $hallId;");
+    $sql = mysqli_query($db, "UPDATE `halls` SET $result WHERE `halls`.`hallId` = $hallId;");
     if($sql) {
       return true;
     } else {
@@ -100,7 +100,7 @@ class Halls {
    * @return boolean
    */
   static public function deleteById($db, $hallId) {
-    $sql = mysqli_query($db, "DELETE FROM `halls` WHERE `halls`.`hall_id` = $hallId");
+    $sql = mysqli_query($db, "DELETE FROM `halls` WHERE `halls`.`hallId` = $hallId");
     if($sql) {
       return true;
     } else {

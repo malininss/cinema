@@ -26,8 +26,6 @@ export class ClientPaymentComponent implements OnInit {
       this.router.navigate(['/film']);
     }
     this.dataObject = this.clientPaymentService.getData();
-    console.log(this.dataObject);
-
   }
 
   sendPayment() {
@@ -41,33 +39,22 @@ export class ClientPaymentComponent implements OnInit {
       });
     });
 
-    if (this.dataObject.scheduleId) {
-      const objToSend = {current_hall: JSON.stringify(hallConfiguration)};
-
-      // console.log(this.dataObject);
-      this.appApiService.editSchedule(objToSend, this.dataObject.scheduleId)
+    if (this.dataObject.reservedHallsId) {
+      const objToSend = {reservedHallsHall: JSON.stringify(hallConfiguration)};
+      this.appApiService.editReservedHall(objToSend, this.dataObject.reservedHallsId)
         .subscribe (response => {
-          console.log(response);
         });
     } else {
-
-      // const date = this.datePipe.transform(this.dataObject.timestamp * 1000, 'yyyy-MM-dd HH:mm:ss');
-
-      // console.log(this.dataObject);
-
       const objectToSend = {
-        hall_id: this.dataObject.hall.hall_id,
-        film_id: this.dataObject.film.film_id,
-        current_hall: this.dataObject.hallConfiguration,
-        datatime: this.datePipe.transform(this.dataObject.timestamp * 1000, 'yyyy-MM-dd HH:mm:ss')
+        hallId: this.dataObject.hall.hallId,
+        filmId: this.dataObject.film.filmId,
+        reservedHallsHall: this.dataObject.hallConfiguration,
+        reservedHallsDate: this.datePipe.transform(this.dataObject.timestamp * 1000, 'yyyy-MM-dd HH:mm:ss')
       };
 
-      this.appApiService.createSchedule(objectToSend)
+      this.appApiService.createReservedHall(objectToSend)
         .subscribe(response => {
-          console.log(response);
         });
-
     }
   }
-
 }

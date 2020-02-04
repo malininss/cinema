@@ -4,31 +4,31 @@ import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 
 export interface Film {
-  film_id: string;
-  film_name: string;
-  film_description: string;
-  film_duration: string;
-  film_country: string;
-  film_img: string;
-  film_schedule?: any;
+  filmId: string;
+  filmName: string;
+  filmDescription: string;
+  filmDuration: string;
+  filmCountry: string;
+  filmImg: string;
+  filmSchedule?: any;
 }
 
-export interface Shcedule {
-  schedule_id: string;
-  hall_id: string;
-  current_hall: string;
-  datatime: string;
-  film_id: string;
+export interface ReservedHalls {
+  reservedHallsId: string;
+  hallId: string;
+  reservedHallsHall: string;
+  reservedHallsDate: string;
+  filmId: string;
 }
 
 
 export interface Hall {
-  hall_id: string;
-  hall_name: string;
-  hall_activity: string;
-  hall_configuration: string;
-  hall_chair_price: string;
-  hall_vip_chair_price: string;
+  hallId: string;
+  hallName: string;
+  hallActivity: string;
+  hallConfiguration: string;
+  hallChairPrice: string;
+  hallVipChairPrice: string;
 }
 
 @Injectable({
@@ -56,26 +56,25 @@ export class AppApiService {
     return this.http.post(requestUrl, {});
   }
 
-
-  getScheduleById(id) {
-    const requestUrl = this.apiUrl + '/schedule/' + id;
-    return this.http.get<Shcedule>(requestUrl);
+  getReservedHallById(id) {
+    const requestUrl = this.apiUrl + '/reservedhalls/' + id;
+    return this.http.get<ReservedHalls>(requestUrl);
   }
 
 
-  editSchedule(updateObj, scneduleId) {
-    const requestUrl = this.apiUrl + '/schedule/' + scneduleId + '/PUT';
+  editReservedHall(updateObj, scneduleId) {
+    const requestUrl = this.apiUrl + '/reservedhalls/' + scneduleId + '/PUT';
     return this.http.post(requestUrl, updateObj);
   }
 
-  getScheduleByDateAndHallId(date, hallId) {
-    console.log(date);
-    const requestUrl = this.apiUrl + '/schedule/' + hallId + '/' + date;
+  getReservedHallByDateAndHallId(date, hallId) {
+    console.log(hallId);
+    const requestUrl = this.apiUrl + '/reservedhalls/' + hallId + '/' + date;
     return this.http.get(requestUrl);
   }
 
-  createSchedule(dataObj) {
-    const requestUrl = this.apiUrl + '/schedule/';
+  createReservedHall(dataObj) {
+    const requestUrl = this.apiUrl + '/reservedhalls/';
     return this.http.post(requestUrl, dataObj);
   }
 

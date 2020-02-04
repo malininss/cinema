@@ -60,31 +60,31 @@ export class ClientFilmListComponent implements OnInit {
     this.appApiService.getFilms()
       .subscribe((films: Film[]) => {
         films.forEach(element => {
-          element.film_schedule = JSON.parse(element.film_schedule);
+          element.filmSchedule = JSON.parse(element.filmSchedule);
         });
         this.films = films;
         // console.log(this.films);
       });
   }
 
-  getScheduleById(id) {
-    this.appApiService.getScheduleById(id)
-    .subscribe(scheduleList => {
+  getReservedHallById(id) {
+    this.appApiService.getReservedHallById(id)
+    .subscribe(reservedHalls => {
     });
   }
 
-  getReservedDateAndTime(scheduleTime) {
-    const timeArr = scheduleTime.split(':');
+  getReservedDateAndTime(time) {
+    const timeArr = time.split(':');
     const reservedDateAndTime = new Date(this.currentDay);
     return reservedDateAndTime.setHours(timeArr[0], timeArr[1]) / 1000; // делением убрали милисекунды
   }
 
   checkFilmActivity(film) {
-    if (film.film_schedule.length === 0) {
+    if (film.filmSchedule.length === 0) {
       return false;
     }
 
-    return !film.film_schedule.every(item => {
+    return !film.filmSchedule.every(item => {
       return !this.checkHallActivity(item.hallId);
     });
   }
@@ -92,11 +92,11 @@ export class ClientFilmListComponent implements OnInit {
   checkHallActivity(hallId) {
 
     const currentHall = this.halls.filter(item => {
-      return item.hall_id === hallId;
+      return item.hallId === hallId;
     })[0];
 
     if (currentHall) {
-      return currentHall.hall_activity === '0' ? false : true;
+      return currentHall.hallActivity === '0' ? false : true;
     }
   }
 

@@ -2,10 +2,10 @@
   <section class="buying" (dblclick)="zoomHall()">
     <div class="buying__info">
       <div class="buying__info-description">
-        <h2 class="buying__info-title">{{ film.film_name }}</h2>
+        <h2 class="buying__info-title">{{ film.filmName }}</h2>
         <!--Хрень с тысячами. Исправить!-->
         <p class="buying__info-start">Начало сеанса: {{ currentTime * 1000 | date : 'HH:mm'}}</p>
-        <p class="buying__info-hall"> {{ hall.hall_name }}</p>
+        <p class="buying__info-hall"> {{ hall.hallName }}</p>
       </div>
       <div class="buying__info-hint">
         <p>Тапните дважды,<br>чтобы увеличить</p>
@@ -14,7 +14,7 @@
     <div class="buying-scheme"
       [ngClass]="{'buying-scheme-zoom': zoom}">
       <div class="buying-scheme__wrapper">
-          <div class="buying-scheme__row" *ngFor="let row of currentSchedulePlaces; let rowIndex = index" >
+          <div class="buying-scheme__row" *ngFor="let row of currentReservedHallPlaces; let rowIndex = index" >
             <span class="buying-scheme__chair"
               *ngFor="let place of row; let placeIndex = index"
               [ngClass]="{
@@ -30,8 +30,8 @@
       </div>
       <div class="buying-scheme__legend">
         <div class="col">
-          <p class="buying-scheme__legend-price"><span class="buying-scheme__chair buying-scheme__chair_standart"></span> Свободно (<span class="buying-scheme__legend-value">{{ hall.hall_chair_price }}</span>руб)</p>
-          <p class="buying-scheme__legend-price"><span class="buying-scheme__chair buying-scheme__chair_vip"></span> Свободно VIP (<span class="buying-scheme__legend-value">{{ hall.hall_vip_chair_price }}</span>руб)</p>
+          <p class="buying-scheme__legend-price"><span class="buying-scheme__chair buying-scheme__chair_standart"></span> Свободно (<span class="buying-scheme__legend-value">{{ hall.hallChairPrice }}</span>руб)</p>
+          <p class="buying-scheme__legend-price"><span class="buying-scheme__chair buying-scheme__chair_vip"></span> Свободно VIP (<span class="buying-scheme__legend-value">{{ hall.hallVipChairPrice }}</span>руб)</p>
         </div>
         <div class="col">
           <p class="buying-scheme__legend-price"><span class="buying-scheme__chair buying-scheme__chair_taken"></span> Занято</p>

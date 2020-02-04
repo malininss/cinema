@@ -1,23 +1,23 @@
 <?php
 require_once('Api.php');
 require_once('Connection.php');
-require_once('Schedule.php');
+require_once('ReservedHalls.php');
 
-class ScheduleApi extends Api {
+class ReservedHallsApi extends Api {
 
-  public $apiName = 'schedule';
+  public $apiName = 'reservedhalls';
 
   /**
    * Метод GET
    * Вывод списка всех записей
-   * http://ДОМЕН/schedule
+   * http://ДОМЕН/reservedhalls
    * @return string
    */
   public function indexAction() {
     $db = (new Connection())->getConnection();
-    $allScheduleElements = Schedule::getAll($db);
-    if($allScheduleElements){
-        return $this->response($allScheduleElements, 200);
+    $allReservedHallsElements = ReservedHalls::getAll($db);
+    if($allReservedHallsElements){
+        return $this->response($allReservedHallsElements, 200);
     }
     return $this->response('Data not found', 404);
   }
@@ -26,7 +26,7 @@ class ScheduleApi extends Api {
   /**
    * Метод GET
    * Просмотр отдельной записи (по id)
-   * http://ДОМЕН/schedule/1
+   * http://ДОМЕН/reservedhalls/1
    * @return string
    */
   public function viewAction() {
@@ -36,9 +36,9 @@ class ScheduleApi extends Api {
 
     if (count($this->requestUri) !== 0) {
       $timestamp = parse_url($this->requestUri[0])['path'];
-      $currentSchedule = Schedule::getByIdAndTimestamp($db, $id, $timestamp); // Привет 1580202000, id 7
-      if($currentSchedule){
-        return $this->response($currentSchedule, 200);
+      $currentReservedHall = ReservedHalls::getByIdAndTimestamp($db, $id, $timestamp); // Привет 1580202000, id 7
+      if($currentReservedHall){
+        return $this->response($currentReservedHall, 200);
       } else {
         return $this->response("", 200);
       }
@@ -46,9 +46,9 @@ class ScheduleApi extends Api {
 
     } else {
         if($id){
-          $currentSchedule = Schedule::getById($db, $id);
-          if($currentSchedule){
-            return $this->response($currentSchedule, 200);
+          $currentReservedHall = ReservedHalls::getById($db, $id);
+          if($currentReservedHall){
+            return $this->response($currentReservedHall, 200);
           }
         }
     }
@@ -60,7 +60,7 @@ class ScheduleApi extends Api {
   /**
    * Метод POST
    * Создание новой записи
-   * http://ДОМЕН/api/schedule
+   * http://ДОМЕН/api/reservedhalls
    * Отправлять параметры запроса: hall_id, current_hall (json), datatime (формат 2020-01-08 00:00:00), film_id
    * @return string
    */
@@ -68,10 +68,9 @@ class ScheduleApi extends Api {
     $db = (new Connection())->getConnection();
 
     $params = json_decode($this->requestParams,true);
-    $params['current_hall'] = json_encode($params['current_hall']);
+    $params['reservedHallsHall'] = json_encode($params['reservedHallsHall']);
 
-    // print_r($params);
-    if(Schedule::createScheduleElement($db, $params)){
+    if(ReservedHalls::createReservedHallsElement($db, $params)){
       return $this->response('Data saved.', 200);
     }
     return $this->response("Saving error", 500);
@@ -81,26 +80,26 @@ class ScheduleApi extends Api {
   /**
    * Метод POST
    * Обновление отдельной записи (по ее id)
-   * http://ДОМЕН/api/schedule/1/PUT
+   * http://ДОМЕН/api/reservedhalls/1/PUT
    * Отправлять параметры обновления: hall_id, current_hall (json), datatime (формат 2020-01-08 00:00:00), film_id
    * @return string
    */
   public function updateAction() {
 
     $parse_url = parse_url($this->requestUri[0]);
-    $scheduleId = $parse_url['path'] ?? null;
+    $reservedHallId = $parse_url['path'] ?? null;
     $params = json_decode($this->requestParams,true);
-    $params['current_hall'] = json_encode($params['current_hall']);
+    $params['reservedHallsHall'] = json_encode($params['reservedHallsHall']);
 
     // print_r($params);
     $db = (new Connection())->getConnection();
 
-    if(!$scheduleId || !Schedule::getById($db, $scheduleId)){
+    if(!$reservedHallId || !ReservedHalls::getById($db, $reservedHallId)){
       return $this->response("Hall with id=$hallId not found", 404);
     }
 
     if($params){
-      if($schedule = Schedule::updateScheduleElement($db, $scheduleId, $params)){
+      if($reservedHallId = ReservedHalls::updateReservedHallsElement($db, $reservedHallId, $params)){
         return $this->response('Data updated.', 200);
       }
     }
@@ -111,21 +110,21 @@ class ScheduleApi extends Api {
   /**
    * Метод DELETE
    * Удаление отдельной записи (по ее id)
-   * http://ДОМЕН/users/schedule/1/DELETE
+   * http://ДОМЕН/users/reservedhalls/1/DELETE
    * @return string
    */
   public function deleteAction() {
 
     $parse_url = parse_url($this->requestUri[0]);
-    $scheduleId = $parse_url['path'] ?? null;
+    $reservedHallId = $parse_url['path'] ?? null;
 
     $db = (new Connection())->getConnection();
 
-    if(!$scheduleId || !Schedule::getById($db, $scheduleId)){
-      return $this->response("User with id=$scheduleId not found", 404);
+    if(!$reservedHallId || !ReservedHalls::getById($db, $reservedHallId)){
+      return $this->response("User with id=$reservedHallId not found", 404);
     }
 
-    if(Schedule::deleteById($db, $scheduleId)){
+    if(ReservedHalls::deleteById($db, $reservedHallId)){
       return $this->response('Data deleted.', 200);
     }
     return $this->response("Delete error", 500);

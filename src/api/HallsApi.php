@@ -48,7 +48,7 @@ class HallsApi extends Api {
    * Метод POST
    * Создание новой записи
    * http://ДОМЕН/api/halls
-   * Отправлять параметры запроса: hall_name, hall_configuration, hall_chair_price, hall_vip_chair_price
+   * Отправлять параметры запроса: hallName, hallConfiguration, hallChairPrice, hallVipChairPrice
    * @return string
    */
   public function createAction() {
@@ -58,8 +58,8 @@ class HallsApi extends Api {
     $params = json_decode($this->requestParams,true);
 
     if($params){
-      if (!array_key_exists('hall_configuration', $params)) {
-        $params['hall_configuration'] = file_get_contents('standart-hall-configuration.json');
+      if (!array_key_exists('hallConfiguration', $params)) {
+        $params['hallConfiguration'] = file_get_contents('standart-hall-configuration.json');
       }
 
       if(Halls::createHall($db, $params)){
@@ -76,7 +76,7 @@ class HallsApi extends Api {
    * Метод POST
    * Обновление отдельной записи (по ее id)
    * http://ДОМЕН/api/halls/1/PUT
-   * Отправлять параметры обновления: hall_name, hall_configuration, hall_chair_price, hall_vip_chair_price
+   * Отправлять параметры обновления: hallName, hallConfiguration, hallChairPrice, hallVipChairPrice
    * @return string
    */
   public function updateAction() {
@@ -85,8 +85,8 @@ class HallsApi extends Api {
     $hallId = $parse_url['path'] ?? null;
     $params = json_decode($this->requestParams,true);
 
-    if (isset($params['hall_configuration'])) {
-      $params['hall_configuration'] = json_encode($params['hall_configuration']);
+    if (isset($params['hallConfiguration'])) {
+      $params['hallConfiguration'] = json_encode($params['hallConfiguration']);
     }
 
     $db = (new Connection())->getConnection();

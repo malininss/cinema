@@ -27,11 +27,11 @@
               <img class="movie__poster-image" alt="Звёздные войны постер" src="../assets/i/poster1.jpg">
             </div>
             <div class="movie__description">
-              <h2 class="movie__title">{{ film.film_name }}</h2>
-              <p class="movie__synopsis">{{ film.film_description }}.</p>
+              <h2 class="movie__title">{{ film.filmName }}</h2>
+              <p class="movie__synopsis">{{ film.filmDescription }}.</p>
               <p class="movie__data">
-                <span class="movie__data-duration">{{ film.film_duration }} минут </span>
-                <span class="movie__data-origin">{{ film.film_country }}</span>
+                <span class="movie__data-duration">{{ film.filmDuration }} минут </span>
+                <span class="movie__data-origin">{{ film.filmCountry }}</span>
               </p>
             </div>
           </div>
@@ -39,7 +39,7 @@
 
           <div
             class="movie-seances__wrapper"
-            *ngFor="let schedule of film.film_schedule"
+            *ngFor="let schedule of film.filmSchedule"
           >
             <div
               class="movie-seances__hall"
@@ -48,7 +48,7 @@
             <h3 class="movie-seances__hall-title"> {{ schedule.hallName }}</h3>
               <ul class="movie-seances__list">
                 <li class="movie-seances__time-block" *ngFor="let scheduleTime of schedule.time">
-                <a class="movie-seances__time" [routerLink]="['/hall', schedule.hallId, film.film_id, getReservedDateAndTime(scheduleTime)]"> {{ scheduleTime }}</a>
+                <a class="movie-seances__time" [routerLink]="['/hall', schedule.hallId, film.filmId, getReservedDateAndTime(scheduleTime)]"> {{ scheduleTime }}</a>
                 </li>
               </ul>
             </div>

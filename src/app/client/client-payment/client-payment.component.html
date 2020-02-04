@@ -6,9 +6,9 @@
     </header>
 
     <div class="ticket__info-wrapper">
-      <p class="ticket__info">На фильм: <span class="ticket__details ticket__title"> {{ dataObject.film.film_name }}</span></p>
+      <p class="ticket__info">На фильм: <span class="ticket__details ticket__title"> {{ dataObject.film.filmName }}</span></p>
       <p class="ticket__info">Места: <span class="ticket__details ticket__chairs"> {{ dataObject.checkedPlaces.join(', ') }} </span></p>
-      <p class="ticket__info">В зале: <span class="ticket__details ticket__hall">{{ dataObject.hall.hall_name }}</span></p>
+      <p class="ticket__info">В зале: <span class="ticket__details ticket__hall">{{ dataObject.hall.hallName }}</span></p>
       <p class="ticket__info">Начало сеанса: <span class="ticket__details ticket__start"> {{ dataObject.timeToStart }}</span></p>
       <p class="ticket__info">Стоимость: <span class="ticket__details ticket__cost">{{ dataObject.totalPrice }}</span> рублей</p>
 

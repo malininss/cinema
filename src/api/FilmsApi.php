@@ -48,7 +48,7 @@ class FilmsApi extends Api {
    * Метод POST
    * Создание новой записи
    * http://ДОМЕН/api/films.
-   * Отправлять параметры запроса: film_name, film_description, film_duration, film_country, film_img
+   * Отправлять параметры запроса: filmName, filmDescription, filmDuration, filmCountry, filmImg
    * @return string
    */
   public function createAction() {
@@ -61,26 +61,26 @@ class FilmsApi extends Api {
 
     if(isset($_FILES)) {
 
-      if ((int)$_FILES['film_img']['size']  >= 1048576 ) {
+      if ((int)$_FILES['filmImg']['size']  >= 1048576 ) {
         print_r('файл больше 10 мегабайт не загружать!');
         return $this->response("Saving error", 500);
-      } elseif ($_FILES['film_img']['type'] !== 'image/jpeg' && $_FILES['film_img']['type'] !== 'image/png') {
+      } elseif ($_FILES['filmImg']['type'] !== 'image/jpeg' && $_FILES['filmImg']['type'] !== 'image/png') {
 
-        // print_r($_FILES['film_img']['type'] !== 'image/png')
+        // print_r($_FILES['filmImg']['type'] !== 'image/png')
         // print_r('Разрешено загружать только файлы .jpg и .png');
         return $this->response("Saving error", 500);
       }
 
       $pathToPosters = '/home/sergey/Рабочий стол/Netology FInal/Cinema/src/assets/i/';
-      $file_name = time() . '-' .  $_FILES['film_img']['name'];
+      $file_name = time() . '-' .  $_FILES['filmImg']['name'];
 
       $destiation_dir = $pathToPosters .'/'. $file_name;
 
-      move_uploaded_file($_FILES['film_img']['tmp_name'], $destiation_dir ); // Перемещаем файл в желаемую директорию
+      move_uploaded_file($_FILES['filmImg']['tmp_name'], $destiation_dir ); // Перемещаем файл в желаемую директорию
       // print_r('Файл успешно загружен');
 
       // ИЗМЕНИТЬ ПУТЬ ДО КАРТИНКИ!!
-      $params['film_img'] = 'http://localhost:4200/assets/i/' . $file_name;
+      $params['filmImg'] = 'http://localhost:4200/assets/i/' . $file_name;
 
     }
 
@@ -97,7 +97,7 @@ class FilmsApi extends Api {
    * Метод POST
    * Обновление отдельной записи (по ее id)
    * http://ДОМЕН/api/films/1/PUT
-   * Отправлять параметры обновления: film_name, film_description, film_duration, film_country, film_img, film_schedule (json)
+   * Отправлять параметры обновления: filmName, filmDescription, filmDuration, filmCountry, filmImg, filmSchedule (json)
    * @return string
    */
   public function updateAction() {
@@ -109,8 +109,8 @@ class FilmsApi extends Api {
     $params = json_decode($this->requestParams,true);
 
 
-    if (isset($params['film_schedule'])) {
-      $params['film_schedule'] = json_encode($params['film_schedule'], JSON_UNESCAPED_UNICODE);
+    if (isset($params['filmSchedule'])) {
+      $params['filmSchedule'] = json_encode($params['filmSchedule'], JSON_UNESCAPED_UNICODE);
     }
 
     if(!$filmId || !Films::getById($db, $filmId)){

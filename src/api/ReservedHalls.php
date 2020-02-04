@@ -1,24 +1,24 @@
 <?php
 
-class Schedule {
+class ReservedHalls {
 
 
   /**
    * Метод получения всех залов
-   * Принимает соединение с базой данных $db из ScheduleApi.php
+   * Принимает соединение с базой данных $db из ReservedHallsApi.php
    * @return boolean
    */
   static public function getAll($db) {
-    $sql = mysqli_query($db, "SELECT * FROM schedule");
+    $sql = mysqli_query($db, "SELECT * FROM reservedHalls");
 
-    $allScheduleElement = [];
+    $allreservedHallsElement = [];
 
     if ($sql->num_rows > 0 ) {
       while ($result = mysqli_fetch_assoc($sql)) {
-        $allScheduleElement[] = $result;
+        $allreservedHallsElement[] = $result;
       }
     }
-    return $allScheduleElement;
+    return $allreservedHallsElement;
   }
 
 
@@ -28,7 +28,7 @@ class Schedule {
    * @return boolean
    */
   static public function getById($db, $id){
-    $sql = mysqli_query($db, "SELECT * FROM schedule WHERE schedule_id=$id");
+    $sql = mysqli_query($db, "SELECT * FROM reservedHalls WHERE reservedHallsId=$id");
     return mysqli_fetch_assoc($sql);
   }
 
@@ -36,17 +36,21 @@ class Schedule {
     $date = new DateTime();
     $date->setTimestamp($timestamp);
 
+
     $formattedDate = $date->format('Y-m-d H:i:s');
-    $sql = mysqli_query($db, "SELECT * FROM schedule WHERE hall_id=$hallId AND datatime='$formattedDate'");
+    // print_r($formattedDate);
+
+    $sql = mysqli_query($db, "SELECT * FROM reservedHalls WHERE hallId=$hallId AND reservedHallsDate='$formattedDate'");
     return mysqli_fetch_assoc($sql);
   }
 
   /**
    * Метод для создания элемента расписания
-   * Принимает соединение с базой данных $db и масссив $arr с данными для создания зала из ScheduleApi.php
+   * Принимает соединение с базой данных $db и масссив $arr с данными для создания зала из ReservedHallsApi.php
    * @return boolean
    */
-  static public function createScheduleElement($db, $arr) {
+  static public function createReservedHallsElement($db, $arr) {
+
     $keysString = '';
     $valuesString = '';
 
@@ -62,7 +66,11 @@ class Schedule {
     $keysString = substr($keysString,0,-1);
     $valuesString = substr($valuesString,0,-1);
 
-    $sql = mysqli_query($db, "INSERT INTO schedule($keysString) VALUES ($valuesString)");
+    print_r($keysString);
+    // print_r($keysString);
+
+
+    $sql = mysqli_query($db, "INSERT INTO reservedHalls($keysString) VALUES ($valuesString)");
 
     if ($sql) {
       return true;
@@ -74,10 +82,10 @@ class Schedule {
 
   /**
    * Метод обновления элемента расписания по id
-   * Принимает соединение с базой данных $db, $scheduleId и массив $arr с параметрами для обновления из ScheduleApi.php
+   * Принимает соединение с базой данных $db, $reservedHallsId и массив $arr с параметрами для обновления из ReservedHallsApi.php
    * @return boolean
    */
-  static public function updateScheduleElement($db, $scheduleId, $arr) {
+  static public function updateReservedHallsElement($db, $reservedHallsId, $arr) {
     $result = "";
 
     foreach ($arr as $key => $value) {
@@ -86,7 +94,7 @@ class Schedule {
 
     $result = substr($result,0,-1);
 
-    $sql = mysqli_query($db, "UPDATE `schedule` SET $result WHERE `schedule`.`schedule_id` = $scheduleId;");
+    $sql = mysqli_query($db, "UPDATE `reservedHalls` SET $result WHERE `reservedHalls`.`reservedHallsId` = $reservedHallsId;");
     if($sql) {
       return true;
     } else {
@@ -97,11 +105,11 @@ class Schedule {
 
   /**
    * Метод удаления элемента расписания
-   * Принимает соединение с базой данных $db и $scheduleId из ScheduleApi.php
+   * Принимает соединение с базой данных $db и $reservedHallsId из ReservedHallsApi.php
    * @return boolean
    */
-  static public function deleteById($db, $scheduleId) {
-    $sql = mysqli_query($db, "DELETE FROM `schedule` WHERE `schedule`.`schedule_id` = $scheduleId");
+  static public function deleteById($db, $reservedHallsId) {
+    $sql = mysqli_query($db, "DELETE FROM `reservedHalls` WHERE `reservedHalls`.`reservedHallsId` = $reservedHallsId");
     if($sql) {
       return true;
     } else {

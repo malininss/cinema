@@ -2,7 +2,7 @@
 
 require_once 'FilmsApi.php';
 require_once 'HallsApi.php';
-require_once 'ScheduleApi.php';
+require_once 'ReservedHallsApi.php';
 
 
 
@@ -24,9 +24,9 @@ if (!isset($url[1])) {
   } catch (Exception $e) {
       echo json_encode(Array('error' => $e->getMessage()));
   }
-} elseif ($url[1] === 'schedule') {
+} elseif ($url[1] === 'reservedhalls') {
   try {
-    $api = new ScheduleApi();
+    $api = new ReservedHallsApi();
     echo $api->run();
   } catch (Exception $e) {
       echo json_encode(Array('error' => $e->getMessage()));

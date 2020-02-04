@@ -12,7 +12,7 @@
       <div class="conf-step__wrapper">
         <p class="conf-step__paragraph">Доступные залы:</p>
         <ul class="conf-step__list" *ngFor="let hall of halls">
-          <li> {{ hall.hall_name }}
+          <li> {{ hall.hallName }}
             <button class="conf-step__button conf-step__button-trash"
             (click)="showDeleteHallPopup(hall)"></button>
           </li>
@@ -39,10 +39,10 @@
                 class="conf-step__radio"
                 name="activeHallId"
                 (change)='getRowAndPlaceValue()'
-                value='{{hall.hall_id}}'
+                value='{{hall.hallId}}'
                 formControlName="activeHallId"
               >
-              <span class="conf-step__selector"> {{ hall.hall_name }} </span>
+              <span class="conf-step__selector"> {{ hall.hallName }} </span>
             </li>
           </ul>
 
@@ -52,7 +52,6 @@
               formControlName="currentRow"
               placeholder="10"
               (change)="editHallConf()"
-              (focus)="resetHallPriceChanges()"
               ></label>
             <span class="multiplier">x</span>
             <label
@@ -60,7 +59,6 @@
               formControlName="currentPlace"
               placeholder="8"
               (change)="editHallConf()"
-              (focus)="resetHallPriceChanges()"
               ></label>
           </div>
           <div *ngIf="hallConfigurateFormGroup.invalid" >
@@ -132,11 +130,11 @@
                 type="radio"
                 class="conf-step__radio"
                 name="pricesActiveHallId"
-                value="{{ hall.hall_id }}"
+                value="{{ hall.hallId }}"
                 formControlName="pricesActiveHallId"
                 (change)="getPricesHallForPriceConfiguration()"
               >
-              <span class="conf-step__selector"> {{ hall.hall_name }} </span>
+              <span class="conf-step__selector"> {{ hall.hallName }} </span>
             </li>
           </ul>
 
@@ -149,7 +147,6 @@
                 placeholder="0"
                 formControlName="currentStandartPrice"
                 (change)="saveHallPrice()"
-                (change)="resetHallConfigurateChanges()"
               >
             </label>
             за <span class="conf-step__chair conf-step__chair_standart"></span> обычные кресла
@@ -161,7 +158,6 @@
                 placeholder="0"
                 formControlName="currentVipPrice"
                 (change)="saveHallPrice()"
-                (change)="resetHallConfigurateChanges()"
               >
             </label>
             за <span class="conf-step__chair conf-step__chair_vip"></span> VIP кресла
@@ -205,15 +201,15 @@
         <div class="conf-step__movies">
           <div
             class="conf-step__movie"
-            id="{{ film.film_id }}"
+            id="{{ film.filmId }}"
             *ngFor="let film of films"
             draggable="true"
             (click)="showDeleteFilmPopup(film)"
             (mousedown)="registerDragAndDropEvents()"
           >
-          <img class="conf-step__movie-poster" alt="poster" draggable="false" src="{{ film.film_img }}">
-            <h3 class="conf-step__movie-title">{{ film.film_name }}</h3>
-            <p class="conf-step__movie-duration">{{ film.film_duration }} минут</p>
+          <img class="conf-step__movie-poster" alt="poster" draggable="false" src="{{ film.filmImg }}">
+            <h3 class="conf-step__movie-title">{{ film.filmName }}</h3>
+            <p class="conf-step__movie-duration">{{ film.filmDuration }} минут</p>
           </div>
 
         </div>
@@ -233,7 +229,7 @@
               <div
                 class="conf-step__seances-movie"
                 [ngStyle]="{
-                  'width': getWidth(getFilmById(scheduleItem.value).film_duration),
+                  'width': getWidth(getFilmById(scheduleItem.value).filmDuration),
                   'background-color': setSeancesFilmColor(scheduleItem.value),
                   'left': getLeftPosition(scheduleItem.key)
                 }"
@@ -241,7 +237,7 @@
                 (click)="showDeleteSessionPopup(hall.key, scheduleItem)"
               >
 
-                <p class="conf-step__seances-movie-title">{{ getFilmById(scheduleItem.value).film_name }}</p>
+                <p class="conf-step__seances-movie-title">{{ getFilmById(scheduleItem.value).filmName }}</p>
                 <p class="conf-step__seances-movie-start">{{ scheduleItem.key }}</p>
               </div>
 
@@ -274,10 +270,10 @@
                 type="radio"
                 class="conf-step__radio"
                 name="hallActivityActiveHall"
-                value="{{ hall.hall_id }}"
+                value="{{ hall.hallId }}"
                 formControlName="hallActivityActiveHall"
               >
-              <span class="conf-step__selector"> {{ hall.hall_name }} </span>
+              <span class="conf-step__selector"> {{ hall.hallName }} </span>
             </li>
 
             <div class="conf-step__wrapper text-center">
@@ -344,7 +340,7 @@
         [formGroup]="deleteHallFormGroup"
         (ngSubmit)="deleteHall()"
         >
-          <p class="conf-step__paragraph">Вы действительно хотите удалить зал <span>{{ hallToDelete.hall_name | uppercase }}</span>?</p>
+          <p class="conf-step__paragraph">Вы действительно хотите удалить зал <span>{{ hallToDelete.hallName | uppercase }}</span>?</p>
           <!-- В span будет подставляться название зала -->
           <div class="conf-step__buttons text-center">
             <button type="submit" value="Удалить" class="conf-step__button conf-step__button-accent"
@@ -385,7 +381,7 @@
               class="conf-step__input"
               type="text"
               placeholder="Например, &laquo;Гражданин Кейн&raquo;"
-              formControlName="film_name"
+              formControlName="filmName"
               >
           </label>
 
@@ -395,7 +391,7 @@
               class="conf-step__input"
               type="text"
               placeholder="Например, &laquo;Самый лучший фильм&raquo;"
-              formControlName="film_description"
+              formControlName="filmDescription"
             >
           </label>
 
@@ -405,7 +401,7 @@
               class="conf-step__input"
               type="number"
               placeholder="Например, &laquo;130&raquo;"
-              formControlName="film_duration"
+              formControlName="filmDuration"
             >
           </label>
 
@@ -415,7 +411,7 @@
               class="conf-step__input"
               type="text"
               placeholder="Например, &laquo;Румыния&raquo;"
-              formControlName="film_country"
+              formControlName="filmCountry"
             >
           </label>
 
@@ -465,7 +461,7 @@
         [formGroup]="deleteFilmFormGroup"
         (ngSubmit)="deleteFilm()"
         >
-          <p class="conf-step__paragraph">Вы действительно хотите удалить фильм <span>{{ filmToDelete.film_name | uppercase }}</span>?</p>
+          <p class="conf-step__paragraph">Вы действительно хотите удалить фильм <span>{{ filmToDelete.filmName | uppercase }}</span>?</p>
           <!-- В span будет подставляться название зала -->
           <div class="conf-step__buttons text-center">
             <button type="submit" value="Удалить" class="conf-step__button conf-step__button-accent"
@@ -510,8 +506,8 @@
             >
               <option
                 *ngFor="let hall of halls"
-                value="{{ hall.hall_id }}"
-              > {{ hall.hall_name }}</option>
+                value="{{ hall.hallId }}"
+              > {{ hall.hallName }}</option>
             </select>
           </label>
           <label class="conf-step__label conf-step__label-fullsize">
@@ -554,7 +550,7 @@
         [formGroup]="deleteSessionFormGroup"
         (ngSubmit)="deleteSession()"
         >
-          <p class="conf-step__paragraph">Вы действительно хотите удалить сессию фильма "{{getFilmById(this.deleteSessionFormGroup.value.filmId).film_name }}"? </p>
+          <p class="conf-step__paragraph">Вы действительно хотите удалить сессию фильма "{{getFilmById(this.deleteSessionFormGroup.value.filmId).filmName }}"? </p>
           <div class="conf-step__buttons text-center">
             <button type="submit" value="Удалить" class="conf-step__button conf-step__button-accent"
             >Удалить</button>

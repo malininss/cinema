@@ -12,12 +12,12 @@ export class AdminComponent implements OnInit {
 
   halls: Hall[] = [
     {
-      hall_id: '',
-      hall_name: '',
-      hall_activity: '0',
-      hall_vip_chair_price: '',
-      hall_chair_price: null,
-      hall_configuration: null
+      hallId: '',
+      hallName: '',
+      hallActivity: '0',
+      hallVipChairPrice: '',
+      hallChairPrice: null,
+      hallConfiguration: null
     }
   ];
 
@@ -80,11 +80,11 @@ export class AdminComponent implements OnInit {
     });
 
     this.addFilmFormGroup = new FormGroup({
-      film_name: new FormControl(null, Validators.required),
-      film_description: new FormControl(null, Validators.required),
-      film_duration: new FormControl(null, Validators.required),
-      film_country: new FormControl(null, Validators.required),
-      film_img: new FormControl(null, Validators.required)
+      filmName: new FormControl(null, Validators.required),
+      filmDescription: new FormControl(null, Validators.required),
+      filmDuration: new FormControl(null, Validators.required),
+      filmCountry: new FormControl(null, Validators.required),
+      filmImg: new FormControl(null, Validators.required)
     });
 
     this.hallConfigurateFormGroup = new FormGroup({
@@ -112,7 +112,7 @@ export class AdminComponent implements OnInit {
     this.appApiService.getHalls()
     .subscribe((halls: Hall[]) => {
       halls.forEach(item => {
-        item.hall_configuration = JSON.parse(item.hall_configuration);
+        item.hallConfiguration = JSON.parse(item.hallConfiguration);
       });
 
       this.halls = halls;
@@ -120,19 +120,19 @@ export class AdminComponent implements OnInit {
 
       this.hallConfigurateFormGroup.reset();
       this.hallConfigurateFormGroup.patchValue({
-        activeHallId: this.halls[0].hall_id,
+        activeHallId: this.halls[0].hallId,
       });
 
 
       this.hallPriceConfigurationFormGroup.reset();
       this.hallPriceConfigurationFormGroup.patchValue({
-        pricesActiveHallId: this.halls[0].hall_id,
-        currentStandartPrice: this.halls[0].hall_chair_price,
-        currentVipPrice: this.halls[0].hall_vip_chair_price
+        pricesActiveHallId: this.halls[0].hallId,
+        currentStandartPrice: this.halls[0].hallChairPrice,
+        currentVipPrice: this.halls[0].hallVipChairPrice
       });
 
       this.hallActivityFormGroup.patchValue({
-        hallActivityActiveHall: this.halls[0].hall_id,
+        hallActivityActiveHall: this.halls[0].hallId,
       });
 
       this.getRowAndPlaceValue();
@@ -143,25 +143,25 @@ export class AdminComponent implements OnInit {
 
   getHallById(id) {
     return this.halls.filter(item => {
-      return item.hall_id === id;
+      return item.hallId === id;
     })[0];
   }
 
   getHallNameById(id) {
     const hall: Hall = this.halls.filter(item => {
-      return item.hall_id === id;
+      return item.hallId === id;
     })[0];
 
     if (hall) {
-      return hall.hall_name;
+      return hall.hallName;
     }
   }
 
   createHall() {
     const formdata = {...this.addHallFormGroup.value};
     const objToSend = {
-      hall_name: formdata.hallName,
-      hall_activity: '0'
+      hallName: formdata.hallName,
+      hallActivity: '0'
     };
 
     this.appApiService.newHall(objToSend)
@@ -177,14 +177,14 @@ export class AdminComponent implements OnInit {
 
   deleteHall() {
     this.getFilms();
-    this.appApiService.deleteHall(this.hallToDelete.hall_id)
+    this.appApiService.deleteHall(this.hallToDelete.hallId)
     .subscribe(data => {
       this.films.forEach(film => {
-        if (film.film_schedule) {
-          film.film_schedule.forEach((scheduleItem, scheduleIndex) => {
-            if (scheduleItem.hallId === this.hallToDelete.hall_id) {
-              film.film_schedule.splice(scheduleIndex, 1);
-              this.appApiService.updateFilm(JSON.stringify({film_schedule: film.film_schedule}) , film.film_id)
+        if (film.filmSchedule) {
+          film.filmSchedule.forEach((scheduleItem, scheduleIndex) => {
+            if (scheduleItem.hallId === this.hallToDelete.hallId) {
+              film.filmSchedule.splice(scheduleIndex, 1);
+              this.appApiService.updateFilm(JSON.stringify({filmSchedule: film.filmSchedule}) , film.filmId)
               .subscribe(response => {
                 this.getHallTimeLine();
               });
@@ -205,7 +205,7 @@ export class AdminComponent implements OnInit {
     const rows = this.hallConfigurateFormGroup.value.currentRow;
     const places = this.hallConfigurateFormGroup.value.currentPlace;
     const hall = this.getHallById(this.hallConfigurateFormGroup.value.activeHallId);
-    const updatedHallConfiguration: any = hall.hall_configuration;
+    const updatedHallConfiguration: any = hall.hallConfiguration;
 
     if (+rows > 15 ||
         +rows <= 0 ||
@@ -245,7 +245,7 @@ export class AdminComponent implements OnInit {
 
     if (rowToAdd < 0) {
       // Тут надо удалить ряды, просто обрезаем
-      hall.hall_configuration = updatedHallConfiguration.slice(0, rowToAdd);
+      hall.hallConfiguration = updatedHallConfiguration.slice(0, rowToAdd);
     }
 
     if (rowToAdd > 0) {
@@ -268,7 +268,7 @@ export class AdminComponent implements OnInit {
 
   submitHallConfiguration() {
     this.halls.forEach(hall => {
-        this.appApiService.editHall(hall, hall.hall_id)
+        this.appApiService.editHall(hall, hall.hallId)
           .subscribe(response => {
             this.getHalls();
           });
@@ -277,9 +277,9 @@ export class AdminComponent implements OnInit {
 
   changePlaceType(place) {
 
-    if (this.hallPriceConfigurationFormGroup.dirty) {
-      this.hallPriceConfigurationFormGroup.reset();
-    }
+    // if (this.hallPriceConfigurationFormGroup.dirty) {
+    //   this.hallPriceConfigurationFormGroup.reset();
+    // }
 
     const types = ['disabled', 'simple', 'vip'];
     if (types.indexOf(place.type) === types.length - 1) {
@@ -295,13 +295,20 @@ export class AdminComponent implements OnInit {
   saveHallPrice() {
     const priceValue = this.hallPriceConfigurationFormGroup.value;
     const hall = this.getHallById(priceValue.pricesActiveHallId);
-    this.halls[this.halls.indexOf(hall)].hall_chair_price = priceValue.currentStandartPrice;
-    this.halls[this.halls.indexOf(hall)].hall_vip_chair_price = priceValue.currentVipPrice;
+    this.halls[this.halls.indexOf(hall)].hallChairPrice = priceValue.currentStandartPrice;
+    this.halls[this.halls.indexOf(hall)].hallVipChairPrice = priceValue.currentVipPrice;
   }
 
   submitPriceConfiguration() {
     this.halls.forEach(hall => {
-      this.appApiService.editHall(hall, hall.hall_id)
+      // console.log(hall);
+
+      const objToSend = {
+        hallChairPrice: hall.hallChairPrice,
+        hallVipChairPrice: hall.hallVipChairPrice
+      };
+
+      this.appApiService.editHall(objToSend, hall.hallId)
         .subscribe(response => {
           this.getHalls();
         });
@@ -315,16 +322,16 @@ export class AdminComponent implements OnInit {
       const hallLineObj = {};
 
       films.forEach(film => {
-        film.film_schedule = JSON.parse(film.film_schedule);
+        film.filmSchedule = JSON.parse(film.filmSchedule);
 
-        // console.log(film.film_schedule);
-        if (film.film_schedule) {
-          film.film_schedule.forEach(schedule => {
+        // console.log(film.filmSchedule);
+        if (film.filmSchedule) {
+          film.filmSchedule.forEach(schedule => {
 
             const timeObj = {};
 
             schedule.time.forEach(time => {
-              timeObj[time] = film.film_id;
+              timeObj[time] = film.filmId;
             });
 
             if (hallLineObj[schedule.hallId]) {
@@ -337,8 +344,8 @@ export class AdminComponent implements OnInit {
       });
 
       this.halls.forEach(hall => {
-        if (!hallLineObj[hall.hall_id]) {
-          hallLineObj[hall.hall_id] = {};
+        if (!hallLineObj[hall.hallId]) {
+          hallLineObj[hall.hallId] = {};
         }
       });
 
@@ -351,15 +358,15 @@ export class AdminComponent implements OnInit {
     const activeHall = this.getHallById(activeHallId);
 
     this.hallConfigurateFormGroup.patchValue({
-      currentRow: activeHall.hall_configuration.length,
-      currentPlace: activeHall.hall_configuration[0].length
+      currentRow: activeHall.hallConfiguration.length,
+      currentPlace: activeHall.hallConfiguration[0].length
     });
   }
 
   getActiveHallForConfiguration() {
     const activeHallId = this.hallConfigurateFormGroup.get('activeHallId').value;
     const activeHall = this.getHallById(activeHallId);
-    return activeHall.hall_configuration;
+    return activeHall.hallConfiguration;
   }
 
   getPricesHallForPriceConfiguration() {
@@ -367,8 +374,8 @@ export class AdminComponent implements OnInit {
     const pricesActiveHall = this.getHallById(pricesActiveHallId);
 
     this.hallPriceConfigurationFormGroup.patchValue({
-      currentStandartPrice: pricesActiveHall.hall_chair_price,
-      currentVipPrice: pricesActiveHall.hall_vip_chair_price
+      currentStandartPrice: pricesActiveHall.hallChairPrice,
+      currentVipPrice: pricesActiveHall.hallVipChairPrice
 
     });
   }
@@ -381,7 +388,7 @@ export class AdminComponent implements OnInit {
     this.appApiService.getFilms()
       .subscribe((films: Film[]) => {
         films.forEach((element, index) => {
-          element.film_schedule = JSON.parse(element.film_schedule);
+          element.filmSchedule = JSON.parse(element.filmSchedule);
         });
         this.films = films;
         // console.log(this.films);
@@ -391,16 +398,16 @@ export class AdminComponent implements OnInit {
   getFilmById(id): Film {
 
     let result: Film = {
-      film_id: '',
-      film_name: '',
-      film_description: '',
-      film_duration: '',
-      film_country: '',
-      film_img: '',
+      filmId: '',
+      filmName: '',
+      filmDescription: '',
+      filmDuration: '',
+      filmCountry: '',
+      filmImg: '',
     };
 
     this.films.forEach(item => {
-      if (+item.film_id === +id) {
+      if (+item.filmId === +id) {
         result = item;
       }
     });
@@ -427,11 +434,11 @@ export class AdminComponent implements OnInit {
     const obj = {...this.addFilmFormGroup.value};
 
 
-    if (obj.film_name &&
-        obj.film_description &&
-        obj.film_duration &&
-        obj.film_country &&
-        obj.film_img ) {
+    if (obj.filmName &&
+        obj.filmDescription &&
+        obj.filmDuration &&
+        obj.filmCountry &&
+        obj.filmImg ) {
 
       console.log(obj);
 
@@ -448,7 +455,7 @@ export class AdminComponent implements OnInit {
   checkSessionTime(hallId, currentTime) {
 
     // console.log(hallId);
-    const currentFilmDuration = +(this.getFilmById(this.addShowtimeFilmId).film_duration);
+    const currentFilmDuration = +(this.getFilmById(this.addShowtimeFilmId).filmDuration);
 
     // Преобразуем время из строки в количество минут, прошедших с полуночи
     const minutesFromMidnight = (time) => {
@@ -469,7 +476,7 @@ export class AdminComponent implements OnInit {
           let timeArr = Object.entries(this.hallTimeLine[hall]);
           timeArr = timeArr.map(elem => {
             const film = this.getFilmById(elem[1]);
-            const filmDuration = film.film_duration;
+            const filmDuration = film.filmDuration;
             elem[1] = filmDuration;
             return [elem[0], elem[1]];
           });
@@ -540,7 +547,7 @@ export class AdminComponent implements OnInit {
     const formData = { ...this.addShowtimeFormGroup.value };
 
     if (this.checkSessionTime(formData.hallId, formData.time)) {
-      const filmSchedule = this.getFilmById(this.addShowtimeFilmId).film_schedule;
+      const filmSchedule = this.getFilmById(this.addShowtimeFilmId).filmSchedule;
       let arrToSend = [];
 
       if (filmSchedule) {
@@ -561,8 +568,8 @@ export class AdminComponent implements OnInit {
 
         } else {
           const hallName = this.halls.filter(item => {
-            return item.hall_id === formData.hallId;
-          })[0].hall_name;
+            return item.hallId === formData.hallId;
+          })[0].hallName;
 
           arrToSend = filmSchedule.slice();
 
@@ -585,7 +592,7 @@ export class AdminComponent implements OnInit {
         ];
       }
 
-      this.appApiService.updateFilm(JSON.stringify({film_schedule: arrToSend}), this.addShowtimeFilmId)
+      this.appApiService.updateFilm(JSON.stringify({filmSchedule: arrToSend}), this.addShowtimeFilmId)
         .subscribe(response => {
           this.closeShowtimeAddPopup();
           this.getHallTimeLine();
@@ -603,7 +610,7 @@ export class AdminComponent implements OnInit {
     const hallId = this.deleteSessionFormGroup.value.hallId;
     const sessionTime = this.deleteSessionFormGroup.value.sessionTime;
 
-    const filmSchedule = film.film_schedule;
+    const filmSchedule = film.filmSchedule;
 
     filmSchedule.forEach((item, index) => {
       if (item.hallId === hallId) {
@@ -620,7 +627,7 @@ export class AdminComponent implements OnInit {
     });
 
 
-    this.appApiService.updateFilm(JSON.stringify({film_schedule: filmSchedule}) , film.film_id)
+    this.appApiService.updateFilm(JSON.stringify({filmSchedule: filmSchedule}) , film.filmId)
       .subscribe(response => {
         this.closeDeleteSessionPopup();
         this.getHallTimeLine();
@@ -762,7 +769,7 @@ export class AdminComponent implements OnInit {
     getActiveButtonText() {
       const activeHallId = this.hallActivityFormGroup.value.hallActivityActiveHall;
       const activeHall = this.getHallById(activeHallId);
-      if (activeHall.hall_activity === '1') {
+      if (activeHall.hallActivity === '1') {
         return 'Остановить продажи';
       } else {
         return 'Начать продажи';
@@ -773,9 +780,9 @@ export class AdminComponent implements OnInit {
       const activeHallId = this.hallActivityFormGroup.value.hallActivityActiveHall;
       const activeHall = this.getHallById(activeHallId);
 
-      const newActiveStatus = activeHall.hall_activity === '0' ? '1' : '0';
+      const newActiveStatus = activeHall.hallActivity === '0' ? '1' : '0';
 
-      this.appApiService.editHall({hall_activity: newActiveStatus}, activeHallId)
+      this.appApiService.editHall({hallActivity: newActiveStatus}, activeHallId)
         .subscribe(response => {
           this.getHalls();
         });
@@ -785,16 +792,16 @@ export class AdminComponent implements OnInit {
 
     uploadImage(event) {
       const file = event.target.files[0];
-      this.addFilmFormGroup.get('film_img').setValue(file);
+      this.addFilmFormGroup.get('filmImg').setValue(file);
       this.addFilmFormGroup.patchValue({
-        film_img: file
+        filmImg: file
       });
       console.log(this.addFilmFormGroup.value);
     }
 
     deleteFilm() {
 
-      this.appApiService.deleteFilmById(this.filmToDelete.film_id)
+      this.appApiService.deleteFilmById(this.filmToDelete.filmId)
         .subscribe(response => {
           this.getHalls();
           this.getFilms();

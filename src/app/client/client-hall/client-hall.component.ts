@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { ClientPaymentService } from './../client-payment/client-payment.service';
-import { AppApiService, Film, Shcedule, Hall } from '../../app-api.service';
+import { AppApiService, Film, ReservedHalls, Hall } from '../../app-api.service';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
@@ -11,7 +11,7 @@ export interface ObjectForPayment {
   hallConfiguration?: Array<any>;
   checkedPlaces: string[];
   totalPrice: number;
-  scheduleId: string;
+  reservedHallsId: string;
   timestamp: number;
 }
 
@@ -25,28 +25,28 @@ export class ClientHallComponent implements OnInit {
   hallId: number;
   filmId: number;
   currentTime: any;
-  currentSchedulePlaces: any;
-  currentSchedileId: string;
+  currentReservedHallPlaces: any;
+  currentReservedHallId: string;
 
   zoom = false;
 
   film: Film = {
-    film_id: '',
-    film_name: '',
-    film_description: '',
-    film_duration: '',
-    film_country: '',
-    film_img: '',
+    filmId: '',
+    filmName: '',
+    filmDescription: '',
+    filmDuration: '',
+    filmCountry: '',
+    filmImg: '',
   };
 
   hallName: string;
   hall: Hall = {
-    hall_id: '',
-    hall_name: '',
-    hall_configuration: '',
-    hall_activity: '',
-    hall_chair_price: '',
-    hall_vip_chair_price: ''
+    hallId: '',
+    hallName: '',
+    hallConfiguration: '',
+    hallActivity: '',
+    hallChairPrice: '',
+    hallVipChairPrice: ''
   };
 
   objectForSand: ObjectForPayment = {
@@ -55,7 +55,7 @@ export class ClientHallComponent implements OnInit {
     timeToStart: '',
     checkedPlaces: [],
     totalPrice: 0,
-    scheduleId: '',
+    reservedHallsId: '',
     timestamp: 0,
   };
 
@@ -76,20 +76,22 @@ export class ClientHallComponent implements OnInit {
     this.getFilm();
   }
 
-  getScheduleByDateAndHallId() {
-    this.appApiService.getScheduleByDateAndHallId(this.currentTime, this.hallId)
-      .subscribe((currentSchedule: Shcedule) => {
-        this.currentSchedileId = currentSchedule.schedule_id;
+  getReservedHallByDateAndHallId() {
+    this.appApiService.getReservedHallByDateAndHallId(this.currentTime, this.hallId)
+      .subscribe((currentReservedHall: ReservedHalls) => {
+        console.log(currentReservedHall);
 
-        if (!currentSchedule) {
-          this.currentSchedulePlaces = JSON.parse(this.hall.hall_configuration);
+        this.currentReservedHallId = currentReservedHall.reservedHallsId;
+
+        if (!currentReservedHall) {
+          this.currentReservedHallPlaces = JSON.parse(this.hall.hallConfiguration);
         } else {
-          currentSchedule.current_hall = JSON.parse(currentSchedule.current_hall);
-          this.currentSchedulePlaces = currentSchedule.current_hall;
+          currentReservedHall.reservedHallsHall = JSON.parse(currentReservedHall.reservedHallsHall);
+          this.currentReservedHallPlaces = currentReservedHall.reservedHallsHall;
         }
       },
       error => {
-        // console.log(error.message);
+        console.log(error.message);
       });
   }
 
@@ -104,12 +106,12 @@ export class ClientHallComponent implements OnInit {
     this.appApiService.getHallById(this.hallId)
     .subscribe((hall: Hall) => {
       this.hall = hall;
-      this.getScheduleByDateAndHallId();
+      this.getReservedHallByDateAndHallId();
     });
   }
 
   changePlaceStatus(rowIndex, placeIndex) {
-    const currentElem = this.currentSchedulePlaces[rowIndex][placeIndex];
+    const currentElem = this.currentReservedHallPlaces[rowIndex][placeIndex];
     if (currentElem.status === 'free') {
       currentElem.status = 'checked';
     } else if (currentElem.status === 'checked') {
@@ -120,15 +122,15 @@ export class ClientHallComponent implements OnInit {
   createObjectForPayment() {
     this.objectForSand.film = this.film;
     this.objectForSand.hall = this.hall;
-    this.objectForSand.scheduleId = this.currentSchedileId;
+    this.objectForSand.reservedHallsId = this.currentReservedHallId;
     // Хрень с тысячами. Разобраться!
     this.objectForSand.timeToStart = this.datePipe.transform(this.currentTime * 1000, 'HH:mm');
     this.objectForSand.timestamp = this.currentTime;
-    this.objectForSand.hallConfiguration = this.currentSchedulePlaces;
+    this.objectForSand.hallConfiguration = this.currentReservedHallPlaces;
 
     let placeCounter = 0;
 
-    for (const currentRow of this.currentSchedulePlaces) {
+    for (const currentRow of this.currentReservedHallPlaces) {
       for (const currentPlace of currentRow) {
         if (currentPlace.type !== 'disabled') {
 
@@ -139,9 +141,9 @@ export class ClientHallComponent implements OnInit {
           this.objectForSand.checkedPlaces.push(placeCounter.toString());
 
           if (currentPlace.type === 'simple') {
-            this.objectForSand.totalPrice += +this.hall.hall_chair_price;
+            this.objectForSand.totalPrice += +this.hall.hallChairPrice;
           } else {
-            this.objectForSand.totalPrice += +this.hall.hall_vip_chair_price;
+            this.objectForSand.totalPrice += +this.hall.hallVipChairPrice;
           }
         }
       }

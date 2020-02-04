@@ -60,7 +60,7 @@ class Films {
    * @return boolean
    */
   static public function getById($db, $id){
-    $sql = mysqli_query($db, "SELECT * FROM films WHERE film_id=$id");
+    $sql = mysqli_query($db, "SELECT * FROM films WHERE filmId=$id");
     return mysqli_fetch_assoc($sql);
   }
 
@@ -79,7 +79,7 @@ class Films {
 
     $result = substr($result,0,-1);
 
-    $sql = mysqli_query($db, "UPDATE `films` SET $result WHERE `films`.`film_id` = $filmId;");
+    $sql = mysqli_query($db, "UPDATE `films` SET $result WHERE `films`.`filmId` = $filmId;");
     if($sql) {
       return true;
     } else {
@@ -94,7 +94,7 @@ class Films {
    * @return boolean
    */
   static public function deleteById($db, $filmId) {
-    $sql = mysqli_query($db, "DELETE FROM `films` WHERE `films`.`film_id` = $filmId");
+    $sql = mysqli_query($db, "DELETE FROM `films` WHERE `films`.`filmId` = $filmId");
     if($sql) {
       return true;
     } else {
