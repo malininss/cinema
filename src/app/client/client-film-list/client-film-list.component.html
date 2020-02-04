@@ -10,10 +10,8 @@
       }"
       *ngFor="let day of days"
       (click)="checkCurrentDay(day)">
-
       <span class="page-nav__day-week">{{ day | date: 'EE' | titlecase }}</span>
       <span class="page-nav__day-number">{{ day | date: 'dd'}}</span>
-
     </a>
 
     <a class="page-nav__day page-nav__day_next" (click)="getDays(6)"></a>
@@ -24,7 +22,7 @@
       <section class="movie" *ngIf="checkFilmActivity(film)" >
           <div class="movie__info">
             <div class="movie__poster">
-              <img class="movie__poster-image" alt="Звёздные войны постер" src="../assets/i/poster1.jpg">
+              <img class="movie__poster-image" alt="Звёздные войны постер" src="{{ film.filmImg }}">
             </div>
             <div class="movie__description">
               <h2 class="movie__title">{{ film.filmName }}</h2>
@@ -35,7 +33,6 @@
               </p>
             </div>
           </div>
-
 
           <div
             class="movie-seances__wrapper"
@@ -53,11 +50,6 @@
               </ul>
             </div>
           </div>
-
-
-
-
-
       </section>
     </div>
   </main>

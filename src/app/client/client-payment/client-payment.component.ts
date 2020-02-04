@@ -75,6 +75,5 @@ export class ClientPaymentComponent implements OnInit {
         this.clientPaymentService.objectForPayment.pathToQr = response;
         this.clientPaymentService.paymentStatus = true;
       });
-
   }
 }

@@ -3,7 +3,6 @@
     <div class="buying__info">
       <div class="buying__info-description">
         <h2 class="buying__info-title">{{ film.filmName }}</h2>
-        <!--Хрень с тысячами. Исправить!-->
         <p class="buying__info-start">Начало сеанса: {{ currentTime * 1000 | date : 'HH:mm'}}</p>
         <p class="buying__info-hall"> {{ hall.hallName }}</p>
       </div>
@@ -41,6 +40,5 @@
     </div>
     <button class="acceptin-button" (click)="createObjectForPayment()">Забронировать</button>
     <div class="buying-scheme__notice">Выберите места для бронирования</div>
-
   </section>
 </main>

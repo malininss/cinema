@@ -20,7 +20,6 @@ export class ClientTicketComponent implements OnInit {
     if (!this.clientPaymentService.getDataForPayment()) {
       this.router.navigate(['/film']);
     }
-
     this.dataObject = this.clientPaymentService.getDataForPayment();
   }
 }

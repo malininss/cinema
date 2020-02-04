@@ -5,7 +5,6 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 
-
 export class ClientPaymentService {
 
   objectForPayment: ObjectForPayment = undefined;
@@ -20,6 +19,4 @@ export class ClientPaymentService {
   getDataForPayment() {
     return this.objectForPayment;
   }
-
-
 }

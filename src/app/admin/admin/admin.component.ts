@@ -1,6 +1,5 @@
 import { AppApiService, Hall, Film } from './../../app-api.service';
 import { Component, OnInit } from '@angular/core';
-import { Scheduler, timer } from 'rxjs';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 @Component({
@@ -104,10 +103,6 @@ export class AdminComponent implements OnInit {
     });
   }
 
-
-
-
-  // Методы, связанные с холлом
   getHalls() {
     this.appApiService.getHalls()
     .subscribe((halls: Hall[]) => {
@@ -117,12 +112,10 @@ export class AdminComponent implements OnInit {
 
       this.halls = halls;
 
-
       this.hallConfigurateFormGroup.reset();
       this.hallConfigurateFormGroup.patchValue({
         activeHallId: this.halls[0].hallId,
       });
-
 
       this.hallPriceConfigurationFormGroup.reset();
       this.hallPriceConfigurationFormGroup.patchValue({
@@ -137,7 +130,6 @@ export class AdminComponent implements OnInit {
 
       this.getRowAndPlaceValue();
       this.isPlaceChanges = false;
-
     });
   }
 
@@ -166,7 +158,6 @@ export class AdminComponent implements OnInit {
 
     this.appApiService.newHall(objToSend)
     .subscribe(data => {
-      // console.log(data);
       this.getHalls();
       this.getHallTimeLine();
       this.closeCreateHallPopup();
@@ -237,7 +228,6 @@ export class AdminComponent implements OnInit {
     }
 
     // Конфигурируем ряды
-
     let rowToAdd = 0;
 
     // Считаем количество рядов для добавления / удаления
@@ -253,7 +243,6 @@ export class AdminComponent implements OnInit {
       for (let i = 0; i < rowToAdd; i++ ) {
 
         const arrayToPush = [];
-
         for (let j = 0; j < places; j++ ) {
           arrayToPush.push({
             status: 'free',
@@ -276,11 +265,6 @@ export class AdminComponent implements OnInit {
   }
 
   changePlaceType(place) {
-
-    // if (this.hallPriceConfigurationFormGroup.dirty) {
-    //   this.hallPriceConfigurationFormGroup.reset();
-    // }
-
     const types = ['disabled', 'simple', 'vip'];
     if (types.indexOf(place.type) === types.length - 1) {
       place.type = types[0];
@@ -291,7 +275,6 @@ export class AdminComponent implements OnInit {
     this.isPlaceChanges = true;
   }
 
-
   saveHallPrice() {
     const priceValue = this.hallPriceConfigurationFormGroup.value;
     const hall = this.getHallById(priceValue.pricesActiveHallId);
@@ -301,8 +284,6 @@ export class AdminComponent implements OnInit {
 
   submitPriceConfiguration() {
     this.halls.forEach(hall => {
-      // console.log(hall);
-
       const objToSend = {
         hallChairPrice: hall.hallChairPrice,
         hallVipChairPrice: hall.hallVipChairPrice
@@ -324,7 +305,6 @@ export class AdminComponent implements OnInit {
       films.forEach(film => {
         film.filmSchedule = JSON.parse(film.filmSchedule);
 
-        // console.log(film.filmSchedule);
         if (film.filmSchedule) {
           film.filmSchedule.forEach(schedule => {
 
@@ -391,7 +371,6 @@ export class AdminComponent implements OnInit {
           element.filmSchedule = JSON.parse(element.filmSchedule);
         });
         this.films = films;
-        // console.log(this.films);
       });
   }
 
@@ -412,7 +391,6 @@ export class AdminComponent implements OnInit {
       }
     });
     return result;
-
   }
 
   getLeftPosition(time): string {
@@ -440,21 +418,16 @@ export class AdminComponent implements OnInit {
         obj.filmCountry &&
         obj.filmImg ) {
 
-      console.log(obj);
-
       this.appApiService.newFilm(obj)
       .subscribe(data => {
-        // тут обнулить значения формы при добавлении фильма
         this.closeCreateFilmPopup();
         this.getFilms();
       });
-
     }
   }
 
   checkSessionTime(hallId, currentTime) {
 
-    // console.log(hallId);
     const currentFilmDuration = +(this.getFilmById(this.addShowtimeFilmId).filmDuration);
 
     // Преобразуем время из строки в количество минут, прошедших с полуночи
@@ -483,8 +456,6 @@ export class AdminComponent implements OnInit {
 
           // Идём по полученному массиву
           for (let i = 0; i < timeArr.length; i++) {
-
-            console.log(i);
 
             // Определяем дату старта и дату окончания фильма
             const timeStartFilm = minutesFromMidnight(timeArr[i][0]);
@@ -601,7 +572,6 @@ export class AdminComponent implements OnInit {
     } else {
       return false;
     }
-
   }
 
 
@@ -622,18 +592,16 @@ export class AdminComponent implements OnInit {
         if (item.time.length <= 0) {
           filmSchedule.splice(index, 1);
         }
-
       }
     });
 
 
-    this.appApiService.updateFilm(JSON.stringify({filmSchedule: filmSchedule}) , film.filmId)
+    this.appApiService.updateFilm(JSON.stringify({filmSchedule}) , film.filmId)
       .subscribe(response => {
         this.closeDeleteSessionPopup();
         this.getHallTimeLine();
       });
   }
-
 
   setSeancesFilmColor(filmId) {
     const elem = document.getElementById(filmId);
@@ -671,9 +639,6 @@ export class AdminComponent implements OnInit {
       });
 
       e.dataTransfer.getData('text/plain', null);
-
-      // Научиться отменить зарегистрированные события!
-
       return true;
     };
 
@@ -684,7 +649,6 @@ export class AdminComponent implements OnInit {
 
     const dragLeave = (e) => {
       e.preventDefault();
-      // dragAndDropContainer.style.background = 'none';
       return true;
     };
 
@@ -699,7 +663,6 @@ export class AdminComponent implements OnInit {
       container.addEventListener('dragleave', dragLeave);
     });
   }
-
 
     // Попапы
 
@@ -786,8 +749,6 @@ export class AdminComponent implements OnInit {
         .subscribe(response => {
           this.getHalls();
         });
-
-
     }
 
     uploadImage(event) {
@@ -796,7 +757,6 @@ export class AdminComponent implements OnInit {
       this.addFilmFormGroup.patchValue({
         filmImg: file
       });
-      console.log(this.addFilmFormGroup.value);
     }
 
     deleteFilm() {

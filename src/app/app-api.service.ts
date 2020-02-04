@@ -36,7 +36,7 @@ export interface Hall {
 })
 
 export class AppApiService {
-  apiUrl = 'http://localhost/api';
+  apiUrl = 'http://para-z.com/api';
 
 
   constructor(private http: HttpClient) { }
@@ -68,7 +68,6 @@ export class AppApiService {
   }
 
   getReservedHallByDateAndHallId(date, hallId) {
-    console.log(hallId);
     const requestUrl = this.apiUrl + '/reservedhalls/' + hallId + '/' + date;
     return this.http.get(requestUrl);
   }
@@ -117,10 +116,6 @@ export class AppApiService {
     const requestUrl = this.apiUrl + '/orders';
     return this.http.post(requestUrl, orderObj);
   }
-
-
-
-
 
   toFormData(object) {
     const formData = new FormData();

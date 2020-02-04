@@ -81,7 +81,6 @@ export class ClientHallComponent implements OnInit {
   getReservedHallByDateAndHallId() {
     this.appApiService.getReservedHallByDateAndHallId(this.currentTime, this.hallId)
       .subscribe((currentReservedHall: ReservedHalls) => {
-        console.log(currentReservedHall);
 
         this.currentReservedHallId = currentReservedHall.reservedHallsId;
 
@@ -93,7 +92,6 @@ export class ClientHallComponent implements OnInit {
         }
       },
       error => {
-        console.log(error.message);
       });
   }
 
@@ -126,7 +124,6 @@ export class ClientHallComponent implements OnInit {
     this.objectForSand.film = this.film;
     this.objectForSand.hall = this.hall;
     this.objectForSand.reservedHallsId = this.currentReservedHallId;
-    // Хрень с тысячами. Разобраться!
     this.objectForSand.timeToStart = this.datePipe.transform(this.currentTime * 1000, 'HH:mm');
     this.objectForSand.timestamp = this.currentTime;
     this.objectForSand.hallConfiguration = this.currentReservedHallPlaces;
@@ -162,9 +159,6 @@ export class ClientHallComponent implements OnInit {
       this.clientPaymentService.paymentStatus = false;
       this.router.navigate(['/payment']);
     }
-
-
-
 
   }
 
