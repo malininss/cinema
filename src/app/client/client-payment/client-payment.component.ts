@@ -70,8 +70,9 @@ export class ClientPaymentComponent implements OnInit {
     };
 
     this.appApiService.newOrder(orderObj)
-      .subscribe(response => {
+      .subscribe((response: string) => {
         this.router.navigate(['/ticket']);
+        this.clientPaymentService.objectForPayment.pathToQr = response;
         this.clientPaymentService.paymentStatus = true;
       });
 

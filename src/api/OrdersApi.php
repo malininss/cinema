@@ -72,8 +72,34 @@ class OrdersApi extends Api {
       $params['orderDateOfFilm'] = $orderDateOfFilm;
       $params['orderDateOfOrder'] = $orderDateOfOrder;
 
+      function generateReservedCode($length = 10){
+        $chars = 'abdefhiknrstyz123456789';
+        $numChars = strlen($chars);
+        $string = '';
+
+        for ($i = 0; $i < $length; $i++) {
+          $string .= substr($chars, rand(1, $numChars) - 1, 1);
+        }
+        return $string;
+      }
+
+      $reservedCode = generateReservedCode();
+
+      $filmName = Films::getById($db, $params['orderFilmId'])['filmName'];
+      $hallName = Halls::getById($db, $params['orderHallId'])['hallName'];
+      $dateOfFilm = $params['orderDateOfFilm'];
+      $orderPlaces = implode(", ", json_decode($params['orderPlaces']));
+
+      $strForQR = "Код бронирования: $reservedCode. Фильм: $filmName. Зал: $hallName. Дата начала: $dateOfFilm. Места: $orderPlaces.";
+      // ПОМЕНЯТЬ ПУТЬ НА КОРРЕКТНЫЙ!!!
+      $urlToQr = 'qr/' . $reservedCode . '.png';
+      QRcode::png($strForQR, $urlToQr, QR_ECLEVEL_L, 5);
+
+      $params['orderReservedCode'] = $reservedCode;
+      $params['orderQrImg'] = 'qr/' . $reservedCode . '.png';
+
       if(Orders::createOrder($db, $params)){
-        return $this->response('Data saved.', 200);
+        return $this->response($urlToQr, 200);
       }
 
       return $this->response("Create error", 500);

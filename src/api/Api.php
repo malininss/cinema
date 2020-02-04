@@ -71,6 +71,11 @@ abstract class Api
         return json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 
+    protected function responseWithData($data, $status = 500) {
+      header("HTTP/1.1 " . $status . " " . $this->requestStatus($status));
+      return $data;
+    }
+
     private function requestStatus($code) {
         $status = array(
             200 => 'OK',

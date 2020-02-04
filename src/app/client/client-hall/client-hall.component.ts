@@ -13,6 +13,7 @@ export interface ObjectForPayment {
   totalPrice: number;
   reservedHallsId: string;
   timestamp: number;
+  pathToQr?: string;
 }
 
 @Component({
