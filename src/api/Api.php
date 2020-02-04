@@ -2,7 +2,7 @@
 
 abstract class Api
 {
-    public $apiName = ''; //films
+    public $apiName = '';
 
     protected $method = ''; //GET|POST|PUT|DELETE
 
