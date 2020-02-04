@@ -113,6 +113,15 @@ export class AppApiService {
     return this.http.post(requestUrl, updateObj);
   }
 
+  newOrder(orderObj) {
+    const requestUrl = this.apiUrl + '/orders';
+    return this.http.post(requestUrl, orderObj);
+  }
+
+
+
+
+
   toFormData(object) {
     const formData = new FormData();
 

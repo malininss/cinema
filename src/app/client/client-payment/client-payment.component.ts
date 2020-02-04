@@ -22,10 +22,12 @@ export class ClientPaymentComponent implements OnInit {
     ) {}
 
   ngOnInit() {
-    if (!this.clientPaymentService.getData()) {
+    if (!this.clientPaymentService.getDataForPayment() ||
+        this.clientPaymentService.paymentStatus ) {
       this.router.navigate(['/film']);
     }
-    this.dataObject = this.clientPaymentService.getData();
+
+    this.dataObject = this.clientPaymentService.getDataForPayment();
   }
 
   sendPayment() {
@@ -52,9 +54,26 @@ export class ClientPaymentComponent implements OnInit {
         reservedHallsDate: this.datePipe.transform(this.dataObject.timestamp * 1000, 'yyyy-MM-dd HH:mm:ss')
       };
 
+      // Временно закомментировал
       this.appApiService.createReservedHall(objectToSend)
         .subscribe(response => {
         });
     }
+
+    const orderObj = {
+      orderPlaces: this.dataObject.checkedPlaces,
+      orderTotalPrice: this.dataObject.totalPrice,
+      orderDateOfFilm: this.dataObject.timestamp,
+      orderDateOfOrder: Math.floor(+(new Date()) / 1000).toString(),
+      orderHallId: this.dataObject.hall.hallId,
+      orderFilmId: this.dataObject.film.filmId
+    };
+
+    this.appApiService.newOrder(orderObj)
+      .subscribe(response => {
+        this.router.navigate(['/ticket']);
+        this.clientPaymentService.paymentStatus = true;
+      });
+
   }
 }

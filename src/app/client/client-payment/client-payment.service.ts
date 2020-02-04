@@ -8,15 +8,18 @@ import { Injectable } from '@angular/core';
 
 export class ClientPaymentService {
 
-  dataObject: ObjectForPayment = undefined;
+  objectForPayment: ObjectForPayment = undefined;
+  paymentStatus = false;
 
   constructor() { }
 
-  setData(data) {
-    this.dataObject = data;
+  setDataForPayment(data) {
+    this.objectForPayment = data;
   }
 
-  getData() {
-    return this.dataObject;
+  getDataForPayment() {
+    return this.objectForPayment;
   }
+
+
 }

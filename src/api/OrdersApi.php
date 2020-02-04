@@ -58,6 +58,20 @@ class OrdersApi extends Api {
 
     if($params){
 
+      if ($params['orderPlaces']) {
+        $params['orderPlaces'] = json_encode($params['orderPlaces'], JSON_UNESCAPED_UNICODE);
+      }
+
+      $orderDateOfFilm = new DateTime();
+      $orderDateOfFilm->setTimestamp((int)$params['orderDateOfFilm']);
+      $orderDateOfFilm = $orderDateOfFilm->format('Y-m-d H:i:s');
+
+      $orderDateOfOrder = new DateTime();
+      $orderDateOfOrder = $orderDateOfOrder->format('Y-m-d H:i:s');
+
+      $params['orderDateOfFilm'] = $orderDateOfFilm;
+      $params['orderDateOfOrder'] = $orderDateOfOrder;
+
       if(Orders::createOrder($db, $params)){
         return $this->response('Data saved.', 200);
       }

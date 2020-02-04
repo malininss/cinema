@@ -66,7 +66,7 @@ class ReservedHalls {
     $keysString = substr($keysString,0,-1);
     $valuesString = substr($valuesString,0,-1);
 
-    print_r($keysString);
+    // print_r($keysString);
     // print_r($keysString);
 
 

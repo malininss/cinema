@@ -45,6 +45,7 @@
     font-weight: 300;
     font-size: 1.4rem;
     text-align: center;
+    user-select: none;
 
     p {
       position: relative;
@@ -84,6 +85,14 @@
     content: '';
   }
 
+}
+
+.buying-scheme__notice {
+  display: none;
+  text-align: center;
+  color:red;
+  font-size: 1.6rem;
+  margin-top: 10px;
 }
 
 .buying-scheme__row + .buying-scheme__row {

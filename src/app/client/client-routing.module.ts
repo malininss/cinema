@@ -1,6 +1,6 @@
 import { PageNotFoundComponent } from './../page-not-found/page-not-found.component';
 import { ClientPaymentComponent } from './client-payment/client-payment.component';
-import { ClientTicketComponent } from './client-ticket/ticket.component';
+import { ClientTicketComponent } from './client-ticket/client-ticket.component';
 import { ClientHallComponent } from './client-hall/client-hall.component';
 import { ClientComponent } from './client/client.component';
 import { ClientFilmListComponent } from './client-film-list/client-film-list.component';

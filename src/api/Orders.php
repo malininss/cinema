@@ -8,7 +8,6 @@ class Orders {
    * @return boolean
    */
   static public function createOrder($db, $arr) {
-    // print_r($arr);
 
     $keysString = '';
     $valuesString = '';

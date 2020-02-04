@@ -263,7 +263,7 @@
           [formGroup]="hallActivityFormGroup"
           (ngSubmit)="submitNewActivity()"
         >
-          <p class="conf-step__paragraph">Выберите зал, чтобы назначить активность:</p>
+          <p class="conf-step__paragraph">Выберите зал, чтобы назначить активность.<br>Новый созданный зал по умолчанию неактивен.</p>
           <ul class="conf-step__selectors-box">
             <li *ngFor="let hall of halls">
               <input

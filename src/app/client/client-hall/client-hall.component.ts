@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { ClientPaymentService } from './../client-payment/client-payment.service';
 import { AppApiService, Film, ReservedHalls, Hall } from '../../app-api.service';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 export interface ObjectForPayment {
   film: any;
@@ -61,6 +61,7 @@ export class ClientHallComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private appApiService: AppApiService,
     private clientPaymentService: ClientPaymentService,
     private datePipe: DatePipe
@@ -115,6 +116,7 @@ export class ClientHallComponent implements OnInit {
     if (currentElem.status === 'free') {
       currentElem.status = 'checked';
     } else if (currentElem.status === 'checked') {
+      this.objectForSand.checkedPlaces = [];
       currentElem.status = 'free';
     }
   }
@@ -131,6 +133,8 @@ export class ClientHallComponent implements OnInit {
     let placeCounter = 0;
 
     for (const currentRow of this.currentReservedHallPlaces) {
+
+      const rowNumber = this.currentReservedHallPlaces.indexOf(currentRow) + 1;
       for (const currentPlace of currentRow) {
         if (currentPlace.type !== 'disabled') {
 
@@ -138,7 +142,7 @@ export class ClientHallComponent implements OnInit {
         } else {
         }
         if (currentPlace.status === 'checked') {
-          this.objectForSand.checkedPlaces.push(placeCounter.toString());
+          this.objectForSand.checkedPlaces.push('место ' + placeCounter.toString() + ' / ряд ' + rowNumber);
 
           if (currentPlace.type === 'simple') {
             this.objectForSand.totalPrice += +this.hall.hallChairPrice;
@@ -149,7 +153,18 @@ export class ClientHallComponent implements OnInit {
       }
     }
 
-    this.clientPaymentService.setData(this.objectForSand);
+    if (this.objectForSand.checkedPlaces.length === 0) {
+      const notice: any = document.querySelector('.buying-scheme__notice');
+      notice.style.display = 'block';
+    } else {
+      this.clientPaymentService.setDataForPayment(this.objectForSand);
+      this.clientPaymentService.paymentStatus = false;
+      this.router.navigate(['/payment']);
+    }
+
+
+
+
   }
 
   zoomHall() {

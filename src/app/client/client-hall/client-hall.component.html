@@ -1,5 +1,5 @@
 <main>
-  <section class="buying" (dblclick)="zoomHall()">
+  <section class="buying">
     <div class="buying__info">
       <div class="buying__info-description">
         <h2 class="buying__info-title">{{ film.filmName }}</h2>
@@ -7,7 +7,7 @@
         <p class="buying__info-start">Начало сеанса: {{ currentTime * 1000 | date : 'HH:mm'}}</p>
         <p class="buying__info-hall"> {{ hall.hallName }}</p>
       </div>
-      <div class="buying__info-hint">
+      <div class="buying__info-hint" (dblclick)="zoomHall()">
         <p>Тапните дважды,<br>чтобы увеличить</p>
       </div>
     </div>
@@ -39,6 +39,8 @@
         </div>
       </div>
     </div>
-    <button class="acceptin-button" (click)="createObjectForPayment()" routerLink="/payment">Забронировать</button>
+    <button class="acceptin-button" (click)="createObjectForPayment()">Забронировать</button>
+    <div class="buying-scheme__notice">Выберите места для бронирования</div>
+
   </section>
 </main>

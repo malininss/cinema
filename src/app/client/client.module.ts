@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { ClientTicketComponent } from './client-ticket/ticket.component';
+import { ClientTicketComponent } from './client-ticket/client-ticket.component';
 import { ClientHallComponent } from './client-hall/client-hall.component';
 import { ClientPaymentComponent } from './client-payment/client-payment.component';
 import { ClientRoutingModule } from './client-routing.module';
