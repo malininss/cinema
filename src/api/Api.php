@@ -29,21 +29,6 @@ abstract class Api
         } else if ($this->method == 'POST' && $this->requestUri[count($this->requestUri) - 1] == 'DELETE') {
           $this->method = 'DELETE';
         }
-        // print_r($this->requestUri[count($this->requestUri) - 1]);
-
-        // if ($this->method == 'POST' && array_key_exists('HTTP_X_HTTP_METHOD', $_SERVER)) {
-
-        //     if ($_SERVER['HTTP_X_HTTP_METHOD'] == 'DELETE') {
-        //         $this->method = 'DELETE';
-        //     } else if ($_SERVER['REQUEST_METHOD'] == 'POST' && count($this->requestUri) > 2) {
-        //       print_r('test');
-        //         $this->method = 'PUT';
-        //     } else {
-        //         throw new Exception("Unexpected Header");
-        //     }
-        // }
-
-        // print_r($this->method);
     }
 
     public function run() {

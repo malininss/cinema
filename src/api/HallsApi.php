@@ -54,7 +54,6 @@ class HallsApi extends Api {
   public function createAction() {
     $db = (new Connection())->getConnection();
 
-    // Нужно получать данные через json_decode!!!
     $params = json_decode($this->requestParams,true);
 
     if($params){

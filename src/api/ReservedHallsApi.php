@@ -30,7 +30,6 @@ class ReservedHallsApi extends Api {
    * @return string
    */
   public function viewAction() {
-    //id должен быть первым параметром после /films/
     $id = array_shift($this->requestUri);
     $db = (new Connection())->getConnection();
 
@@ -91,7 +90,6 @@ class ReservedHallsApi extends Api {
     $params = json_decode($this->requestParams,true);
     $params['reservedHallsHall'] = json_encode($params['reservedHallsHall']);
 
-    // print_r($params);
     $db = (new Connection())->getConnection();
 
     if(!$reservedHallId || !ReservedHalls::getById($db, $reservedHallId)){

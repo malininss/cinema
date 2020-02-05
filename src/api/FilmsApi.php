@@ -22,7 +22,6 @@ class FilmsApi extends Api {
     return $this->response('Data not found', 404);
   }
 
-
   /**
    * Метод GET
    * Просмотр отдельной записи (по id)
@@ -43,7 +42,6 @@ class FilmsApi extends Api {
     return $this->response('Data not found', 404);
   }
 
-
   /**
    * Метод POST
    * Создание новой записи
@@ -54,9 +52,6 @@ class FilmsApi extends Api {
   public function createAction() {
     $db = (new Connection())->getConnection();
 
-    // $uploaddir = __DIR__;
-    // $uploadfile = $uploaddir . basename($_FILES[0]);
-
     $params = $_POST;
 
     if(isset($_FILES)) {
@@ -66,8 +61,6 @@ class FilmsApi extends Api {
         return $this->response("Saving error", 500);
       } elseif ($_FILES['filmImg']['type'] !== 'image/jpeg' && $_FILES['filmImg']['type'] !== 'image/png') {
 
-        // print_r($_FILES['filmImg']['type'] !== 'image/png')
-        // print_r('Разрешено загружать только файлы .jpg и .png');
         return $this->response("Saving error", 500);
       }
 
@@ -76,10 +69,7 @@ class FilmsApi extends Api {
 
       $destiation_dir = $pathToPosters .'/'. $file_name;
 
-      move_uploaded_file($_FILES['filmImg']['tmp_name'], $destiation_dir ); // Перемещаем файл в желаемую директорию
-      // print_r('Файл успешно загружен');
-
-      // ИЗМЕНИТЬ ПУТЬ ДО КАРТИНКИ!!
+      move_uploaded_file($_FILES['filmImg']['tmp_name'], $destiation_dir );
       $params['filmImg'] = 'http://localhost:4200/assets/i/' . $file_name;
 
     }
@@ -124,7 +114,6 @@ class FilmsApi extends Api {
     }
     return $this->response("Update error", 400);
   }
-
 
   /**
    * Метод DELETE

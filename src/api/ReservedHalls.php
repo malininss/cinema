@@ -21,7 +21,6 @@ class ReservedHalls {
     return $allreservedHallsElement;
   }
 
-
   /**
    * Метод получения конкретного зала по IP
    * Принимает соединение с базой данных $db и $id из HallsApi.php
@@ -38,8 +37,6 @@ class ReservedHalls {
 
 
     $formattedDate = $date->format('Y-m-d H:i:s');
-    // print_r($formattedDate);
-
     $sql = mysqli_query($db, "SELECT * FROM reservedHalls WHERE hallId=$hallId AND reservedHallsDate='$formattedDate'");
     return mysqli_fetch_assoc($sql);
   }
@@ -65,10 +62,6 @@ class ReservedHalls {
 
     $keysString = substr($keysString,0,-1);
     $valuesString = substr($valuesString,0,-1);
-
-    // print_r($keysString);
-    // print_r($keysString);
-
 
     $sql = mysqli_query($db, "INSERT INTO reservedHalls($keysString) VALUES ($valuesString)");
 

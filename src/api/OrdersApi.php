@@ -30,7 +30,6 @@ class OrdersApi extends Api {
    */
   public function viewAction() {
 
-    //id должен быть первым параметром после /orders/
     $id = array_shift($this->requestUri);
 
     if($id){
@@ -91,7 +90,6 @@ class OrdersApi extends Api {
       $orderPlaces = implode(", ", json_decode($params['orderPlaces']));
 
       $strForQR = "Код бронирования: $reservedCode. Фильм: $filmName. Зал: $hallName. Дата начала: $dateOfFilm. Места: $orderPlaces.";
-      // ПОМЕНЯТЬ ПУТЬ НА КОРРЕКТНЫЙ!!!
       $urlToQr = 'qr/' . $reservedCode . '.png';
       QRcode::png($strForQR, $urlToQr, QR_ECLEVEL_L, 5);
 

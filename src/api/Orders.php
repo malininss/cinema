@@ -9,9 +9,6 @@ class Orders {
    */
   static public function createOrder($db, $arr) {
 
-
-    // print_r($arr);
-
     $keysString = '';
     $valuesString = '';
 
@@ -85,8 +82,6 @@ class Orders {
 
     $result = substr($result,0,-1);
 
-    // print_r($result);
-
     $sql = mysqli_query($db, "UPDATE `orders` SET $result WHERE `orders`.`orderId` = $orderId;");
     if($sql) {
       return true;
@@ -102,11 +97,6 @@ class Orders {
    * @return boolean
    */
   static public function deleteById($db, $hallId) {
-    // $sql = mysqli_query($db, "DELETE FROM `halls` WHERE `halls`.`hallId` = $hallId");
-    // if($sql) {
-    //   return true;
-    // } else {
-    //   return false;
-    // }
+
   }
 }

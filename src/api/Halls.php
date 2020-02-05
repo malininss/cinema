@@ -8,7 +8,6 @@ class Halls {
    * @return boolean
    */
   static public function createHall($db, $arr) {
-    // print_r($arr);
 
     $keysString = '';
     $valuesString = '';
@@ -33,7 +32,6 @@ class Halls {
       return false;
     }
   }
-
 
   /**
    * Метод получения всех залов
@@ -82,8 +80,6 @@ class Halls {
     }
 
     $result = substr($result,0,-1);
-
-    // print_r($result);
 
     $sql = mysqli_query($db, "UPDATE `halls` SET $result WHERE `halls`.`hallId` = $hallId;");
     if($sql) {

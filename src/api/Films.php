@@ -87,7 +87,6 @@ class Films {
     }
   }
 
-
   /**
    * Метод удаления фильма
    * Принимает соединение с базой данных $db и $filmId из FilmsApi.php
@@ -101,9 +100,4 @@ class Films {
       return false;
     }
   }
-
-
-  // static public function getFilmWithSchedule() {
-
-  // }
 }
