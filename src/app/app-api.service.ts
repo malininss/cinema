@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
 
 export interface Film {
   filmId: string;
@@ -36,84 +34,84 @@ export interface Hall {
 })
 
 export class AppApiService {
-  apiUrl = 'http://para-z.com/api';
+  apiUrl = 'http://para-z.com/';
 
 
   constructor(private http: HttpClient) { }
 
   getFilms() {
-    const requestUrl = this.apiUrl + '/films/';
+    const requestUrl = this.apiUrl + 'api/films/';
     return this.http.get<Film[]>(requestUrl);
   }
 
   getFilmById(filmId) {
-    const requestUrl = this.apiUrl + '/films/' + filmId;
+    const requestUrl = this.apiUrl + 'api/films/' + filmId;
     return this.http.get<Film>(requestUrl);
   }
 
   deleteFilmById(filmId) {
-    const requestUrl = this.apiUrl + '/films/' + filmId + '/DELETE';
+    const requestUrl = this.apiUrl + 'api/films/' + filmId + '/DELETE';
     return this.http.post(requestUrl, {});
   }
 
   getReservedHallById(id) {
-    const requestUrl = this.apiUrl + '/reservedhalls/' + id;
+    const requestUrl = this.apiUrl + 'api/reservedhalls/' + id;
     return this.http.get<ReservedHalls>(requestUrl);
   }
 
 
   editReservedHall(updateObj, scneduleId) {
-    const requestUrl = this.apiUrl + '/reservedhalls/' + scneduleId + '/PUT';
+    const requestUrl = this.apiUrl + 'api/reservedhalls/' + scneduleId + '/PUT';
     return this.http.post(requestUrl, updateObj);
   }
 
   getReservedHallByDateAndHallId(date, hallId) {
-    const requestUrl = this.apiUrl + '/reservedhalls/' + hallId + '/' + date;
+    const requestUrl = this.apiUrl + 'api/reservedhalls/' + hallId + '/' + date;
     return this.http.get(requestUrl);
   }
 
   createReservedHall(dataObj) {
-    const requestUrl = this.apiUrl + '/reservedhalls/';
+    const requestUrl = this.apiUrl + 'api/reservedhalls/';
     return this.http.post(requestUrl, dataObj);
   }
 
   getHallById(hallId) {
-    const requestUrl = this.apiUrl + '/halls/' + hallId;
+    const requestUrl = this.apiUrl + 'api/halls/' + hallId;
     return this.http.get<Hall>(requestUrl);
   }
 
   getHalls() {
-    const requestUrl = this.apiUrl + '/halls/';
+    const requestUrl = this.apiUrl + 'api/halls/';
     return this.http.get<Hall[]>(requestUrl);
   }
 
   newHall(hall) {
-    const requestUrl = this.apiUrl + '/halls';
+    const requestUrl = this.apiUrl + 'api/halls';
     return this.http.post(requestUrl, hall);
   }
 
   deleteHall(hallId) {
-    const requestUrl = this.apiUrl + '/halls/' + hallId + '/DELETE';
+    const requestUrl = this.apiUrl + 'api/halls/' + hallId + '/DELETE';
     return this.http.post(requestUrl, {});
   }
 
   editHall(updateObj, hallId) {
-    const requestUrl = this.apiUrl + '/halls/' + hallId + '/PUT';
+    const requestUrl = this.apiUrl + 'api/halls/' + hallId + '/PUT';
     return this.http.post(requestUrl, updateObj);
   }
 
   newFilm(filmObj) {
-    const requestUrl = this.apiUrl + '/films';
+    const requestUrl = this.apiUrl + 'api/films';
     return this.http.post(requestUrl, this.toFormData(filmObj));
   }
 
   updateFilm(updateObj, filmId) {
-    const requestUrl = this.apiUrl + '/films/' + filmId + '/PUT';
+    const requestUrl = this.apiUrl + 'api/films/' + filmId + '/PUT';
     return this.http.post(requestUrl, updateObj);
   }
 
   newOrder(orderObj) {
-    const requestUrl = this.apiUrl + '/orders';
+    const requestUrl = this.apiUrl + 'api/orders';
     return this.http.post(requestUrl, orderObj);
   }
 
@@ -124,7 +122,7 @@ export class AppApiService {
       const value = object[key];
       formData.append(key, value);
     }
-
     return formData;
   }
+
 }
