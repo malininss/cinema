@@ -72,7 +72,7 @@ input[type='radio'], input[type='submit'], button, .conf-step__header, select {
   padding: 35px $colwidth 35px (2 * $colwidth + $gapwidth);
 }
 
-.conf-step_notice {
+.conf-step__notice {
   color: red;
 }
 
@@ -767,5 +767,7 @@ input[type='radio'], input[type='submit'], button, .conf-step__header, select {
 }
 
 .notice {
+  font-size: 14px;
+  margin: 4px 0 2px 0;
   color: red;
 }

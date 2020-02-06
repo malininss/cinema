@@ -130,6 +130,11 @@ export class AdminComponent implements OnInit {
 
       this.getRowAndPlaceValue();
       this.isPlaceChanges = false;
+
+      document.querySelector('.conf-step__delete-hall-notice').innerHTML = '';
+    },
+    error => {
+      throw new Error('Добавьте зал!');
     });
   }
 
@@ -156,11 +161,11 @@ export class AdminComponent implements OnInit {
       hallActivity: '0'
     };
 
+    this.closeCreateHallPopup();
     this.appApiService.newHall(objToSend)
     .subscribe(data => {
       this.getHalls();
       this.getHallTimeLine();
-      this.closeCreateHallPopup();
 
       this.addHallFormGroup.reset();
     });
@@ -168,27 +173,34 @@ export class AdminComponent implements OnInit {
 
   deleteHall() {
     this.getFilms();
-    this.appApiService.deleteHall(this.hallToDelete.hallId)
-    .subscribe(data => {
-      this.films.forEach(film => {
-        if (film.filmSchedule) {
-          film.filmSchedule.forEach((scheduleItem, scheduleIndex) => {
-            if (scheduleItem.hallId === this.hallToDelete.hallId) {
-              film.filmSchedule.splice(scheduleIndex, 1);
-              this.appApiService.updateFilm(JSON.stringify({filmSchedule: film.filmSchedule}) , film.filmId)
-              .subscribe(response => {
-                this.getHallTimeLine();
-              });
-            }
-          });
-        }
-      });
 
-      this.getHalls();
-      this.getHallTimeLine();
+    if (this.halls.length <= 1) {
+      document.querySelector('.conf-step__delete-hall-popup-notice').innerHTML =
+      'Нельзя удалить холл, если он остался один.<br> Сначала добавьте другой.';
+
+    } else {
       this.closeDeleteHallPopup();
-      this.hallToDelete = '';
-    });
+      this.appApiService.deleteHall(this.hallToDelete.hallId)
+      .subscribe(data => {
+        this.films.forEach(film => {
+          if (film.filmSchedule) {
+            film.filmSchedule.forEach((scheduleItem, scheduleIndex) => {
+              if (scheduleItem.hallId === this.hallToDelete.hallId) {
+                film.filmSchedule.splice(scheduleIndex, 1);
+                this.appApiService.updateFilm(JSON.stringify({filmSchedule: film.filmSchedule}) , film.filmId)
+                .subscribe(response => {
+                  this.getHallTimeLine();
+                });
+              }
+            });
+          }
+        });
+
+        this.getHalls();
+        this.getHallTimeLine();
+        this.hallToDelete = '';
+      });
+    }
   }
 
   editHallConf() {
@@ -323,13 +335,16 @@ export class AdminComponent implements OnInit {
         }
       });
 
-      this.halls.forEach(hall => {
-        if (!hallLineObj[hall.hallId]) {
-          hallLineObj[hall.hallId] = {};
-        }
-      });
-
       this.hallTimeLine = hallLineObj;
+
+      setTimeout(() => {
+        this.halls.forEach(hall => {
+          if (!this.hallTimeLine[hall.hallId]) {
+            this.hallTimeLine[hall.hallId] = {};
+          }
+        });
+      }, 1000);
+
     });
   }
 
@@ -420,6 +435,8 @@ export class AdminComponent implements OnInit {
 
       this.appApiService.newFilm(obj)
       .subscribe(data => {
+
+        document.querySelector('.conf-step__delete-film-notice').innerHTML = '';
         this.closeCreateFilmPopup();
         this.getFilms();
       });
@@ -466,7 +483,7 @@ export class AdminComponent implements OnInit {
                 currentTimeDate < timeEndFilm
             ) {
 
-              const notice = document.querySelector('.conf-step_notice');
+              const notice = document.querySelector('.conf-step__showtime-notice');
               notice.innerHTML = `
                 Время сеанса совпадает со временем уже идущего фильма.<br>
                 Время старта фильма, с которым происходит конфликт: ${timeArr[i][0]} <br>
@@ -479,7 +496,7 @@ export class AdminComponent implements OnInit {
             // Если время окончания фильма - после 24:00
             const minutesInDay = 1440;
             if (currentTimeDate + currentFilmDuration > minutesInDay) {
-              const notice = document.querySelector('.conf-step_notice');
+              const notice = document.querySelector('.conf-step__showtime-notice');
               notice.innerHTML = `
                 Сеанс не может заканчиваться позже 24:00.
               `;
@@ -498,7 +515,7 @@ export class AdminComponent implements OnInit {
                    currentTimeDate + currentFilmDuration > nextFilmMinutesFromMidnight
               ) {
 
-                const notice = document.querySelector('.conf-step_notice');
+                const notice = document.querySelector('.conf-step__showtime-notice');
                 notice.innerHTML = `
                   Время добавленного сеанса наезжает на следующий сеанса.<br>
                   Время старта фильма, с которым происходит конфликт: ${timeArr[i][0]} <br>
@@ -667,8 +684,13 @@ export class AdminComponent implements OnInit {
     // Попапы
 
     showDeleteHallPopup(hall) {
-      this.hallToDelete = hall;
-      this.visibleDeleteHallPopup = true;
+      if (this.halls.length <= 1) {
+        document.querySelector('.conf-step__delete-hall-notice').innerHTML =
+        'Нельзя удалить холл, если он остался один.<br> Сначала добавьте другой.';
+      } else {
+        this.hallToDelete = hall;
+        this.visibleDeleteHallPopup = true;
+      }
     }
 
     showCreateHallPopup() {
@@ -693,8 +715,14 @@ export class AdminComponent implements OnInit {
     }
 
     showDeleteFilmPopup(film) {
-      this.filmToDelete = film;
-      this.visibleDeleteFilmPopup = true;
+
+      if (this.films.length <= 1) {
+        document.querySelector('.conf-step__delete-film-notice').innerHTML =
+        'Нельзя удалить фильм, если он остался один. Сначала добавьте фильм';
+      } else {
+        this.filmToDelete = film;
+        this.visibleDeleteFilmPopup = true;
+      }
     }
 
 
@@ -713,8 +741,7 @@ export class AdminComponent implements OnInit {
 
     closeShowtimeAddPopup() {
       this.visibleShowtimeAddPopup = false;
-      const notice = document.querySelector('.conf-step_notice');
-      notice.innerHTML = '';
+      document.querySelector('.conf-step__showtime-notice').innerHTML = '';
     }
 
     closeDeleteSessionPopup() {
@@ -723,7 +750,7 @@ export class AdminComponent implements OnInit {
     }
 
     closeDeleteFilmPopup() {
-      this.filmToDelete = '';
+      document.querySelector('.conf-step__delete-film-notice').innerHTML = '';
       this.visibleDeleteFilmPopup = false;
     }
 
@@ -761,13 +788,21 @@ export class AdminComponent implements OnInit {
 
     deleteFilm() {
 
-      this.appApiService.deleteFilmById(this.filmToDelete.filmId)
-        .subscribe(response => {
-          this.getHalls();
-          this.getFilms();
-          this.getHallTimeLine();
-          this.closeDeleteFilmPopup();
-        });
+      if (this.films.length <= 1) {
+        document.querySelector('.conf-step__delete-film-popup-notice').innerHTML =
+        'Нельзя удалить фильм, если он остался один. Сначала добавьте фильм';
+      } else {
+
+        this.closeDeleteFilmPopup();
+        this.appApiService.deleteFilmById(this.filmToDelete.filmId)
+          .subscribe(response => {
+            this.getHalls();
+            this.getFilms();
+            this.getHallTimeLine();
+            this.filmToDelete = '';
+            document.querySelector('.conf-step__delete-hall-notice').innerHTML = '';
+          });
+      }
     }
 
     resetHallConfigurateChanges() {

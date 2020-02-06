@@ -18,6 +18,7 @@
             (click)="showDeleteHallPopup(hall)"></button>
           </li>
         </ul>
+        <div class="conf-step__delete-hall-notice notice"></div>
         <button class="conf-step__button conf-step__button-accent" (click)="showCreateHallPopup()">Создать зал</button>
       </div>
     </section>
@@ -215,6 +216,7 @@
 
         </div>
 
+        <div class="conf-step__delete-film-notice notice"></div>
         <p class="conf-step__paragraph">Перетащите фильм в сетку сеансов</p>
 
         <div
@@ -349,6 +351,7 @@
             <button type="button" class="conf-step__button conf-step__button-regular"
             (click)="closeDeleteHallPopup()"
             >Отменить</button>
+            <div class="conf-step__delete-hall-popup-notice notice"></div>
           </div>
         </form>
       </div>
@@ -470,6 +473,7 @@
             <button type="button" class="conf-step__button conf-step__button-regular"
             (click)="closeDeleteFilmPopup()"
             >Отменить</button>
+            <div class="conf-step__delete-film-popup-notice notice"></div>
           </div>
         </form>
       </div>
@@ -521,7 +525,7 @@
               formControlName="time"
             >
           </label>
-          <div class="conf-step_notice"></div>
+          <div class="conf-step__showtime-notice notice"></div>
           <div class="conf-step__buttons text-center">
             <button type="submit" class="conf-step__button conf-step__button-accent" [disabled]="addShowtimeFormGroup.invalid">Добавить сессию</button>
             <button type="button" class="conf-step__button conf-step__button-regular" (click)="closeShowtimeAddPopup()">Отменить</button>
